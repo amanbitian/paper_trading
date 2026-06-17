@@ -1,0 +1,55 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif dashboard %}
+<section class="data-ingestion-summary">
+    <div class="data-ops-mini-metrics">
+        <article class="metric-card data-ops-metric">
+            <span class="metric-label">Active tickers</span>
+            <strong class="metric-value">{{ dashboard.active_stocks | number(0) }}</strong>
+        </article>
+        <article class="metric-card data-ops-metric">
+            <span class="metric-label">With daily prices</span>
+            <strong class="metric-value">{{ dashboard.stocks_with_daily_prices | number(0) }}</strong>
+        </article>
+        <article class="metric-card data-ops-metric">
+            <span class="metric-label">Coverage</span>
+            <strong class="metric-value">{{ dashboard.price_coverage_pct | number(1) }}%</strong>
+        </article>
+        <article class="metric-card data-ops-metric">
+            <span class="metric-label">Daily price rows</span>
+            <strong class="metric-value">{{ dashboard.total_daily_price_rows | number(0) }}</strong>
+        </article>
+    </div>
+    {% if latest_run %}
+    <article class="section-card data-ingestion-latest-run">
+        <div class="section-heading compact">
+            <h3>Latest ingestion run</h3>
+            {% set badge_text = latest_run.status %}
+            {% set badge_tone = latest_run.status_tone %}
+            {% include "partials/status_badge.html" %}
+        </div>
+        <dl class="data-ingestion-dl">
+            <div><dt>Run ID</dt><dd>#{{ latest_run.id }}</dd></div>
+            <div><dt>Provider</dt><dd>{{ latest_run.provider }}</dd></div>
+            <div><dt>Mode</dt><dd>{{ latest_run.ingestion_mode }}</dd></div>
+            <div><dt>Duration</dt><dd>{{ latest_run.duration_label }}</dd></div>
+            <div><dt>Rows saved</dt><dd>{{ latest_run.rows_saved | number(0) }}</dd></div>
+            <div><dt>Symbols</dt><dd>{{ latest_run.symbols_synced }} ok / {{ latest_run.symbols_failed }} failed / {{ latest_run.symbols_skipped }} skipped</dd></div>
+            <div><dt>Sync end date</dt><dd>{{ latest_run.latest_after | date_text }}</dd></div>
+        </dl>
+        {% if latest_run.error_message %}
+            {% set banner_message = latest_run.error_message %}
+            {% set banner_tone = "warning" %}
+            {% include "partials/info_banner.html" %}
+        {% endif %}
+    </article>
+    {% endif %}
+    <p class="muted data-ops-note">Universe metadata: {{ dashboard.stocks_with_sector | number(0) }} with sector, {{ dashboard.performance_snapshots | number(0) }} performance snapshots.</p>
+</section>
+{% else %}
+    {% set empty_title = "Ingestion dashboard unavailable" %}
+    {% set empty_message = "Could not load ingestion metrics." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

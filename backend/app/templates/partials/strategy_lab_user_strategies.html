@@ -1,0 +1,65 @@
+{% if not rows %}
+    {% set empty_title = "No user strategies yet" %}
+    {% set empty_message = "Create a user strategy above to generate signals for this portfolio." %}
+    {% include "partials/empty_state.html" %}
+{% else %}
+    <div class="financial-table-card table-scroll-wrap">
+        <div class="table-scroll">
+            <table class="data-table compact strategy-lab-saved-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Template</th>
+                        <th>Params</th>
+                        <th class="num">Risk %</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            <td>{{ row.strategy_name }}</td>
+                            <td>{{ row.template_name }}</td>
+                            <td><small>{{ row.parameters_summary }}</small></td>
+                            <td class="num">{{ row.risk_per_trade_pct | number(1) }}</td>
+                            <td>
+                                {% if row.is_enabled %}
+                                    {% set badge_text = "Active" %}
+                                    {% set badge_tone = "positive" %}
+                                {% else %}
+                                    {% set badge_text = "Disabled" %}
+                                    {% set badge_tone = "neutral" %}
+                                {% endif %}
+                                {% include "partials/status_badge.html" %}
+                            </td>
+                            <td>{{ row.created_at | date_text }}</td>
+                            <td>
+                                <button
+                                    type="button"
+                                    class="ghost-button strategy-use-btn"
+                                    data-user-strategy-id="{{ row.id }}">
+                                    Use
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <label class="field">
+        <span>User strategy for signal generation</span>
+        <select name="user_strategy_id" id="strategy-lab-user-strategy-id">
+            <option value="">Select saved strategy</option>
+            {% for row in rows %}
+                <option
+                    value="{{ row.id }}"
+                    {% if selected_user_strategy_id == row.id %}selected{% endif %}>
+                    {{ row.strategy_name }} (#{{ row.id }})
+                </option>
+            {% endfor %}
+        </select>
+    </label>
+{% endif %}

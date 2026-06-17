@@ -1,0 +1,47 @@
+<section class="stock-detail-page" id="stock-detail-page">
+    <div class="stock-detail-toolbar">
+        <a class="ghost-button" href="/web/explore">← Back to Explore</a>
+    </div>
+    {% include "partials/stock_detail_header.html" %}
+    {% include "partials/stock_price_summary.html" %}
+    {% include "partials/stock_fundamentals_placeholder.html" %}
+    {% include "partials/stock_chart.html" %}
+    {% include "partials/stock_news.html" %}
+    {% include "partials/stock_algorithm_findings.html" %}
+    {% include "partials/stock_strategy_playground.html" %}
+
+    {% if detail.price_rows %}
+    <section class="section-card stock-detail-card stock-candles-card">
+        <div class="section-heading compact">
+            <h3>Stored daily candles</h3>
+            <p class="muted">Showing latest {{ detail.price_rows | length }} rows.</p>
+        </div>
+        <div class="index-fund-table-scroll">
+            <table class="financial-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Open</th>
+                        <th>High</th>
+                        <th>Low</th>
+                        <th>Close</th>
+                        <th>Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in detail.price_rows | reverse %}
+                    <tr>
+                        <td>{{ row.date | date_text }}</td>
+                        <td>{{ row.open | inr if row.open is not none else "—" }}</td>
+                        <td>{{ row.high | inr if row.high is not none else "—" }}</td>
+                        <td>{{ row.low | inr if row.low is not none else "—" }}</td>
+                        <td>{{ row.close | inr if row.close is not none else "—" }}</td>
+                        <td>{{ row.volume | volume if row.volume is not none else "—" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+</section>

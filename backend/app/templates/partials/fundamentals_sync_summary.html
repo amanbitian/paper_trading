@@ -1,0 +1,36 @@
+{% set latest_fundamentals_result = (fundamentals_status.latest_result if fundamentals_status else none) %}
+<div class="sync-combined-summary">
+    <div class="sync-summary-head">
+        <strong>Fundamentals sync</strong>
+        {% if latest_fundamentals_result %}
+            {% set badge_text = latest_fundamentals_result.status | upper %}
+            {% set badge_tone = "success" if latest_fundamentals_result.status == "success" else ("warning" if latest_fundamentals_result.status in ["partial", "warning"] else "danger") %}
+            {% include "partials/status_badge.html" %}
+        {% else %}
+            {% set badge_text = "NOT RUN" %}
+            {% set badge_tone = "neutral" %}
+            {% include "partials/status_badge.html" %}
+        {% endif %}
+    </div>
+    <small>Table: {{ fundamentals_status.table_name if fundamentals_status else "stock_fundamentals_latest" }}</small>
+    {% if latest_fundamentals_result %}
+        <small>
+            {{ latest_fundamentals_result.rows_upserted or 0 }} upserted
+            ({{ latest_fundamentals_result.rows_inserted or 0 }} inserted,
+            {{ latest_fundamentals_result.rows_updated or 0 }} updated),
+            {{ latest_fundamentals_result.columns_ingested or 10 }} metrics.
+        </small>
+        <small>
+            Selected {{ latest_fundamentals_result.selected_stocks or 0 }},
+            succeeded {{ latest_fundamentals_result.succeeded or 0 }},
+            failed {{ latest_fundamentals_result.failed or 0 }},
+            duration {{ latest_fundamentals_result.duration_seconds | duration_text }}.
+        </small>
+    {% elif fundamentals_status %}
+        <small>
+            Rows: {{ fundamentals_status.total_rows or 0 }},
+            success/partial: {{ fundamentals_status.success_rows or 0 }},
+            failed: {{ fundamentals_status.failed_rows or 0 }}.
+        </small>
+    {% endif %}
+</div>

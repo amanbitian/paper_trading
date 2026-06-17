@@ -1,0 +1,65 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif strategy_ready %}
+<div class="index-fund-strategy-summary">
+    <article class="metric-card index-fund-metric">
+        <span class="metric-label">Backtest-ready</span>
+        <strong class="metric-value">{{ strategy_ready.ready_count | number(0) }}</strong>
+    </article>
+    <article class="metric-card index-fund-metric">
+        <span class="metric-label">Min rows required</span>
+        <strong class="metric-value">{{ strategy_ready.min_rows | number(0) }}</strong>
+    </article>
+</div>
+{% set banner_message = strategy_ready.backtesting_note %}
+{% set banner_tone = "info" %}
+{% include "partials/info_banner.html" %}
+<div class="table-scroll index-fund-table-scroll">
+    <table class="index-fund-table compact-table">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Yahoo</th>
+                <th>Category</th>
+                <th>Rows</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Backtest</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in strategy_ready.instruments %}
+            <tr>
+                <td>{{ row.symbol }}</td>
+                <td>{{ row.yahoo_symbol }}</td>
+                <td>{{ row.category }}</td>
+                <td>{{ row.row_count }}</td>
+                <td>{{ row.min_date | date_text }}</td>
+                <td>{{ row.max_date | date_text }}</td>
+                <td>
+                    {% if row.usable_in_backtest %}
+                        {% set badge_text = "Ready" %}
+                        {% set badge_tone = "success" %}
+                    {% else %}
+                        {% set badge_text = "Insufficient" %}
+                        {% set badge_tone = "warning" %}
+                    {% endif %}
+                    {% include "partials/status_badge.html" %}
+                </td>
+                <td class="index-fund-message-cell">{{ row.warning or "—" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="index-fund-note muted">
+    <a href="/web/backtesting">Backtesting</a> supports index funds via the Index funds universe type.
+</p>
+{% else %}
+    {% set empty_title = "Strategy-ready list unavailable" %}
+    {% set empty_message = "Could not evaluate index instruments for backtesting." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

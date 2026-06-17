@@ -1,0 +1,60 @@
+{% if not query %}
+{% elif not results %}
+<div class="empty-state">
+    <strong>No matching instruments found</strong>
+    <p>Try a company name or direct symbol.</p>
+</div>
+{% else %}
+<div class="search-results-panel">
+    <div class="search-result-grid strategy-lab-search-grid">
+        {% for item in results %}
+            {% if universe_type == "index_fund" %}
+                {% set instrument_id = item.id %}
+                {% set symbol = item.symbol %}
+                {% set company_name = item.symbol %}
+                {% set exchange_label = item.base_currency or "INR" %}
+                {% set yahoo_symbol = item.yahoo_symbol %}
+                {% set sector = "" %}
+                {% set industry = item.category %}
+                {% set latest_price = none %}
+            {% else %}
+                {% set instrument_id = item.id %}
+                {% set symbol = item.symbol %}
+                {% set company_name = item.company_name or item.symbol %}
+                {% set exchange_label = item.exchange %}
+                {% set yahoo_symbol = item.yahoo_symbol %}
+                {% set sector = item.sector %}
+                {% set industry = item.industry %}
+                {% set latest_price = latest_prices.get(item.id) %}
+            {% endif %}
+            <button
+                type="button"
+                class="search-result-item strategy-lab-stock-pick"
+                data-stock-payload='{{ {
+                    "id": instrument_id,
+                    "symbol": symbol,
+                    "exchange": exchange_label,
+                    "company_name": company_name,
+                    "yahoo_symbol": yahoo_symbol,
+                    "sector": sector,
+                    "industry": industry,
+                    "latest_price": latest_price | float if latest_price is not none else none
+                } | tojson }}'>
+                <div class="search-result-copy">
+                    <strong>{{ company_name }}</strong>
+                    <span>{{ symbol }} · {{ exchange_label }}</span>
+                    {% if sector or industry %}
+                        <small>{% if sector %}{{ sector }}{% endif %}{% if sector and industry %} · {% endif %}{% if industry %}{{ industry }}{% endif %}</small>
+                    {% endif %}
+                </div>
+                <div class="search-result-meta">
+                    {% if latest_price is not none %}
+                        <span class="search-result-price">Rs {{ "%.2f"|format(latest_price) }}</span>
+                    {% endif %}
+                    <span class="search-result-action">Select</span>
+                </div>
+            </button>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

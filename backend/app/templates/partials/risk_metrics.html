@@ -1,0 +1,45 @@
+{% if error %}
+    {% set banner_message = "Risk metrics failed: " ~ error %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif not cards %}
+    {% set empty_title = "Risk metrics unavailable" %}
+    {% set empty_message = "Select a portfolio with holdings and stored snapshots." %}
+    {% include "partials/empty_state.html" %}
+{% else %}
+    {% set beta = cards.beta %}
+    {% set var = cards.var %}
+    {% set conc = cards.concentration %}
+    {% set dd = cards.drawdown %}
+
+    {% if beta.portfolio_beta is not none %}
+        {% set label = "Portfolio Beta" %}{% set value = "%.2f"|format(beta.portfolio_beta) %}{% set delta = beta.interpretation %}{% set tone = "neutral" %}{% include "partials/metric_card.html" %}
+    {% else %}
+        {% set label = "Portfolio Beta" %}{% set value = "—" %}{% set delta = beta.interpretation or "Sync latest prices to calculate beta." %}{% set tone = "warning" %}{% include "partials/metric_card.html" %}
+    {% endif %}
+
+    {% if var.var_95_1d is not none %}
+        {% set label = "1D VaR 95%" %}{% set value = var.var_95_1d | inr %}{% set delta = (var.var_95_1d_pct | optional_pct) ~ " of portfolio" %}{% set tone = "warning" %}{% include "partials/metric_card.html" %}
+    {% else %}
+        {% set label = "1D VaR 95%" %}{% set value = "—" %}{% set delta = "Need at least 30 daily snapshots to calculate VaR." %}{% set tone = "warning" %}{% include "partials/metric_card.html" %}
+    {% endif %}
+
+    {% if dd.portfolio_max_drawdown_pct is not none %}
+        {% set label = "Max Drawdown" %}{% set value = (0 - dd.portfolio_max_drawdown_pct) | pct %}{% set delta = "Portfolio" %}{% set tone = "negative" %}{% include "partials/metric_card.html" %}
+    {% else %}
+        {% set label = "Max Drawdown" %}{% set value = "—" %}{% set delta = "Insufficient snapshot history." %}{% set tone = "warning" %}{% include "partials/metric_card.html" %}
+    {% endif %}
+
+    {% set label = "Top Holding" %}{% set value = "%.1f%%"|format(conc.top_holding_pct or 0) %}{% set tone = "warning" if (conc.top_holding_pct or 0) >= 25 else "neutral" %}{% include "partials/metric_card.html" %}
+    {% set label = "Top 3 Concentration" %}{% set value = "%.1f%%"|format(conc.top_3_pct or 0) %}{% include "partials/metric_card.html" %}
+    {% set label = "HHI" %}{% set value = "%.0f"|format(conc.hhi or 0) %}{% set delta = conc.concentration_level %}{% set tone = "warning" if conc.concentration_level in ['High', 'Very High'] else "neutral" %}{% include "partials/metric_card.html" %}
+
+    {% if cards.portfolio_value is not none %}
+        {% set label = "Portfolio Value" %}{% set value = cards.portfolio_value | inr %}{% include "partials/metric_card.html" %}
+    {% endif %}
+    {% if cards.cash_balance is not none %}
+        {% set label = "Cash" %}{% set value = cards.cash_balance | inr %}{% include "partials/metric_card.html" %}
+    {% endif %}
+
+    <p class="analytics-caption">Last computed: {{ cards.refreshed_at or "-" }}</p>
+{% endif %}

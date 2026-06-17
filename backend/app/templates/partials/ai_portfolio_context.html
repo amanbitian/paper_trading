@@ -1,0 +1,22 @@
+{% if context.error %}
+    {% set banner_message = context.error %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif context.selected %}
+<article class="ai-context-card">
+    <strong>{{ context.selected.name }}</strong>
+    <span class="muted">{{ context.selected.type }}</span>
+    <p class="ai-context-meta">
+        Value: {{ context.total_value | inr }} ·
+        {{ context.holdings_count }} holdings ·
+        {{ context.trades_count }} paper trades
+    </p>
+    {% if not context.journal_ready %}
+        <small class="muted">Journal analysis needs at least 10 paper trades.</small>
+    {% endif %}
+</article>
+{% else %}
+    {% set empty_title = "No portfolio selected" %}
+    {% set empty_message = "Choose a portfolio from the selector above." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

@@ -1,0 +1,20 @@
+<div class="topbar">
+    <button class="mobile-menu-button" type="button" data-sidebar-toggle aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <div class="topbar-title">
+        <strong>{{ title or "Paper Trading App" }}</strong>
+        {% if overview is defined and overview.record_date %}
+            <span>Latest stored session: {{ overview.record_date | date_text }}</span>
+        {% endif %}
+    </div>
+    <div class="topbar-actions">
+        {% if overview is defined and overview.source %}
+            {% set badge_text = overview.source %}
+            {% set badge_tone = "success" if overview.source in ["database", "yfinance"] else "warning" %}
+            {% include "partials/status_badge.html" %}
+        {% endif %}
+    </div>
+</div>

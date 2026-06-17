@@ -1,0 +1,21 @@
+<div id="index-cards" class="metric-grid index-grid">
+    {% if overview.indices %}
+        {% for index in overview.indices %}
+            {% set change_tone = index.change_pct | tone %}
+            <article class="index-card">
+                <span class="metric-label">{{ index.label }}</span>
+                <strong class="metric-value">{{ index.price | number }}</strong>
+                <span class="metric-delta {{ change_tone }}">
+                    {{ index.change | number }} ({{ index.change_pct | pct }})
+                </span>
+                {% if index.record_date %}
+                    <small>{{ index.record_date | date_text }}</small>
+                {% endif %}
+            </article>
+        {% endfor %}
+    {% else %}
+        {% set empty_title = "No index cards yet" %}
+        {% set empty_message = data_warning or "Sync market data to populate NIFTY, SENSEX, BANKNIFTY, MIDCPNIFTY, and FINNIFTY." %}
+        {% include "partials/empty_state.html" %}
+    {% endif %}
+</div>

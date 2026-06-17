@@ -1,0 +1,83 @@
+<form
+    id="index-fund-history-form"
+    class="index-fund-filter-bar"
+    autocomplete="off"
+    hx-get="/web/partials/index-fund/history"
+    hx-target="#index-fund-history-panel"
+    hx-swap="innerHTML"
+    hx-include="#index-fund-history-form"
+    hx-indicator="#index-fund-history-loader">
+    <label class="field compact wide">
+        <span>Instrument</span>
+        <select name="index_fund_id" data-index-fund-history-filter required>
+            <option value="">Select instrument...</option>
+            {% for opt in instrument_options %}
+                <option value="{{ opt.id }}" {% if filters.index_fund_id == opt.id %}selected{% endif %}>{{ opt.label }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label class="field compact">
+        <span>Start date</span>
+        <input type="date" name="start_date" value="{{ filters.start_date }}" data-index-fund-history-filter>
+    </label>
+    <label class="field compact">
+        <span>End date</span>
+        <input type="date" name="end_date" value="{{ filters.end_date }}" data-index-fund-history-filter>
+    </label>
+    <label class="field compact">
+        <span>Rows</span>
+        <select name="limit" data-index-fund-history-filter>
+            <option value="100" {% if filters.limit == 100 %}selected{% endif %}>100</option>
+            <option value="250" {% if filters.limit == 250 %}selected{% endif %}>250</option>
+            <option value="500" {% if filters.limit == 500 %}selected{% endif %}>500</option>
+        </select>
+    </label>
+</form>
+
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif history and history.needs_selection %}
+    {% set empty_title = "Select an instrument" %}
+    {% set empty_message = "Choose an index or ETF above to load stored daily candles." %}
+    {% include "partials/empty_state.html" %}
+{% elif history and history.rows %}
+<div class="index-fund-history-meta">
+    <span class="muted">{{ history.selected.symbol }} · {{ history.row_count }} rows · {{ history.start_date | date_text }} to {{ history.end_date | date_text }}</span>
+</div>
+<div class="table-scroll index-fund-table-scroll">
+    <table class="index-fund-table compact-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Open</th>
+                <th>High</th>
+                <th>Low</th>
+                <th>Close</th>
+                <th>Adj. Close</th>
+                <th>Volume</th>
+                <th>Daily Return</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in history.rows %}
+            <tr>
+                <td>{{ row.date | date_text }}</td>
+                <td>{{ row.open | inr if history.selected.base_currency == 'INR' else row.open | number(2) }}</td>
+                <td>{{ row.high | inr if history.selected.base_currency == 'INR' else row.high | number(2) }}</td>
+                <td>{{ row.low | inr if history.selected.base_currency == 'INR' else row.low | number(2) }}</td>
+                <td>{{ row.close | inr if history.selected.base_currency == 'INR' else row.close | number(2) }}</td>
+                <td>{{ row.adjusted_close | inr if history.selected.base_currency == 'INR' else row.adjusted_close | number(2) }}</td>
+                <td>{{ row.volume | volume if row.volume is not none else "—" }}</td>
+                <td class="{{ row.daily_return_pct | tone }}">{% if row.daily_return_pct is not none %}{{ row.daily_return_pct | pct }}{% else %}—{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+    {% set empty_title = "No daily candles" %}
+    {% set empty_message = "No stored price history for this instrument in the selected range. Run index ingestion first." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

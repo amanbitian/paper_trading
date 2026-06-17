@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header ai-think-tank-header">
+    <div>
+        <p class="eyebrow">Educational AI</p>
+        <h1>AI Think Tank</h1>
+        <p class="page-subtitle">{{ subtitle }}</p>
+        <div class="header-badges">
+            {% set badge_text = "Local LLM" %}
+            {% set badge_tone = "info" %}
+            {% include "partials/status_badge.html" %}
+        </div>
+    </div>
+</header>
+
+{% set banner_message = page_disclaimer %}
+{% set banner_tone = "warning" %}
+<div class="ai-disclaimer-banner">
+    {% include "partials/info_banner.html" %}
+</div>
+
+<section class="ai-think-tank-page" id="ai-think-tank-page" data-default-model="{{ default_model }}">
+    <section class="ai-global-controls section-card">
+        <div class="ai-controls-grid">
+            <label class="field">
+                <span>Model</span>
+                <select id="ai-model-select" name="model" form="ai-think-tank-form">
+                    <option value="{{ default_model }}" selected>{{ default_model }}</option>
+                </select>
+            </label>
+            <label class="field">
+                <span>Portfolio</span>
+                <select id="ai-portfolio-select" name="portfolio_id" form="ai-think-tank-form">
+                    {% if not portfolios %}
+                        <option value="">No portfolio</option>
+                    {% else %}
+                        {% for portfolio in portfolios %}
+                            <option value="{{ portfolio.id }}" {% if selected_portfolio_id == portfolio.id %}selected{% endif %}>
+                                {{ portfolio.portfolio_name }} ({{ portfolio.portfolio_type }})
+                            </option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </label>
+            <label class="field">
+                <span>Exchange</span>
+                <select id="ai-search-exchange" name="search_exchange">
+                    <option value="">All</option>
+                    <option value="NSE">NSE</option>
+                    <option value="BSE">BSE</option>
+                </select>
+            </label>
+        </div>
+        <label class="field wide">
+            <span>Search stock</span>
+            <input type="search" id="ai-stock-search" placeholder="Search SBIN, HDFC Bank, RELIANCE..." autocomplete="off">
+        </label>
+        <span id="ai-search-loader" class="loading-indicator inline">Searching...</span>
+        <div id="ai-search-results" class="search-results-panel"></div>
+        <input type="hidden" id="ai-stock-id" name="stock_id" value="" form="ai-think-tank-form">
+        <input type="hidden" id="ai-symbol" name="symbol" value="" form="ai-think-tank-form">
+
+        <div class="ai-context-row">
+            <div class="ai-context-host">
+                <div class="section-heading compact"><h3>Stock context</h3></div>
+                <div id="ai-stock-context-panel">
+                    {% set empty_title = "No stock selected" %}
+                    {% set empty_message = "Search and select a stock to load algo findings context." %}
+                    {% include "partials/empty_state.html" %}
+                </div>
+            </div>
+            <div class="ai-context-host">
+                <div class="section-heading compact"><h3>Portfolio context</h3></div>
+                <div id="ai-portfolio-context-panel">
+                    {% set empty_title = "No portfolio" %}
+                    {% set empty_message = "Select a portfolio to see holdings and trade counts." %}
+                    {% include "partials/empty_state.html" %}
+                </div>
+            </div>
+        </div>
+
+        <span id="ai-model-status-loader" class="loading-indicator is-visible">Checking model status...</span>
+        <div id="ai-model-status-panel" data-lazy-url="/web/partials/ai-think-tank/model-status" class="ai-model-status-host"></div>
+    </section>
+
+    <div class="ai-think-tank-tabs tab-row" role="tablist">
+        {% for mode_id, mode_label in analysis_modes %}
+            {% if mode_id != 'activity_log' %}
+            <button
+                type="button"
+                class="tab-button {% if loop.first %}is-active{% endif %}"
+                data-ai-tab="{{ mode_id }}"
+                aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                {{ mode_label }}
+            </button>
+            {% endif %}
+        {% endfor %}
+        <button type="button" class="tab-button" data-ai-tab="activity_log" aria-selected="false">Activity Log</button>
+    </div>
+
+    <form id="ai-think-tank-form" autocomplete="off">
+        <input type="hidden" name="mode" id="ai-analysis-mode" value="signal_synthesizer">
+
+        <section class="ai-tab-panel is-active" data-ai-panel="signal_synthesizer">
+            <p class="muted">Synthesize algorithm findings into an educational bull/bear view. Does not place trades.</p>
+            <button type="button" class="accent-button ai-run-button" data-ai-mode="signal_synthesizer">Run Signal Synthesis</button>
+        </section>
+
+        <section class="ai-tab-panel" data-ai-panel="backtest_interpreter" hidden>
+            <p class="muted">Interpret a stored backtest run in plain language.</p>
+            <label class="field wide">
+                <span>Backtest run</span>
+                <select name="backtest_id">
+                    <option value="">Select run...</option>
+                    {% for run in backtest_runs %}
+                        <option value="{{ run.id }}">
+                            #{{ run.id }} {{ run.symbol or '—' }} ({{ run.total_return_pct | number(1) }}% / Sharpe {{ run.sharpe_ratio | number(2) }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+            {% if not backtest_runs %}
+                {% set banner_message = "No backtest runs found. Run a backtest on the Backtesting page first." %}
+                {% set banner_tone = "info" %}
+                {% include "partials/info_banner.html" %}
+            {% endif %}
+            <button type="button" class="accent-button ai-run-button" data-ai-mode="backtest_interpreter">Interpret Backtest</button>
+        </section>
+
+        <section class="ai-tab-panel" data-ai-panel="pre_trade_advisor" hidden>
+            {% set banner_message = "Pre-trade check is educational only — it does not approve or reject trades." %}
+            {% set banner_tone = "warning" %}
+            {% include "partials/info_banner.html" %}
+            <div class="ai-pretrade-grid">
+                <label class="field">
+                    <span>Action</span>
+                    <select name="action">
+                        <option value="BUY">BUY</option>
+                        <option value="SELL">SELL</option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span>Quantity</span>
+                    <input type="number" name="quantity" min="1" value="1" step="1">
+                </label>
+                <label class="field">
+                    <span>Price (INR)</span>
+                    <input type="number" name="price" min="0.01" step="0.01" value="100">
+                </label>
+            </div>
+            <label class="field wide">
+                <span>Your reasoning</span>
+                <textarea name="notes" rows="3" placeholder="Why are you considering this trade?"></textarea>
+            </label>
+            <button type="button" class="accent-button ai-run-button" data-ai-mode="pre_trade_advisor">Run Pre-Trade Check</button>
+        </section>
+
+        <section class="ai-tab-panel" data-ai-panel="nl_screener" hidden>
+            <label class="field wide">
+                <span>Describe the stocks you want</span>
+                <textarea name="user_prompt" rows="3" placeholder="IT stocks that fell this year but recovered last month"></textarea>
+            </label>
+            <button type="button" class="accent-button ai-run-button" data-ai-mode="nl_screener">Run Screener</button>
+        </section>
+
+        <section class="ai-tab-panel" data-ai-panel="portfolio_health" hidden>
+            <button type="button" class="accent-button ai-run-button" data-ai-mode="portfolio_health">Analyze Portfolio Health</button>
+        </section>
+
+        <section class="ai-tab-panel" data-ai-panel="journal_insights" hidden>
+            <p class="muted">Requires at least 10 paper trades in the selected portfolio.</p>
+            <button type="button" class="accent-button ai-run-button" data-ai-mode="journal_insights">Analyze Journal</button>
+        </section>
+
+        <section class="ai-tab-panel" data-ai-panel="activity_log" hidden>
+            <button type="button" class="ghost-button" id="ai-refresh-activity">Refresh activity log</button>
+            <span id="ai-activity-loader" class="loading-indicator">Loading...</span>
+            <div id="ai-activity-panel" class="ai-activity-host"></div>
+        </section>
+    </form>
+
+    <section class="ai-result-section">
+        <span id="ai-analysis-loader" class="loading-indicator">Running analysis...</span>
+        <div id="ai-analysis-result" class="ai-result-host" aria-live="polite"></div>
+    </section>
+
+    <details class="ai-evidence-details" id="ai-evidence-details">
+        <summary>Prompt preview &amp; context</summary>
+        <div id="ai-prompt-preview-panel" class="ai-prompt-preview-host"></div>
+    </details>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/ai_think_tank.js" defer></script>
+{% endblock %}

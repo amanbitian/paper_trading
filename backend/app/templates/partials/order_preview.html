@@ -1,0 +1,31 @@
+<div id="order-preview" class="estimate-card">
+    {% if preview.errors %}
+        {% for err in preview.errors %}
+            <div class="form-banner danger"><span class="info-dot"></span><p>{{ err }}</p></div>
+        {% endfor %}
+    {% endif %}
+    {% for warn in preview.warnings %}
+        <div class="form-banner warning"><span class="info-dot"></span><p>{{ warn }}</p></div>
+    {% endfor %}
+
+    {% if preview.stock %}
+        <div class="preview-grid">
+            <div><span class="muted">Symbol</span><strong>{{ preview.stock.symbol }}</strong></div>
+            <div><span class="muted">Company</span><strong>{{ preview.stock.company_name or preview.stock.symbol }}</strong></div>
+            <div><span class="muted">Latest stored</span><strong>{{ preview.latest_price | inr }}</strong></div>
+            <div><span class="muted">Side</span><strong class="side-{{ preview.side | lower }}">{{ preview.side }}</strong></div>
+            <div><span class="muted">Order type</span><strong>{{ preview.order_type }}</strong></div>
+            <div><span class="muted">Quantity</span><strong>{{ preview.quantity | number(2) }}</strong></div>
+            <div><span class="muted">Gross value</span><strong>{{ preview.gross_value | inr }}</strong></div>
+            <div><span class="muted">Charges (est.)</span><strong>{{ preview.charges | inr }}</strong></div>
+            <div><span class="muted">Estimated total</span><strong>{{ preview.estimated_total | inr }}</strong></div>
+            <div><span class="muted">Available cash</span><strong>{{ preview.available_cash | inr }}</strong></div>
+            <div><span class="muted">Holding qty</span><strong>{{ preview.holding_qty | number(2) }}</strong></div>
+            {% if preview.slippage_bps %}
+                <div><span class="muted">Slippage (est.)</span><strong>{{ preview.slippage_bps }} bps</strong></div>
+            {% endif %}
+        </div>
+    {% else %}
+        <p class="muted">Select a paper portfolio and stock to preview the order.</p>
+    {% endif %}
+</div>

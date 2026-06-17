@@ -1,0 +1,7 @@
+{% if success %}
+    {% set message = message %}
+    {% include "partials/form_success.html" %}
+{% else %}
+    {% set message = message %}
+    {% include "partials/form_error.html" %}
+{% endif %}

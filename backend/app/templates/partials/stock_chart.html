@@ -1,0 +1,35 @@
+<section class="section-card stock-detail-card stock-chart-card">
+    <div class="section-heading compact">
+        <h3>Price chart</h3>
+        <form class="stock-chart-filters" method="get" action="/web/explore">
+            <input type="hidden" name="stock" value="{{ detail.stock.route_key }}">
+            <label class="field compact">
+                <span>Start</span>
+                <input type="date" name="start_date" value="{{ chart_filters.start_date }}">
+            </label>
+            <label class="field compact">
+                <span>End</span>
+                <input type="date" name="end_date" value="{{ chart_filters.end_date }}">
+            </label>
+            <label class="field compact">
+                <span>Chart</span>
+                <select name="chart_type">
+                    <option value="candlestick" {% if detail.chart_type == 'candlestick' %}selected{% endif %}>OHLC / candlestick</option>
+                    <option value="line" {% if detail.chart_type == 'line' %}selected{% endif %}>Line (close)</option>
+                </select>
+            </label>
+            <button type="submit" class="ghost-button compact">Apply</button>
+        </form>
+    </div>
+    <!-- TODO: Moving-average toggles and volume overlay when chart service supports them. -->
+    {% if detail.chart_json_str %}
+        <div class="stock-chart-plot-wrap">
+            <div id="stock-detail-ohlc-chart" class="chart-plot stock-chart-plot"></div>
+        </div>
+        <div class="plotly-payload" data-plotly-json data-target="stock-detail-ohlc-chart" hidden aria-hidden="true">{{ detail.chart_json_str }}</div>
+    {% else %}
+        {% set empty_title = "No stored candles" %}
+        {% set empty_message = "Sync or ingest daily prices for this symbol, then reopen the stock detail page." %}
+        {% include "partials/empty_state.html" %}
+    {% endif %}
+</section>

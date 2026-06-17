@@ -1,0 +1,56 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif database_info %}
+<div class="data-db-cards">
+    <article class="metric-card data-ops-metric">
+        <span class="metric-label">Database</span>
+        <strong class="metric-value">{{ database_info.database_name or "—" }}</strong>
+    </article>
+    <article class="metric-card data-ops-metric">
+        <span class="metric-label">Schema</span>
+        <strong class="metric-value">{{ database_info.schema_name or "—" }}</strong>
+    </article>
+    <article class="metric-card data-ops-metric">
+        <span class="metric-label">Connected user</span>
+        <strong class="metric-value">{{ database_info.database_user or "—" }}</strong>
+    </article>
+    <article class="metric-card data-ops-metric">
+        <span class="metric-label">Tables</span>
+        <strong class="metric-value">{{ database_info.table_count | number(0) }}</strong>
+    </article>
+</div>
+{% if database_info.postgres_version %}
+    <p class="muted data-ops-note">{{ database_info.postgres_version }}</p>
+{% endif %}
+<div class="table-scroll data-ops-table-scroll">
+    <table class="data-ops-table compact-table">
+        <thead>
+            <tr>
+                <th>Table</th>
+                <th>Estimated rows</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in key_tables %}
+            <tr>
+                <td>{{ row.table_name }}</td>
+                <td>
+                    {% if row.row_estimate is not none %}
+                        {{ row.row_estimate | number(0) }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="muted data-ops-note">Row counts use PostgreSQL reltuples estimates (fast, approximate).</p>
+{% else %}
+    {% set empty_title = "Database stats unavailable" %}
+    {% set empty_message = "Could not load database metadata." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

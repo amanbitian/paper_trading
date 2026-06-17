@@ -1,0 +1,22 @@
+{% if error %}
+    {% set banner_message = "Allocation chart failed: " ~ error %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif not charts %}
+    {% set empty_title = "No allocation data" %}
+    {% set empty_message = "Add holdings to see symbol and sector allocation." %}
+    {% include "partials/empty_state.html" %}
+{% else %}
+    <div class="allocation-charts">
+        <div class="chart-card">
+            <div class="chart-card-header"><h3>By symbol</h3></div>
+            <div id="risk-allocation-symbol" class="plotly-chart-host" data-plotly-chart="risk-allocation-symbol"></div>
+            <script type="application/json" id="risk-allocation-symbol-data">{{ charts.by_symbol | tojson }}</script>
+        </div>
+        <div class="chart-card">
+            <div class="chart-card-header"><h3>By sector</h3></div>
+            <div id="risk-allocation-sector" class="plotly-chart-host" data-plotly-chart="risk-allocation-sector"></div>
+            <script type="application/json" id="risk-allocation-sector-data">{{ charts.by_sector | tojson }}</script>
+        </div>
+    </div>
+{% endif %}

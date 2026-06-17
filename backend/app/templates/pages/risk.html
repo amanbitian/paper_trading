@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Analytics</p>
+        <h1>Risk Dashboard</h1>
+        <p class="page-subtitle">{{ subtitle }}</p>
+        <div class="header-badges">
+            {% set badge_text = "Portfolio risk" %}
+            {% set badge_tone = "warning" %}
+            {% include "partials/status_badge.html" %}
+        </div>
+    </div>
+</header>
+
+<section class="analytics-page" id="risk-page" data-default-lookback="{{ default_lookback }}">
+    <form id="risk-controls-form" class="analytics-filter-bar risk-controls">
+        <label class="field">
+            <span>Portfolio</span>
+            <select name="portfolio_id" id="risk-portfolio-id" data-risk-control>
+                {% if not portfolios %}
+                    <option value="">No portfolio</option>
+                {% else %}
+                    {% for portfolio in portfolios %}
+                        <option value="{{ portfolio.id }}" {% if selected_portfolio_id == portfolio.id %}selected{% endif %}>
+                            {{ portfolio.portfolio_name }} ({{ portfolio.portfolio_type | upper }})
+                        </option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+        </label>
+        <label class="field">
+            <span>Lookback days</span>
+            <input
+                type="number"
+                name="lookback_days"
+                id="risk-lookback-days"
+                min="90"
+                max="400"
+                value="{{ default_lookback }}"
+                data-risk-control>
+        </label>
+        <label class="field">
+            <span>Benchmark</span>
+            <input type="text" value="NIFTY 50 (^NSEI)" disabled>
+        </label>
+        <div class="form-actions">
+            <button
+                type="button"
+                class="primary-button"
+                id="risk-refresh-button"
+                hx-post="/web/partials/risk/refresh"
+                hx-target="#risk-refresh-result"
+                hx-swap="innerHTML"
+                hx-include="#risk-controls-form"
+                hx-indicator="#risk-refresh-loader">
+                Refresh Risk Metrics
+            </button>
+            <span id="risk-refresh-loader" class="loading-indicator inline">Refreshing...</span>
+        </div>
+    </form>
+    <div id="risk-refresh-result"></div>
+
+    <section class="section-stack">
+        <div class="section-heading compact">
+            <h2>Risk metrics</h2>
+        </div>
+        <span id="risk-metrics-loader" class="loading-indicator">Loading metrics...</span>
+        <div id="risk-metrics-panel" class="metric-grid analytics-metric-grid risk-metric-grid"></div>
+    </section>
+
+    <section class="analytics-charts-grid">
+        <div class="section-card chart-section">
+            <div class="section-heading compact">
+                <h2>Allocation</h2>
+            </div>
+            <span id="risk-allocation-loader" class="loading-indicator">Loading allocation...</span>
+            <div id="risk-allocation-panel"></div>
+        </div>
+        <div class="section-card chart-section">
+            <div class="section-heading compact">
+                <h2>Drawdown</h2>
+            </div>
+            <span id="risk-drawdown-loader" class="loading-indicator">Loading drawdown...</span>
+            <div id="risk-drawdown-panel"></div>
+        </div>
+    </section>
+
+    <section class="section-stack">
+        <div class="section-heading compact">
+            <h2>Concentration</h2>
+        </div>
+        <span id="risk-concentration-loader" class="loading-indicator">Loading holdings...</span>
+        <div id="risk-concentration-panel"></div>
+    </section>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+<script src="/static/js/analytics.js" defer></script>
+{% endblock %}

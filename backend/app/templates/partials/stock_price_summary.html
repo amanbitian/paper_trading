@@ -1,0 +1,48 @@
+<section class="stock-detail-card stock-price-summary-grid">
+    <article class="metric-card">
+        <span class="metric-label">Rows in DB</span>
+        <strong class="metric-value">{{ detail.price_row_count | number(0) }}</strong>
+    </article>
+    <article class="metric-card">
+        <span class="metric-label">From</span>
+        <strong class="metric-value">{{ detail.from_date | date_text }}</strong>
+    </article>
+    <article class="metric-card">
+        <span class="metric-label">To</span>
+        <strong class="metric-value">{{ detail.to_date | date_text }}</strong>
+    </article>
+    <article class="metric-card">
+        <span class="metric-label">Latest close</span>
+        <strong class="metric-value">{{ detail.latest_close | inr }}</strong>
+    </article>
+    {% if detail.performance.change_1m_pct is not none %}
+    <article class="metric-card">
+        <span class="metric-label">1M return</span>
+        <strong class="metric-value {{ detail.performance.change_1m_pct | tone }}">{{ detail.performance.change_1m_pct | pct }}</strong>
+    </article>
+    {% endif %}
+    {% if detail.performance.change_3m_pct is not none %}
+    <article class="metric-card">
+        <span class="metric-label">3M return</span>
+        <strong class="metric-value {{ detail.performance.change_3m_pct | tone }}">{{ detail.performance.change_3m_pct | pct }}</strong>
+    </article>
+    {% endif %}
+    {% if detail.performance.change_6m_pct is not none %}
+    <article class="metric-card">
+        <span class="metric-label">6M return</span>
+        <strong class="metric-value {{ detail.performance.change_6m_pct | tone }}">{{ detail.performance.change_6m_pct | pct }}</strong>
+    </article>
+    {% endif %}
+    {% if detail.performance.change_1y_pct is not none %}
+    <article class="metric-card">
+        <span class="metric-label">1Y return</span>
+        <strong class="metric-value {{ detail.performance.change_1y_pct | tone }}">{{ detail.performance.change_1y_pct | pct }}</strong>
+    </article>
+    {% endif %}
+    {% if detail.latest_volume is not none %}
+    <article class="metric-card">
+        <span class="metric-label">Latest volume</span>
+        <strong class="metric-value">{{ detail.latest_volume | volume }}</strong>
+    </article>
+    {% endif %}
+</section>

@@ -1,0 +1,38 @@
+{% if not rows %}
+    {% set empty_title = "No activity yet" %}
+    {% set empty_message = "Generated signals will appear here with type, symbol, and reason." %}
+    {% include "partials/empty_state.html" %}
+{% else %}
+    <div class="financial-table-card table-scroll-wrap">
+        <div class="table-scroll">
+            <table class="data-table compact strategy-lab-activity-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Event</th>
+                        <th>Strategy</th>
+                        <th>Symbol</th>
+                        <th>Status</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            <td>{{ row.time | date_text }}</td>
+                            <td>{{ row.event_type }}</td>
+                            <td>{{ row.strategy }}</td>
+                            <td>{{ row.symbol }}</td>
+                            <td>
+                                {% set badge_text = row.status %}
+                                {% set badge_tone = "positive" if row.status == "BUY" else ("negative" if row.status == "SELL" else "neutral") %}
+                                {% include "partials/status_badge.html" %}
+                            </td>
+                            <td><small>{{ row.message }}</small>{% if row.executed %} · Executed{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}

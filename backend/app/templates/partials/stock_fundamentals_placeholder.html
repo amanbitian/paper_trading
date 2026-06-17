@@ -1,0 +1,94 @@
+<section class="section-card stock-detail-card stock-fundamentals-card">
+    <div class="section-heading compact">
+        <div>
+            <h3>Fundamentals</h3>
+            {% if detail.fundamentals %}
+                <p class="muted">Last updated {{ detail.fundamentals.fetched_at | date_text }} · {{ detail.fundamentals.source }}</p>
+            {% else %}
+                <p class="muted">No fundamental data yet — run a sync to fetch.</p>
+            {% endif %}
+        </div>
+        {% if detail.fundamentals %}
+            {% set badge_text = detail.fundamentals.status | upper %}
+            {% set badge_tone = "success" if detail.fundamentals.status == "success" else ("warning" if detail.fundamentals.status == "partial" else "danger") %}
+            {% include "partials/status_badge.html" %}
+        {% endif %}
+    </div>
+
+    {% if detail.fundamentals %}
+        {% set fundamentals = detail.fundamentals %}
+        <div class="metric-grid fundamentals-grid">
+            {% set label = "Market Cap" %}
+            {% set value = fundamentals.display.market_cap %}
+            {% set delta = fundamentals.currency or "INR" %}
+            {% set tone = "neutral" %}
+            {% set card_class = "" %}
+            {% set value_class = "" %}
+            {% include "partials/metric_card.html" %}
+
+            {% set label = "P/E Ratio" %}
+            {% set value = fundamentals.display.trailing_pe %}
+            {% set delta = "trailing" %}
+            {% set tone = "neutral" %}
+            {% include "partials/metric_card.html" %}
+
+            {% set label = "ROE" %}
+            {% set value = fundamentals.display.roe %}
+            {% set delta = "return on equity" %}
+            {% set tone = "success" if fundamentals.roe and fundamentals.roe > 0 else "neutral" %}
+            {% include "partials/metric_card.html" %}
+
+            {% set label = "Debt / Equity" %}
+            {% set value = fundamentals.display.debt_to_equity %}
+            {% set delta = "ratio" %}
+            {% set tone = "neutral" %}
+            {% include "partials/metric_card.html" %}
+
+            {% set label = "Sales Growth" %}
+            {% set value = fundamentals.display.sales_growth %}
+            {% set delta = "revenue YoY" %}
+            {% set tone = "success" if fundamentals.sales_growth and fundamentals.sales_growth > 0 else ("danger" if fundamentals.sales_growth and fundamentals.sales_growth < 0 else "neutral") %}
+            {% include "partials/metric_card.html" %}
+
+            {% set label = "Earnings Growth" %}
+            {% set value = fundamentals.display.earnings_growth %}
+            {% set delta = "profit YoY" %}
+            {% set tone = "success" if fundamentals.earnings_growth and fundamentals.earnings_growth > 0 else ("danger" if fundamentals.earnings_growth and fundamentals.earnings_growth < 0 else "neutral") %}
+            {% include "partials/metric_card.html" %}
+
+            {% set label = "Insider Holding" %}
+            {% set value = fundamentals.display.promoter_holding %}
+            {% set delta = "promoters" %}
+            {% set tone = "neutral" %}
+            {% include "partials/metric_card.html" %}
+
+            {% set label = "Dividend Yield" %}
+            {% set value = fundamentals.display.dividend_yield %}
+            {% set delta = "yield" %}
+            {% set tone = "neutral" %}
+            {% include "partials/metric_card.html" %}
+
+            {% set label = "Price / Book" %}
+            {% set value = fundamentals.display.price_to_book %}
+            {% set delta = "ratio" %}
+            {% set tone = "neutral" %}
+            {% include "partials/metric_card.html" %}
+
+            {% set label = "Avg Volume" %}
+            {% set value = fundamentals.display.average_volume %}
+            {% set delta = "30-day avg" %}
+            {% set tone = "neutral" %}
+            {% include "partials/metric_card.html" %}
+        </div>
+
+        {% if fundamentals.error_message %}
+        <p class="muted" style="margin-top:10px;font-size:13px;">
+            <strong>Note:</strong> {{ fundamentals.error_message }}
+        </p>
+        {% endif %}
+    {% else %}
+        {% set banner_message = "Fundamental data not available yet. Run a sync from the Data page to fetch it." %}
+        {% set banner_tone = "info" %}
+        {% include "partials/info_banner.html" %}
+    {% endif %}
+</section>

@@ -1,0 +1,30 @@
+{% if preselected %}
+<article class="holding-selected-stock-panel" id="holding-selected-stock">
+    <p class="holding-selected-eyebrow">Selected stock</p>
+    <h3 class="holding-selected-name">{{ preselected.company_name }}</h3>
+    <p class="holding-selected-tickers">
+        {{ preselected.symbol }} · {{ preselected.exchange }} · {{ preselected.yahoo_ticker }}
+    </p>
+    {% if preselected.latest_close is not none %}
+        <p class="holding-selected-price">Latest close: {{ preselected.latest_close | inr }}</p>
+    {% endif %}
+    {% if preselected.latest_date %}
+        <p class="holding-selected-date muted">As of: {{ preselected.latest_date | date_text }}</p>
+    {% endif %}
+    {% if preselected.sector or preselected.industry %}
+        <p class="holding-selected-sector muted">
+            {% if preselected.sector %}{{ preselected.sector }}{% endif %}
+            {% if preselected.sector and preselected.industry %} · {% endif %}
+            {% if preselected.industry %}{{ preselected.industry }}{% endif %}
+        </p>
+    {% endif %}
+    {% set badge_text = preselected.status_label %}
+    {% set badge_tone = preselected.status_tone %}
+    {% include "partials/status_badge.html" %}
+</article>
+{% else %}
+<div id="holding-selected-stock" class="holding-selected-stock-panel is-empty muted">
+    <strong>No stock selected</strong>
+    <p>Search above or open from a stock detail page.</p>
+</div>
+{% endif %}

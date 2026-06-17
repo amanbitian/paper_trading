@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Market Terminal</p>
+        <h1>Explore</h1>
+        <p class="page-subtitle">{{ subtitle }}</p>
+        <div class="header-badges">
+            {% set badge_text = "New FastAPI Web UI" %}
+            {% set badge_tone = "info" %}
+            {% include "partials/status_badge.html" %}
+            {% if overview.record_date %}
+                {% set badge_text = "Latest session " ~ (overview.record_date | date_text) %}
+                {% set badge_tone = "neutral" %}
+                {% include "partials/status_badge.html" %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="sync-panel">
+        {% include "partials/sync_status.html" %}
+    </div>
+</header>
+
+{% if data_warning %}
+    {% set banner_message = data_warning %}
+    {% set banner_tone = "warning" %}
+    {% include "partials/info_banner.html" %}
+{% endif %}
+
+{% if stock_detail_error %}
+    {% set banner_message = stock_detail_error %}
+    {% set banner_tone = "warning" %}
+    {% include "partials/info_banner.html" %}
+{% endif %}
+
+{% if stock_detail %}
+    {% set detail = stock_detail %}
+    {% include "partials/stock_detail.html" %}
+{% endif %}
+
+<section class="section-stack">
+    <div class="section-heading">
+        <div>
+            <h2>Index Overview</h2>
+            <p>Real stored/yfinance market data only. Sample fallback values are hidden.</p>
+        </div>
+        <button
+            class="ghost-button"
+            type="button"
+            hx-get="/web/partials/explore/index-cards"
+            hx-target="#index-cards"
+            hx-swap="outerHTML"
+            hx-indicator="#index-loader">
+            Refresh cards
+        </button>
+    </div>
+    <span id="index-loader" class="loading-indicator">Refreshing...</span>
+    {% include "partials/explore_index_cards.html" %}
+</section>
+
+<section class="section-card">
+    <div class="section-heading compact">
+        <div>
+            <h2>Find A Stock</h2>
+            <p>Search by symbol, company, sector, industry, or exchange ticker.</p>
+        </div>
+    </div>
+    <form id="stock-search-form" class="search-grid" autocomplete="off">
+        <label class="field wide">
+            <span>Search stock</span>
+            <input
+                name="query"
+                type="search"
+                placeholder="Search ITC, HDFC Bank, Axis Bank, RELIANCE..."
+                hx-get="/web/partials/stocks/search?mode=link"
+                hx-trigger="keyup changed delay:400ms"
+                hx-target="#stock-search-results"
+                hx-swap="innerHTML"
+                hx-include="#stock-search-form"
+                hx-indicator="#stock-search-loader">
+        </label>
+        <label class="field">
+            <span>Exchange</span>
+            <select
+                name="exchange"
+                hx-get="/web/partials/stocks/search?mode=link"
+                hx-trigger="change"
+                hx-target="#stock-search-results"
+                hx-swap="innerHTML"
+                hx-include="#stock-search-form"
+                hx-indicator="#stock-search-loader">
+                <option value="">All</option>
+                <option value="NSE">NSE</option>
+                <option value="BSE">BSE</option>
+            </select>
+        </label>
+    </form>
+    <span id="stock-search-loader" class="loading-indicator">Searching...</span>
+    <div id="stock-search-results" class="search-results">
+        {% set empty_title = "Search stored instruments" %}
+        {% set empty_message = "Type a company name, ticker, sector, or industry to search the stocks table." %}
+        {% include "partials/empty_state.html" %}
+    </div>
+</section>
+
+<section class="section-stack">
+    <div class="section-heading">
+        <div>
+            <h2>Explore Data</h2>
+            <p>Switch between movers, all stored stocks, and sequential ranking scans without a full page reload.</p>
+        </div>
+    </div>
+    <div class="explore-main-tabs" role="tablist" aria-label="Explore sections">
+        <button
+            class="main-tab-button is-active"
+            type="button"
+            data-tab-group="explore"
+            hx-get="/web/partials/explore/top-movers"
+            hx-target="#explore-tab-content"
+            hx-swap="innerHTML"
+            hx-indicator="#explore-tab-loader">
+            Market movers
+        </button>
+        <button
+            class="main-tab-button"
+            type="button"
+            data-tab-group="explore"
+            hx-get="/web/partials/explore/all-stocks"
+            hx-target="#explore-tab-content"
+            hx-swap="innerHTML"
+            hx-indicator="#explore-tab-loader">
+            All stocks
+        </button>
+        <button
+            class="main-tab-button"
+            type="button"
+            data-tab-group="explore"
+            hx-get="/web/partials/explore/sequential-rankings"
+            hx-target="#explore-tab-content"
+            hx-swap="innerHTML"
+            hx-indicator="#explore-tab-loader">
+            Sequential rankings
+        </button>
+        <span id="explore-tab-loader" class="loading-indicator inline">Loading section...</span>
+    </div>
+    <div id="explore-tab-content">
+        {% include "partials/explore_top_movers.html" %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{% if stock_detail %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+{% endif %}
+{% endblock %}

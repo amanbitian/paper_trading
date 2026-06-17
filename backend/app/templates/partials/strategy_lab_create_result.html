@@ -1,0 +1,11 @@
+{% if errors %}
+    {% include "partials/backtesting_validation_error.html" %}
+{% elif success %}
+    {% set banner_message = "User strategy \"" ~ created_name ~ "\" created (ID #" ~ created_id ~ ")." %}
+    {% set banner_tone = "success" %}
+    {% include "partials/info_banner.html" %}
+    <span
+        hidden
+        data-created-strategy-id="{{ created_id }}"
+        data-refresh-user-strategies="true"></span>
+{% endif %}

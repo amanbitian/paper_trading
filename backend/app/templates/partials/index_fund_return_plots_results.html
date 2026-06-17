@@ -1,0 +1,72 @@
+{% if validation_message %}
+    {% set banner_message = validation_message %}
+    {% set banner_tone = "warning" %}
+    {% include "partials/info_banner.html" %}
+{% elif error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif plot and plot.missing_instruments %}
+    {% set banner_message = "Missing price history for: " ~ (plot.missing_instruments | join(", ")) %}
+    {% set banner_tone = "warning" %}
+    {% include "partials/info_banner.html" %}
+{% endif %}
+
+{% if plot and plot.has_data %}
+<div class="index-fund-charts">
+    <article class="section-card chart-section">
+        <h3>Return comparison</h3>
+        <div id="index-fund-return-chart" class="chart-plot"></div>
+        {% if plot.return_chart_json_str %}
+        <div class="plotly-payload" data-plotly-json data-target="index-fund-return-chart" hidden aria-hidden="true">{{ plot.return_chart_json_str }}</div>
+        {% endif %}
+    </article>
+    {% if plot.indexed_chart_json_str %}
+    <article class="section-card chart-section">
+        <h3>Indexed value (base 100)</h3>
+        <div id="index-fund-indexed-chart" class="chart-plot"></div>
+        <div class="plotly-payload" data-plotly-json data-target="index-fund-indexed-chart" hidden aria-hidden="true">{{ plot.indexed_chart_json_str }}</div>
+    </article>
+    {% endif %}
+    {% if plot.drawdown_chart_json_str %}
+    <article class="section-card chart-section">
+        <h3>Drawdown</h3>
+        <div id="index-fund-drawdown-chart" class="chart-plot"></div>
+        <div class="plotly-payload" data-plotly-json data-target="index-fund-drawdown-chart" hidden aria-hidden="true">{{ plot.drawdown_chart_json_str }}</div>
+    </article>
+    {% endif %}
+</div>
+<p class="index-fund-note muted">Period {{ plot.period_label }} · {{ plot.start_date | date_text }} to {{ plot.end_date | date_text }}</p>
+
+{% if plot.return_table_rows %}
+<article class="section-card index-fund-return-table-card">
+    <h3>Return rows</h3>
+    <div class="index-fund-table-scroll">
+        <table class="index-fund-table">
+            <thead>
+                <tr>
+                    <th>Instrument</th>
+                    <th>Date</th>
+                    <th>Close</th>
+                    <th>Return %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in plot.return_table_rows %}
+                <tr>
+                    <td>{{ row.instrument }}</td>
+                    <td>{{ row.date | date_text }}</td>
+                    <td>{% if row.close is not none %}{{ row.close | float | round(2) }}{% else %}—{% endif %}</td>
+                    <td>{% if row.return_pct is not none %}{{ row.return_pct | float | round(2) }}%{% else %}—{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>
+{% endif %}
+{% elif not validation_message and not error_message %}
+    {% set empty_title = "Generate return comparison" %}
+    {% set empty_message = "Search and select one or more index or commodity instruments, set dates if needed, then click Generate return plot." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

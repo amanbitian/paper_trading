@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Paper Terminal</p>
+        <h1>Paper Trading</h1>
+        <p class="page-subtitle">{{ subtitle }}</p>
+    </div>
+</header>
+
+<section class="section-stack paper-layout">
+    <div class="paper-context-grid">
+        <div class="form-card section-card">
+            <h2>Portfolio &amp; Instrument</h2>
+            <label class="field">
+                <span>Paper portfolio</span>
+                <select
+                    name="portfolio_id"
+                    id="paper-portfolio-id"
+                    class="portfolio-select"
+                    data-paper-portfolio-select>
+                    {% if not portfolios %}
+                        <option value="">No paper portfolio — create one on Add Portfolio</option>
+                    {% else %}
+                        {% for portfolio in portfolios %}
+                            <option value="{{ portfolio.id }}" {% if selected_portfolio_id == portfolio.id %}selected{% endif %}>
+                                {{ portfolio.portfolio_name }} · Cash {{ portfolio.cash_balance | inr }}
+                            </option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </label>
+            <form id="paper-stock-search-form" class="search-grid" autocomplete="off">
+                <label class="field wide">
+                    <span>Search stock</span>
+                    <input
+                        name="query"
+                        type="search"
+                        placeholder="Search symbol or company..."
+                        hx-get="/web/partials/stocks/search?selectable=true"
+                        hx-trigger="keyup changed delay:400ms"
+                        hx-target="#paper-stock-search-results"
+                        hx-swap="innerHTML"
+                        hx-include="#paper-stock-search-form"
+                        hx-indicator="#paper-stock-search-loader">
+                </label>
+                <label class="field">
+                    <span>Exchange</span>
+                    <select name="exchange" hx-get="/web/partials/stocks/search?selectable=true" hx-trigger="change" hx-target="#paper-stock-search-results" hx-swap="innerHTML" hx-include="#paper-stock-search-form" hx-indicator="#paper-stock-search-loader">
+                        <option value="">All</option>
+                        <option value="NSE">NSE</option>
+                        <option value="BSE">BSE</option>
+                    </select>
+                </label>
+            </form>
+            <span id="paper-stock-search-loader" class="loading-indicator inline">Searching...</span>
+            <div id="paper-stock-search-results" class="search-results"></div>
+            <input type="hidden" name="stock_id" id="paper-stock-id" value="">
+            <div id="paper-selected-stock" class="selected-stock-chip muted">No stock selected</div>
+        </div>
+
+        <div class="form-card section-card order-ticket-card">
+            <h2>Order Ticket</h2>
+            <div id="order-submit-result"></div>
+            <form
+                id="paper-order-form"
+                class="form-grid"
+                hx-post="/web/partials/paper-trading/submit-order"
+                hx-target="#order-submit-result"
+                hx-swap="innerHTML"
+                hx-indicator="#submit-order-loader">
+                <input type="hidden" name="portfolio_id" id="paper-form-portfolio-id" value="{{ selected_portfolio_id or '' }}">
+                <input type="hidden" name="stock_id" id="paper-form-stock-id" value="">
+                <div class="side-toggle" role="group" aria-label="Order side">
+                    <label class="side-option buy is-active"><input type="radio" name="side" value="BUY" checked data-preview-field> BUY</label>
+                    <label class="side-option sell"><input type="radio" name="side" value="SELL" data-preview-field> SELL</label>
+                </div>
+                <label class="field">
+                    <span>Order type</span>
+                    <select name="order_type" id="paper-order-type" data-preview-field>
+                        {% for otype in order_types %}
+                            <option value="{{ otype }}">{{ otype }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="field">
+                    <span>Quantity</span>
+                    <input name="quantity" type="number" min="0.0001" step="1" value="1" data-preview-field>
+                </label>
+                <label class="field limit-only" hidden>
+                    <span>Limit price</span>
+                    <input name="limit_price" type="number" min="0.01" step="0.01" data-preview-field>
+                </label>
+                <label class="field stop-only" hidden>
+                    <span>Stop price</span>
+                    <input name="stop_price" type="number" min="0.01" step="0.01" data-preview-field>
+                </label>
+                <label class="field wide">
+                    <span>Notes</span>
+                    <textarea name="notes" rows="2"></textarea>
+                </label>
+                <div class="form-actions">
+                    <button class="accent-button" type="submit">Submit Paper Order</button>
+                    <span id="submit-order-loader" class="loading-indicator inline">Submitting...</span>
+                </div>
+            </form>
+            <div
+                id="order-preview-wrap"
+                class="section-stack compact"
+                hx-get="/web/partials/paper-trading/order-preview"
+                hx-trigger="load, paper-preview-refresh from:body, paper-order-submitted from:body"
+                hx-include="#paper-order-form, #paper-form-portfolio-id, #paper-form-stock-id"
+                hx-target="#order-preview"
+                hx-swap="outerHTML"
+                hx-indicator="#preview-loader">
+                <span id="preview-loader" class="loading-indicator inline">Updating preview...</span>
+                {% include "partials/order_preview.html" %}
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-heading compact">
+            <h2>Open Positions</h2>
+            <span id="positions-loader" class="loading-indicator inline">Loading...</span>
+        </div>
+        <div
+            id="open-positions-wrap"
+            hx-get="/web/partials/paper-trading/open-positions?portfolio_id={{ selected_portfolio_id or '' }}"
+            hx-trigger="load, paper-order-submitted from:body"
+            hx-swap="innerHTML"
+            hx-indicator="#positions-loader">
+            {% include "partials/open_positions.html" %}
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-heading compact">
+            <h2>Order History</h2>
+            <span id="history-loader" class="loading-indicator inline">Loading...</span>
+        </div>
+        <div
+            id="order-history-wrap"
+            hx-get="/web/partials/paper-trading/order-history?portfolio_id={{ selected_portfolio_id or '' }}"
+            hx-trigger="load, paper-order-submitted from:body"
+            hx-swap="innerHTML"
+            hx-indicator="#history-loader">
+            {% include "partials/order_history.html" %}
+        </div>
+    </div>
+</section>
+<script src="/static/js/trading.js" defer></script>
+{% endblock %}

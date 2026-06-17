@@ -1,0 +1,22 @@
+{% if error %}
+    {% set banner_message = "Drawdown chart failed: " ~ error %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif not figure %}
+    {% set empty_title = "Drawdown history unavailable" %}
+    {% set empty_message = "Need at least two daily portfolio snapshots in the lookback window." %}
+    {% include "partials/empty_state.html" %}
+{% else %}
+    <div class="drawdown-metrics">
+        {% if drawdown.portfolio_max_drawdown_pct is not none %}
+            <span class="risk-severity-badge negative">Portfolio max DD {{ (0 - drawdown.portfolio_max_drawdown_pct) | pct }}</span>
+        {% endif %}
+        {% if drawdown.benchmark_max_drawdown_pct is not none %}
+            <span class="risk-severity-badge neutral">NIFTY 50 max DD {{ (0 - drawdown.benchmark_max_drawdown_pct) | pct }}</span>
+        {% endif %}
+    </div>
+    <div class="chart-card">
+        <div id="risk-drawdown-chart" class="plotly-chart-host" data-plotly-chart="risk-drawdown-chart"></div>
+        <script type="application/json" id="risk-drawdown-chart-data">{{ figure | tojson }}</script>
+    </div>
+{% endif %}

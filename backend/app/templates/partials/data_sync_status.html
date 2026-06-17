@@ -1,0 +1,91 @@
+<div
+    id="data-sync-status"
+    class="sync-status-card data-sync-status-card"
+    data-sync-running="{% if sync_status and sync_status.is_running %}true{% else %}false{% endif %}">
+    <div class="sync-copy">
+        <span class="muted">Sync status</span>
+        <strong class="sync-state-label">
+            {% if sync_status and sync_status.is_running %}
+                Running
+            {% elif sync_status and sync_status.last_sync_status %}
+                {{ sync_status.last_sync_status }}
+            {% else %}
+                Not synced
+            {% endif %}
+        </strong>
+        <small class="data-ops-date-line">
+            <span>Latest candle:</span> {{ latest_candle_date | date_text }}
+        </small>
+        <small class="data-ops-date-line">
+            <span>Provider / session:</span> {{ latest_provider_date | date_text }}
+        </small>
+        <small class="data-ops-date-line">
+            <span>Last sync run:</span> {{ sync_status.last_synced_at | date_text }}
+        </small>
+        {% if sync_status and sync_status.current_run %}
+            <small class="sync-run-detail">
+                Current run #{{ sync_status.current_run.id }}:
+                {{ sync_status.current_run.success_count or 0 }} ok,
+                {{ sync_status.current_run.failed_count or 0 }} failed,
+                {{ sync_status.current_run.rows_saved or 0 }} rows saved
+            </small>
+        {% elif sync_status and sync_status.last_run %}
+            <small class="sync-run-detail">
+                Last run: {{ sync_status.last_run.success_count or 0 }} ok,
+                {{ sync_status.last_run.failed_count or 0 }} failed,
+                {{ sync_status.last_run.rows_saved or 0 }} rows saved
+            </small>
+        {% endif %}
+        {% if sync_message %}
+            <small class="sync-message sync-message-{{ sync_tone or 'info' }}">{{ sync_message }}</small>
+        {% endif %}
+        {% if all_skipped_warning %}
+            <small class="sync-message sync-message-warning">{{ all_skipped_warning }}</small>
+        {% endif %}
+        {% include "partials/fundamentals_sync_summary.html" %}
+    </div>
+    {% if sync_error %}
+        {% set banner_message = sync_error %}
+        {% set banner_tone = "danger" %}
+        <div class="sync-error-banner">
+            {% include "partials/info_banner.html" %}
+        </div>
+    {% endif %}
+    <div class="sync-actions data-sync-action-bar">
+        <div class="sync-now-wrap">
+            <button
+                class="accent-button"
+                type="button"
+                id="data-sync-now-button"
+                {% if sync_status and sync_status.is_running %}disabled{% endif %}
+                hx-post="/web/partials/data/sync-now"
+                hx-target="#data-sync-status"
+                hx-swap="outerHTML"
+                hx-indicator="#data-sync-action-loader">
+                {% if sync_status and sync_status.is_running %}Syncing...{% else %}Sync Now{% endif %}
+            </button>
+            <button
+                class="ghost-button"
+                type="button"
+                hx-get="/web/partials/data/sync-status"
+                hx-target="#data-sync-status"
+                hx-swap="outerHTML"
+                hx-indicator="#data-sync-action-loader">
+                Refresh Status
+            </button>
+            <button
+                class="ghost-button"
+                type="button"
+                hx-post="/web/partials/data/refresh-analytics"
+                hx-target="#data-refresh-result"
+                hx-swap="innerHTML"
+                hx-indicator="#data-sync-action-loader">
+                Refresh Analytics
+            </button>
+            <span id="data-sync-action-loader" class="loading-indicator inline">Working...</span>
+        </div>
+        {% if sync_status and sync_status.is_running %}
+            <small class="sync-poll-note muted">Status refreshes every 5s while sync runs.</small>
+        {% endif %}
+    </div>
+</div>

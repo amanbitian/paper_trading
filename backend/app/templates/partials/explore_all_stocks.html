@@ -1,0 +1,135 @@
+<div id="all-stocks-panel" class="section-stack">
+    {% if error_message %}
+        {% set banner_message = error_message %}
+        {% set banner_tone = "danger" %}
+        {% include "partials/info_banner.html" %}
+    {% endif %}
+    <div class="section-card compact-card">
+        <div class="section-heading compact">
+            <div>
+                <h3>All stocks in database</h3>
+                <p>Latest price uses the most recent stored daily candle. Period changes use nearest stored candles at or before each lookback.</p>
+            </div>
+            {% set badge_text = (rows | length) ~ " shown" %}
+            {% set badge_tone = "info" %}
+            {% include "partials/status_badge.html" %}
+        </div>
+        <form id="all-stocks-filter-form" class="filter-grid all-stocks-filter-grid" autocomplete="off">
+            <label class="field wide">
+                <span>Search</span>
+                <input
+                    name="search"
+                    type="search"
+                    value="{{ search }}"
+                    placeholder="Search symbol or company..."
+                    hx-get="/web/partials/explore/all-stocks"
+                    hx-trigger="keyup changed delay:400ms"
+                    hx-target="#all-stocks-panel"
+                    hx-swap="outerHTML"
+                    hx-include="#all-stocks-filter-form"
+                    hx-indicator="#all-stocks-loader">
+            </label>
+            <label class="field">
+                <span>Exchange</span>
+                <select name="exchange" hx-get="/web/partials/explore/all-stocks" hx-trigger="change" hx-target="#all-stocks-panel" hx-swap="outerHTML" hx-include="#all-stocks-filter-form" hx-indicator="#all-stocks-loader">
+                    <option value="" {% if not selected_exchange %}selected{% endif %}>All</option>
+                    <option value="NSE" {% if selected_exchange == "NSE" %}selected{% endif %}>NSE</option>
+                    <option value="BSE" {% if selected_exchange == "BSE" %}selected{% endif %}>BSE</option>
+                </select>
+            </label>
+            <label class="field">
+                <span>Index</span>
+                <select name="index" hx-get="/web/partials/explore/all-stocks" hx-trigger="change" hx-target="#all-stocks-panel" hx-swap="outerHTML" hx-include="#all-stocks-filter-form" hx-indicator="#all-stocks-loader">
+                    <option value="" {% if not selected_index %}selected{% endif %}>All</option>
+                    {% for option in stock_index_options %}
+                        <option value="{{ option.value }}" {% if selected_index == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="field">
+                <span>Sector</span>
+                <select name="sector" hx-get="/web/partials/explore/all-stocks" hx-trigger="change" hx-target="#all-stocks-panel" hx-swap="outerHTML" hx-include="#all-stocks-filter-form" hx-indicator="#all-stocks-loader">
+                    <option value="" {% if not selected_sector %}selected{% endif %}>All</option>
+                    {% for sector in sector_options %}
+                        <option value="{{ sector }}" {% if selected_sector == sector %}selected{% endif %}>{{ sector }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="field">
+                <span>Industry</span>
+                <select name="industry" hx-get="/web/partials/explore/all-stocks" hx-trigger="change" hx-target="#all-stocks-panel" hx-swap="outerHTML" hx-include="#all-stocks-filter-form" hx-indicator="#all-stocks-loader">
+                    <option value="" {% if not selected_industry %}selected{% endif %}>All</option>
+                    {% for industry in industry_options %}
+                        <option value="{{ industry }}" {% if selected_industry == industry %}selected{% endif %}>{{ industry }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="field">
+                <span>Sort by</span>
+                <select name="sort_by" hx-get="/web/partials/explore/all-stocks" hx-trigger="change" hx-target="#all-stocks-panel" hx-swap="outerHTML" hx-include="#all-stocks-filter-form" hx-indicator="#all-stocks-loader">
+                    {% for value, config in sort_options.items() %}
+                        <option value="{{ value }}" {% if selected_sort == value %}selected{% endif %}>{{ config[2] }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="field">
+                <span>Rows</span>
+                <select name="limit" hx-get="/web/partials/explore/all-stocks" hx-trigger="change" hx-target="#all-stocks-panel" hx-swap="outerHTML" hx-include="#all-stocks-filter-form" hx-indicator="#all-stocks-loader">
+                    {% for limit in [50, 100, 200, 500] %}
+                        <option value="{{ limit }}" {% if selected_limit == limit %}selected{% endif %}>{{ limit }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </form>
+        <span id="all-stocks-loader" class="loading-indicator inline">Updating stocks...</span>
+    </div>
+
+    <div class="financial-table-card">
+        {% if not rows %}
+            {% set empty_title = "No stocks for this filter" %}
+            {% set empty_message = "Adjust filters or sync/enrich stock data." %}
+            {% include "partials/empty_state.html" %}
+        {% else %}
+            <table class="financial-table wide-table">
+                <thead>
+                    <tr>
+                        <th>Open</th>
+                        <th>Company</th>
+                        <th>Symbol</th>
+                        <th>Exchange</th>
+                        <th>Indexes</th>
+                        <th>Sector</th>
+                        <th>Industry</th>
+                        <th>Latest Date</th>
+                        <th>Latest Price</th>
+                        <th>1M Change</th>
+                        <th>3M Change</th>
+                        <th>6M Change</th>
+                        <th>1Y Change</th>
+                        <th>Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            <td><a class="table-link" href="/web/explore?stock={{ row.yahoo_symbol }}">Open</a></td>
+                            <td>{{ row.company_name or row.symbol }}</td>
+                            <td>{{ row.symbol }}</td>
+                            <td>{{ row.exchange }}</td>
+                            <td>{{ row | stock_index_labels }}</td>
+                            <td>{{ row.sector or "-" }}</td>
+                            <td>{{ row.industry or "-" }}</td>
+                            <td>{{ row.latest_price_datetime | date_text }}</td>
+                            <td>{{ row.latest_price | inr }}</td>
+                            <td class="{{ row.change_1m_pct | tone }}">{{ row.change_1m_pct | optional_pct }}</td>
+                            <td class="{{ row.change_3m_pct | tone }}">{{ row.change_3m_pct | optional_pct }}</td>
+                            <td class="{{ row.change_6m_pct | tone }}">{{ row.change_6m_pct | optional_pct }}</td>
+                            <td class="{{ row.change_1y_pct | tone }}">{{ row.change_1y_pct | optional_pct }}</td>
+                            <td>{{ row.latest_volume | volume }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,39 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif rows %}
+<div class="table-scroll data-ops-table-scroll">
+    <table class="data-ops-table compact-table">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Exchange</th>
+                <th>Provider ticker</th>
+                <th>Last attempted</th>
+                <th>Error type</th>
+                <th>Message</th>
+                <th>Retry</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.symbol }}</td>
+                <td>{{ row.exchange }}</td>
+                <td>{{ row.provider_ticker }}</td>
+                <td>{{ row.last_attempted | date_text }}</td>
+                <td>{{ row.error_type }}</td>
+                <td class="data-ops-message-cell">{{ row.error_message }}</td>
+                <td>{{ row.retry_status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="muted data-ops-note">Showing up to {{ limit }} symbols without stored daily candles or marked delisted.</p>
+{% else %}
+    {% set empty_title = "No failed symbols" %}
+    {% set empty_message = "All active symbols have stored daily candles." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

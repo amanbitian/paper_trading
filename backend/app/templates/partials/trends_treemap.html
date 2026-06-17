@@ -1,0 +1,19 @@
+{% if error %}
+    {% set banner_message = "Treemap failed: " ~ error %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif not figure %}
+    {% set empty_title = "No trend data" %}
+    {% set empty_message = "No trend data available for the selected filters." %}
+    {% include "partials/empty_state.html" %}
+{% else %}
+    <div class="chart-card treemap-card trends-treemap">
+        <div id="trends-treemap-plot" class="chart-plot"></div>
+        <div
+            class="plotly-payload"
+            data-plotly-json
+            data-target="trends-treemap-plot"
+            hidden
+            aria-hidden="true">{{ figure | tojson }}</div>
+    </div>
+{% endif %}

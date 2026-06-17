@@ -1,0 +1,79 @@
+<div class="analytics-filter-bar trends-filter-grid">
+    <label class="field">
+        <span>Index / universe</span>
+        <select name="index_universe" data-trends-filter="index_universe">
+            {% for option in filter_payload.markets %}
+                <option value="{{ option.value }}" {% if option.value == index_universe %}selected{% endif %}>{{ option.label }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label class="field">
+        <span>Industry</span>
+        <select name="industry" data-trends-filter="industry">
+            <option value="All industries" {% if industry == 'All industries' %}selected{% endif %}>All industries</option>
+            {% for group in filter_payload.industry_groups %}
+                <option value="{{ group }}" {% if group == industry %}selected{% endif %}>{{ group }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label class="field">
+        <span>NIFTY Index</span>
+        <select name="nifty_index" data-trends-filter="nifty_index">
+            <option value="All indices" data-count="{{ filter_payload.all_stocks_eligible_max }}" {% if nifty_index == 'All indices' %}selected{% endif %}>All indices</option>
+            {% for option in filter_payload.nifty_indices %}
+                <option
+                    value="{{ option.value }}"
+                    data-count="{{ option.constituent_count }}"
+                    {% if option.value == nifty_index %}selected{% endif %}>
+                    {{ option.label }} ({{ option.constituent_count }})
+                </option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <div class="field rows-field">
+        <span>Rows</span>
+        <div class="rows-control">
+            <label class="auto-rows-toggle">
+                <input
+                    type="checkbox"
+                    name="rows_auto_toggle"
+                    id="trends-rows-auto-toggle"
+                    data-trends-filter="rows_auto"
+                    {% if rows_mode == 'auto' %}checked{% endif %}>
+                <span>Auto rows</span>
+            </label>
+            <input
+                type="number"
+                name="rows"
+                id="trends-rows-input"
+                min="50"
+                max="{{ max_stocks }}"
+                step="50"
+                value="{{ rows }}"
+                data-trends-filter="rows"
+                {% if rows_mode == 'auto' %}data-auto-rows="true"{% endif %}>
+            <input type="hidden" name="rows_mode" id="trends-rows-mode" value="{{ rows_mode }}">
+        </div>
+    </div>
+
+    <label class="field">
+        <span>Sort by</span>
+        <select name="sort_by" data-trends-filter="sort_by">
+            {% for option in filter_payload.sort_options %}
+                <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.label }}</option>
+            {% endfor %}
+        </select>
+    </label>
+</div>
+<p class="analytics-caption">
+    Returns use adjusted close when available. Treemap tile size uses latest price × volume.
+    Max rows for this universe: {{ max_stocks | number(0) }}.
+    {% if rows_mode == 'auto' %}
+        Rows are set automatically from the selected NIFTY index.
+    {% else %}
+        Rows are manually set to {{ rows | number(0) }}.
+    {% endif %}
+</p>

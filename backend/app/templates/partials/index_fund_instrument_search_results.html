@@ -1,0 +1,36 @@
+{% if query and not results %}
+<div class="index-fund-search-empty muted">
+    <p>No matching index or commodity instruments found.</p>
+</div>
+{% elif results %}
+<div class="index-fund-search-results-list">
+    {% for item in results %}
+        <button
+            type="button"
+            class="index-fund-search-result"
+            data-instrument-payload='{{ item | tojson }}'>
+            <div class="index-fund-search-result-main">
+                <strong>{{ item.symbol }}</strong>
+                <span class="muted">{{ item.yahoo_symbol }}</span>
+                {% if item.category %}
+                    <small class="muted">{{ item.category }}</small>
+                {% endif %}
+            </div>
+            <div class="index-fund-search-result-meta">
+                {% if item.latest_price is not none %}
+                    <span>{{ item.latest_price | float | round(2) }}</span>
+                    {% if item.latest_price_datetime %}
+                        <small class="muted">{{ item.latest_price_datetime | date_text }}</small>
+                    {% endif %}
+                {% else %}
+                    <small class="muted">No stored price</small>
+                {% endif %}
+                {% set badge_text = item.status_label %}
+                {% set badge_tone = item.status_tone %}
+                {% include "partials/status_badge.html" %}
+                <span class="index-fund-search-result-action">Add</span>
+            </div>
+        </button>
+    {% endfor %}
+</div>
+{% endif %}

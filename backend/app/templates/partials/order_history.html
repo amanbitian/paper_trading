@@ -1,0 +1,46 @@
+<div id="order-history" class="financial-table-card">
+    {% if error_message %}
+        {% set banner_message = error_message %}
+        {% set banner_tone = "danger" %}
+        {% include "partials/info_banner.html" %}
+    {% elif not portfolio_id %}
+        {% set empty_title = "Select a portfolio" %}
+        {% set empty_message = "Choose a paper portfolio to view order history." %}
+        {% include "partials/empty_state.html" %}
+    {% elif not rows %}
+        {% set empty_title = "No orders yet" %}
+        {% set empty_message = "Submitted paper orders will appear here." %}
+        {% include "partials/empty_state.html" %}
+    {% else %}
+        <table class="financial-table wide-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Symbol</th>
+                    <th>Side</th>
+                    <th>Type</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Value</th>
+                    <th>Status</th>
+                    <th>Notes / Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>{{ row.placed_at | date_text }}</td>
+                        <td>{{ row.symbol }}</td>
+                        <td><span class="rank-badge {{ 'buy' if row.side == 'BUY' else 'sell' }}">{{ row.side }}</span></td>
+                        <td>{{ row.order_type }}</td>
+                        <td>{{ row.quantity | number(2) }}</td>
+                        <td>{{ row.price | inr }}</td>
+                        <td>{{ row.value | inr }}</td>
+                        <td>{{ row.status }}</td>
+                        <td>{{ row.reason or row.notes or "-" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>

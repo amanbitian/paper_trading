@@ -1,0 +1,50 @@
+<section class="section-card stock-detail-card stock-news-card" id="stock-news-panel">
+    <div class="section-heading compact">
+        <div>
+            <h3>News</h3>
+            <p>Latest matched headlines.</p>
+        </div>
+        <form
+            class="stock-news-refresh"
+            hx-post="/web/partials/explore/stock-news/{{ detail.stock.id }}/refresh"
+            hx-target="#stock-news-panel"
+            hx-swap="outerHTML"
+            hx-indicator="#stock-news-loader">
+            <button class="ghost-button" type="submit">Refresh</button>
+            <span id="stock-news-loader" class="loading-indicator inline">Refreshing...</span>
+        </form>
+    </div>
+
+    {% if detail.news_refresh_error %}
+        {% set banner_message = detail.news_refresh_error %}
+        {% set banner_tone = "danger" %}
+        {% include "partials/info_banner.html" %}
+    {% endif %}
+
+    {% if detail.news %}
+        <div class="stock-news-list">
+            {% for item in detail.news %}
+            <article class="stock-news-item">
+                <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
+                    <strong>{{ item.headline }}</strong>
+                </a>
+                <div class="stock-news-meta">
+                    <span>{{ item.source or item.source_domain or item.provider }}</span>
+                    <span>{{ item.published_at | date_text }}</span>
+                    <span>{{ item.provider }}</span>
+                    {% if item.match_confidence is not none %}
+                        <span>{{ "%.0f"|format(item.match_confidence * 100) }}% match</span>
+                    {% endif %}
+                </div>
+                {% if item.summary %}
+                    <p>{{ item.summary }}</p>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% set banner_message = "No saved news yet." %}
+        {% set banner_tone = "info" %}
+        {% include "partials/info_banner.html" %}
+    {% endif %}
+</section>

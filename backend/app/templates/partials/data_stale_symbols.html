@@ -1,0 +1,43 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif rows %}
+<div class="table-scroll data-ops-table-scroll">
+    <table class="data-ops-table compact-table">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Exchange</th>
+                <th>Company</th>
+                <th>Latest stored</th>
+                <th>Universe latest</th>
+                <th>Lag (days)</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.symbol }}</td>
+                <td>{{ row.exchange }}</td>
+                <td>{{ row.company_name or "—" }}</td>
+                <td>{{ row.latest_stored_date | date_text }}</td>
+                <td>{{ row.provider_latest_date | date_text }}</td>
+                <td>{{ row.lag_days if row.lag_days is not none else "—" }}</td>
+                <td>{{ row.reason or "—" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="muted data-ops-note">
+    Filter: lag &ge; {{ min_lag }} day{% if min_lag != 1 %}s{% endif %}
+    {% if exchange %} · {{ exchange }}{% endif %}
+    · limit {{ limit }}
+</p>
+{% else %}
+    {% set empty_title = "No stale symbols" %}
+    {% set empty_message = "Active universe is up to date for the selected lag filter." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

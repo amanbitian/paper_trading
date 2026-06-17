@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Research</p>
+        <h1>Backtesting</h1>
+        <p class="page-subtitle">{{ subtitle }}</p>
+        <div class="header-badges">
+            {% set badge_text = "Research mode" %}
+            {% set badge_tone = "warning" %}
+            {% include "partials/status_badge.html" %}
+        </div>
+    </div>
+</header>
+
+{% if no_strategies %}
+    {% set banner_message = "No strategy templates are available. Seed strategy templates before running backtests." %}
+    {% set banner_tone = "warning" %}
+    {% include "partials/info_banner.html" %}
+{% endif %}
+
+<section class="backtesting-page" id="backtesting-page">
+    <form
+        id="backtesting-form"
+        class="backtesting-form"
+        autocomplete="off"
+        hx-post="/web/partials/backtesting/run"
+        hx-target="#backtesting-results"
+        hx-swap="innerHTML"
+        hx-indicator="#backtest-run-loader"
+        hx-include="#backtesting-form">
+        <input type="hidden" name="basket_json" id="backtest-basket-json" value="[]">
+        <div id="backtest-basket-hidden-fields" aria-hidden="true"></div>
+        <input type="hidden" name="parameters_json" id="backtest-parameters-json" value="{}">
+
+        <section class="backtest-step-card" id="backtest-step-universe">
+            <div class="step-heading">
+                <span class="step-badge">1</span>
+                <div>
+                    <h2>Instrument Universe</h2>
+                    <p>Search stocks or index funds and build a basket for this run.</p>
+                </div>
+            </div>
+            <div id="backtesting-universe-form" class="backtesting-universe-form">
+                <div class="backtest-universe-grid">
+                    <label class="field">
+                        <span>Universe type</span>
+                        <select name="instrument_type" id="backtest-instrument-type" data-backtest-universe>
+                            <option value="stock" selected>Stocks</option>
+                            <option value="index_fund">Index funds</option>
+                        </select>
+                    </label>
+                    <label class="field stock-only">
+                        <span>Exchange</span>
+                        <select name="search_exchange" id="backtest-search-exchange" data-backtest-search-filter>
+                            <option value="">All</option>
+                            <option value="NSE">NSE</option>
+                            <option value="BSE">BSE</option>
+                        </select>
+                    </label>
+                    <label class="field stock-only">
+                        <span>Index membership</span>
+                        <select name="search_index_code" id="backtest-search-index" data-backtest-search-filter>
+                            {% for option in index_filter_options %}
+                                <option value="{{ option.value }}">{{ option.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="field index-only hidden">
+                        <span>Category</span>
+                        <select name="search_category" id="backtest-search-category" data-backtest-search-filter>
+                            <option value="">All</option>
+                            <option value="index">Index</option>
+                            <option value="commodity">Commodity</option>
+                        </select>
+                    </label>
+                </div>
+                <label class="field wide">
+                    <span>Search instrument</span>
+                    <input
+                        type="search"
+                        id="backtest-instrument-search"
+                        placeholder="Search SBIN, HDFC Bank, RELIANCE..."
+                        autocomplete="off">
+                </label>
+                <span id="backtest-search-loader" class="loading-indicator inline">Searching...</span>
+                <div id="backtesting-search-results" class="search-results-panel backtest-search-results"></div>
+            </div>
+
+            <div class="basket-panel">
+                <div class="basket-header">
+                    <h3>Backtest basket</h3>
+                    <div class="basket-header-actions">
+                        <span id="backtest-basket-count" class="basket-count-badge">0 instruments</span>
+                        <button type="button" class="ghost-button" id="backtest-clear-basket">Clear basket</button>
+                    </div>
+                </div>
+                <div id="backtest-basket-chips" class="basket-grid">
+                    {% set empty_title = "No instruments added yet" %}
+                    {% set empty_message = "Search above, then add one or more instruments to the basket." %}
+                    {% include "partials/empty_state.html" %}
+                </div>
+            </div>
+        </section>
+
+        <section class="backtest-step-card" id="backtest-step-strategy">
+            <div class="step-heading">
+                <span class="step-badge">2</span>
+                <div>
+                    <h2>Strategy</h2>
+                    <p>Choose a strategy template and tune parameters if needed.</p>
+                </div>
+            </div>
+            <div class="strategy-grid">
+                <label class="field">
+                    <span>Strategy</span>
+                    <select
+                        name="strategy_id"
+                        id="backtest-strategy-id"
+                        data-backtest-strategy-select
+                        required>
+                        {% for template in strategy_templates %}
+                            <option
+                                value="{{ template.id }}"
+                                data-strategy-type="{{ template.strategy_type }}"
+                                {% if loop.first %}selected{% endif %}>
+                                {{ template.strategy_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="field toggle-field">
+                    <span>Advanced parameters</span>
+                    <label class="auto-rows-toggle">
+                        <input type="checkbox" id="backtest-advanced-toggle">
+                        <span>Show editable parameters</span>
+                    </label>
+                </label>
+            </div>
+            <span id="strategy-params-loader" class="loading-indicator">Loading parameters...</span>
+            <div id="backtest-strategy-params-panel"></div>
+        </section>
+
+        <section class="backtest-step-card" id="backtest-step-execution">
+            <div class="step-heading">
+                <span class="step-badge">3</span>
+                <div>
+                    <h2>Execution Assumptions</h2>
+                    <p>Fill assumptions, cost model, benchmark, capital, and date range.</p>
+                </div>
+            </div>
+            <div class="execution-grid">
+                <label class="field">
+                    <span>Execution mode</span>
+                    <select name="execution_mode">
+                        {% for label, value in execution_mode_options.items() %}
+                            <option value="{{ value }}" {% if value == 'signal_on_close_execute_next_open' %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="field">
+                    <span>Intrabar assumption</span>
+                    <select name="intrabar_assumption">
+                        {% for label, value in intrabar_options.items() %}
+                            <option value="{{ value }}" {% if value == 'conservative' %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="field">
+                    <span>Cost model</span>
+                    <select name="cost_model">
+                        {% for label, value in cost_model_options.items() %}
+                            <option value="{{ value }}" {% if value == 'zerodha_equity_delivery' %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="field">
+                    <span>Benchmark</span>
+                    <select name="benchmark_code">
+                        {% for label, value in benchmark_options.items() %}
+                            <option value="{{ value }}" {% if value == 'buy_and_hold' %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="field">
+                    <span>Slippage (bps)</span>
+                    <input type="number" name="slippage_bps" min="0" max="500" step="1" value="10">
+                </label>
+                <label class="field">
+                    <span>Start date</span>
+                    <input type="date" name="start_date" value="{{ default_start_date }}" required>
+                </label>
+                <label class="field">
+                    <span>End date</span>
+                    <input type="date" name="end_date" value="{{ default_end_date }}" required>
+                </label>
+                <label class="field">
+                    <span>Initial capital</span>
+                    <input type="number" name="initial_capital" min="1000" step="1000" value="100000" required>
+                </label>
+                <label class="field toggle-field">
+                    <span>Walk-forward validation</span>
+                    <label class="auto-rows-toggle">
+                        <input type="checkbox" name="walk_forward" value="true">
+                        <span>70% in-sample / 30% out-of-sample</span>
+                    </label>
+                </label>
+            </div>
+        </section>
+
+        <div class="backtest-run-bar">
+            <button type="submit" class="primary-button" id="backtest-run-button">Run Backtest</button>
+            <span id="backtest-run-loader" class="loading-indicator inline">Running backtest...</span>
+        </div>
+    </form>
+
+    <section id="backtesting-results" class="backtesting-results-shell">
+        {% set empty_title = "No backtest results yet" %}
+        {% set empty_message = "Configure the basket, strategy, and assumptions, then run a backtest." %}
+        {% include "partials/empty_state.html" %}
+    </section>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+<script src="/static/js/backtesting.js" defer></script>
+{% endblock %}

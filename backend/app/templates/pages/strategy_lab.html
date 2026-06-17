@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Research</p>
+        <h1>Strategy Lab</h1>
+        <p class="page-subtitle">{{ subtitle }}</p>
+        <div class="header-badges">
+            {% set badge_text = "Educational" %}
+            {% set badge_tone = "info" %}
+            {% include "partials/status_badge.html" %}
+        </div>
+    </div>
+</header>
+
+{% if no_strategies %}
+    {% set banner_message = "No strategy templates are available. Seed strategy templates before using Strategy Lab." %}
+    {% set banner_tone = "warning" %}
+    {% include "partials/info_banner.html" %}
+{% else %}
+
+<section class="strategy-lab-page" id="strategy-lab-page">
+    <form id="strategy-lab-form" class="strategy-lab-form" autocomplete="off">
+        <input type="hidden" name="stock_id" id="strategy-lab-stock-id" value="">
+        <input type="hidden" name="params_json" id="strategy-lab-params-json-hidden" value="{}">
+
+        <div class="strategy-lab-workflow">
+            <section class="strategy-lab-card" id="strategy-lab-context">
+                <div class="step-heading">
+                    <span class="step-badge">1</span>
+                    <div>
+                        <h2>Context</h2>
+                        <p>Select portfolio and stock for signal generation.</p>
+                    </div>
+                </div>
+                <div class="strategy-lab-context-grid">
+                    <label class="field">
+                        <span>Portfolio</span>
+                        <select name="portfolio_id" id="strategy-lab-portfolio-id" data-strategy-lab-portfolio>
+                            {% if not portfolios %}
+                                <option value="">No portfolio available</option>
+                            {% else %}
+                                {% for portfolio in portfolios %}
+                                    <option
+                                        value="{{ portfolio.id }}"
+                                        {% if selected_portfolio_id == portfolio.id %}selected{% endif %}>
+                                        {{ portfolio.portfolio_name }} ({{ portfolio.portfolio_type }})
+                                    </option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Exchange</span>
+                        <select name="search_exchange" id="strategy-lab-search-exchange" data-strategy-lab-search-filter>
+                            <option value="">All</option>
+                            <option value="NSE">NSE</option>
+                            <option value="BSE">BSE</option>
+                        </select>
+                    </label>
+                </div>
+                <label class="field wide">
+                    <span>Search stock</span>
+                    <input
+                        type="search"
+                        id="strategy-lab-instrument-search"
+                        placeholder="Search SBIN, HDFC Bank, RELIANCE..."
+                        autocomplete="off">
+                </label>
+                <span id="strategy-lab-search-loader" class="loading-indicator inline">Searching...</span>
+                <div id="strategy-lab-search-results" class="search-results-panel"></div>
+                <div id="strategy-lab-stock-context" class="stock-context-host">
+                    {% set empty_title = "No stock selected" %}
+                    {% set empty_message = "Search and select a stock to see latest price and portfolio exposure." %}
+                    {% include "partials/empty_state.html" %}
+                </div>
+            </section>
+
+            <section class="strategy-lab-card" id="strategy-lab-template">
+                <div class="step-heading">
+                    <span class="step-badge">2</span>
+                    <div>
+                        <h2>Strategy Template</h2>
+                        <p>Choose a template and tune parameters.</p>
+                    </div>
+                </div>
+                <label class="field">
+                    <span>Strategy template</span>
+                    <select name="strategy_template_id" id="strategy-lab-template-id" required>
+                        {% for template in strategy_templates %}
+                            <option
+                                value="{{ template.id }}"
+                                data-strategy-type="{{ template.strategy_type }}"
+                                {% if loop.first %}selected{% endif %}>
+                                {{ template.strategy_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="field toggle-field">
+                    <span>Advanced parameters</span>
+                    <label class="auto-rows-toggle">
+                        <input type="checkbox" id="strategy-lab-advanced-toggle">
+                        <span>Show editable fields / JSON</span>
+                    </label>
+                </label>
+                <span id="strategy-lab-params-loader" class="loading-indicator">Loading parameters...</span>
+                <div id="strategy-lab-params-panel"></div>
+            </section>
+        </div>
+
+        <section class="strategy-lab-card" id="strategy-lab-risk">
+            <div class="step-heading">
+                <span class="step-badge">3</span>
+                <div>
+                    <h2>Risk and Sizing</h2>
+                    <p>Risk settings stored on the user strategy record.</p>
+                </div>
+            </div>
+            <div class="risk-sizing-grid">
+                <label class="field">
+                    <span>Risk per trade %</span>
+                    <input
+                        type="number"
+                        name="risk_per_trade_pct"
+                        id="strategy-lab-risk-pct"
+                        min="0.1"
+                        max="10"
+                        step="0.1"
+                        value="1.0">
+                </label>
+            </div>
+            <p class="analytics-caption">
+                Position sizing uses portfolio value, risk %, and stop loss from strategy parameters when generating BUY signals.
+            </p>
+        </section>
+
+        <section class="strategy-lab-card" id="strategy-lab-actions">
+            <div class="step-heading">
+                <span class="step-badge">4</span>
+                <div>
+                    <h2>Actions</h2>
+                    <p>Create a saved user strategy or generate a live signal.</p>
+                </div>
+            </div>
+            <div id="strategy-lab-create-result"></div>
+            <div class="strategy-lab-action-bar">
+                <button
+                    type="button"
+                    class="primary-button"
+                    id="strategy-lab-create-btn"
+                    hx-post="/web/partials/strategy-lab/create-strategy"
+                    hx-target="#strategy-lab-create-result"
+                    hx-swap="innerHTML"
+                    hx-include="#strategy-lab-form"
+                    hx-indicator="#strategy-lab-create-loader">
+                    Create User Strategy
+                </button>
+                <button
+                    type="button"
+                    class="primary-button secondary"
+                    id="strategy-lab-generate-btn"
+                    hx-post="/web/partials/strategy-lab/generate-signal"
+                    hx-target="#strategy-lab-signal-preview"
+                    hx-swap="innerHTML"
+                    hx-include="#strategy-lab-form, #strategy-lab-user-strategies"
+                    hx-indicator="#strategy-lab-generate-loader">
+                    Generate Signal
+                </button>
+                <button type="button" class="ghost-button" id="strategy-lab-reset-params">Reset Parameters</button>
+                <span id="strategy-lab-create-loader" class="loading-indicator inline">Saving strategy...</span>
+                <span id="strategy-lab-generate-loader" class="loading-indicator inline">Generating signal...</span>
+            </div>
+        </section>
+
+        <section class="strategy-lab-card" id="strategy-lab-preview-section">
+            <div class="step-heading">
+                <span class="step-badge">5</span>
+                <div>
+                    <h2>Signal Preview</h2>
+                    <p>Latest signal output for the selected stock and user strategy.</p>
+                </div>
+            </div>
+            <div id="strategy-lab-signal-preview" class="signal-preview-host">
+                {% set empty_title = "No signal yet" %}
+                {% set empty_message = "Select a stock and user strategy, then generate a signal." %}
+                {% include "partials/empty_state.html" %}
+            </div>
+        </section>
+    </form>
+
+    <section class="strategy-lab-card" id="strategy-lab-saved">
+        <div class="section-heading compact">
+            <h2>Saved User Strategies</h2>
+            <button type="button" class="ghost-button" id="strategy-lab-refresh-strategies">Refresh</button>
+        </div>
+        <div
+            id="strategy-lab-user-strategies"
+            class="lazy-partial-host"
+            data-lazy-url="/web/partials/strategy-lab/user-strategies">
+            <span class="loading-indicator">Loading saved strategies...</span>
+        </div>
+    </section>
+
+    <section class="strategy-lab-card" id="strategy-lab-activity">
+        <div class="section-heading compact">
+            <h2>Activity Log</h2>
+            <button type="button" class="ghost-button" id="strategy-lab-refresh-activity">Refresh</button>
+        </div>
+        <div
+            id="strategy-lab-activity-log"
+            class="lazy-partial-host"
+            data-lazy-url="/web/partials/strategy-lab/activity-log">
+            <span class="loading-indicator">Loading activity...</span>
+        </div>
+    </section>
+</section>
+
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/strategy_lab.js" defer></script>
+{% endblock %}

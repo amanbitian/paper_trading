@@ -1,0 +1,49 @@
+{% if error %}
+    {% set banner_message = "Concentration table failed: " ~ error %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif not rows %}
+    {% set empty_title = "No holdings" %}
+    {% set empty_message = "Add holdings to calculate concentration." %}
+    {% include "partials/empty_state.html" %}
+{% else %}
+    <div class="financial-table-card table-scroll-wrap">
+        <div class="table-card-header">
+            <h3>Holdings by weight</h3>
+            <p>
+                HHI {{ concentration.hhi | number(0) }} ·
+                Level: <span class="risk-severity-badge {% if concentration.concentration_level in ['High', 'Very High'] %}warning{% else %}neutral{% endif %}">{{ concentration.concentration_level }}</span>
+            </p>
+        </div>
+        <div class="table-scroll">
+            <table class="data-table compact">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Company</th>
+                        <th>Sector</th>
+                        <th>Quantity</th>
+                        <th>Latest price</th>
+                        <th>Market value</th>
+                        <th>Weight %</th>
+                        <th>Risk contribution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr class="{% if row.concentration_warning %}row-warning{% endif %}">
+                            <td>{{ row.symbol }}</td>
+                            <td>{{ row.company_name }}</td>
+                            <td>{{ row.sector or "-" }}</td>
+                            <td>{{ row.quantity | number(0) }}</td>
+                            <td>{{ row.latest_price | inr }}</td>
+                            <td>{{ row.market_value | inr }}</td>
+                            <td class="{% if row.concentration_warning %}warning{% endif %}">{{ "%.2f"|format(row.weight_pct) }}%</td>
+                            <td>{{ row.risk_contribution or "—" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}

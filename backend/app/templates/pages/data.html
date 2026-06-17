@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header data-ops-header">
+    <div>
+        <p class="eyebrow">Operations</p>
+        <h1>Data Operations</h1>
+        <p class="page-subtitle">{{ subtitle }}</p>
+        <div class="header-badges">
+            {% set badge_text = "Live backend metrics" %}
+            {% set badge_tone = "info" %}
+            {% include "partials/status_badge.html" %}
+        </div>
+    </div>
+</header>
+
+<section class="data-ops-page" id="data-ops-page">
+    <section class="data-ops-section" id="data-overview-section">
+        <div class="section-heading compact">
+            <h2>Health summary</h2>
+            <p>Explicit dates: stored candles, provider session, last sync run, analytics refresh.</p>
+        </div>
+        <span id="data-overview-loader" class="loading-indicator is-visible">Loading overview...</span>
+        <div
+            id="data-overview-panel"
+            class="data-ops-host"
+            data-lazy-url="/web/partials/data/overview"
+            data-lazy-swap="innerHTML">
+            <div class="data-ops-skeleton-grid">
+                {% for _ in range(8) %}
+                    <div class="skeleton data-ops-skeleton-card"></div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="data-ops-section" id="data-sync-section">
+        <div class="section-heading compact">
+            <h2>Sync controls</h2>
+            <p>Start market sync, refresh status, or rebuild analytics caches.</p>
+        </div>
+        <span id="data-sync-loader" class="loading-indicator is-visible">Loading sync status...</span>
+        <div
+            id="data-sync-panel"
+            class="data-ops-host"
+            data-lazy-url="/web/partials/data/sync-status"
+            data-lazy-swap="outerHTML">
+            <div class="skeleton data-ops-skeleton-bar"></div>
+        </div>
+        <div id="data-refresh-result" class="data-refresh-result-host" aria-live="polite"></div>
+    </section>
+
+    <section class="data-ops-section" id="data-freshness-section">
+        <div class="section-heading compact">
+            <h2>Freshness</h2>
+            <p>Coverage by exchange and lag versus latest stored candle date.</p>
+        </div>
+        <span id="data-freshness-loader" class="loading-indicator is-visible">Loading freshness...</span>
+        <div
+            id="data-freshness-panel"
+            class="data-ops-host"
+            data-lazy-url="/web/partials/data/freshness"
+            data-lazy-swap="innerHTML">
+            <div class="skeleton data-ops-skeleton-table"></div>
+        </div>
+    </section>
+
+    <section class="data-ops-section" id="data-ingestion-section">
+        <div class="section-heading compact">
+            <h2>Ingestion dashboard</h2>
+            <p>Latest run summary from stored ingestion metrics.</p>
+        </div>
+        <span id="data-ingestion-loader" class="loading-indicator is-visible">Loading ingestion dashboard...</span>
+        <div
+            id="data-ingestion-panel"
+            class="data-ops-host"
+            data-lazy-url="/web/partials/data/ingestion-dashboard?runs_limit=25"
+            data-lazy-swap="innerHTML">
+            <div class="skeleton data-ops-skeleton-card"></div>
+        </div>
+    </section>
+
+    <section class="data-ops-section" id="data-fundamentals-section">
+        <div class="section-heading compact">
+            <h2>Fundamentals</h2>
+            <p>Latest yfinance fundamentals snapshot and most recent fundamentals sync result.</p>
+        </div>
+        <span id="data-fundamentals-loader" class="loading-indicator is-visible">Loading fundamentals status...</span>
+        <div
+            id="data-fundamentals-panel"
+            class="data-ops-host"
+            data-lazy-url="/web/partials/data/fundamentals-status"
+            data-lazy-swap="innerHTML">
+            <div class="skeleton data-ops-skeleton-card"></div>
+        </div>
+    </section>
+
+    <section class="data-ops-section" id="data-runs-section">
+        <div class="section-heading compact">
+            <h2>Recent ingestion runs</h2>
+            <p>Last 30 runs with symbol counts and saved rows.</p>
+        </div>
+        <span id="data-runs-loader" class="loading-indicator is-visible">Loading recent runs...</span>
+        <div
+            id="data-runs-panel"
+            class="data-ops-host"
+            data-lazy-url="/web/partials/data/recent-runs?limit=30"
+            data-lazy-swap="innerHTML">
+            <div class="skeleton data-ops-skeleton-table"></div>
+        </div>
+    </section>
+
+    <section class="data-ops-section data-ops-two-col">
+        <div id="data-failed-section">
+            <div class="section-heading compact">
+                <h2>Failed / missing symbols</h2>
+                <p>Active symbols without candles or delisted tickers.</p>
+            </div>
+            <span id="data-failed-loader" class="loading-indicator is-visible">Loading failed symbols...</span>
+            <div
+                id="data-failed-panel"
+                class="data-ops-host"
+                data-lazy-url="/web/partials/data/failed-symbols?limit=100"
+                data-lazy-swap="innerHTML">
+                <div class="skeleton data-ops-skeleton-table"></div>
+            </div>
+        </div>
+        <div id="data-stale-section">
+            <div class="section-heading compact">
+                <h2>Stale symbols</h2>
+                <p>Active symbols behind the universe latest candle date.</p>
+            </div>
+            <form id="data-stale-filter-form" class="data-stale-filters" autocomplete="off">
+                <label class="field compact">
+                    <span>Lag</span>
+                    <select name="min_lag" data-data-stale-filter>
+                        <option value="1" selected>Lag &ge; 1 day</option>
+                        <option value="2">Lag &ge; 2 days</option>
+                    </select>
+                </label>
+                <label class="field compact">
+                    <span>Exchange</span>
+                    <select name="exchange" data-data-stale-filter>
+                        <option value="">All</option>
+                        <option value="NSE">NSE</option>
+                        <option value="BSE">BSE</option>
+                    </select>
+                </label>
+            </form>
+            <span id="data-stale-loader" class="loading-indicator is-visible">Loading stale symbols...</span>
+            <div
+                id="data-stale-panel"
+                class="data-ops-host"
+                data-lazy-url="/web/partials/data/stale-symbols?limit=100&min_lag=1"
+                data-lazy-swap="innerHTML">
+                <div class="skeleton data-ops-skeleton-table"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="data-ops-section data-ops-two-col">
+        <div id="data-db-section">
+            <div class="section-heading compact">
+                <h2>Database stats</h2>
+            </div>
+            <span id="data-db-loader" class="loading-indicator is-visible">Loading database stats...</span>
+            <div
+                id="data-db-panel"
+                class="data-ops-host"
+                data-lazy-url="/web/partials/data/database-stats"
+                data-lazy-swap="innerHTML">
+                <div class="skeleton data-ops-skeleton-card"></div>
+            </div>
+        </div>
+        <div id="data-latency-section">
+            <div class="section-heading compact">
+                <h2>Search / API latency</h2>
+            </div>
+            <span id="data-latency-loader" class="loading-indicator is-visible">Loading search latency...</span>
+            <div
+                id="data-latency-panel"
+                class="data-ops-host"
+                data-lazy-url="/web/partials/data/search-latency"
+                data-lazy-swap="innerHTML">
+                <div class="skeleton data-ops-skeleton-card"></div>
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/data_ops.js" defer></script>
+{% endblock %}

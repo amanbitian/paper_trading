@@ -1,0 +1,5 @@
+{% for error in errors %}
+    {% set banner_message = error %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% endfor %}

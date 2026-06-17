@@ -1,0 +1,98 @@
+<div
+    id="sync-status"
+    class="sync-status-card"
+    data-sync-running="{% if sync_status and sync_status.is_running %}true{% else %}false{% endif %}">
+    <div class="sync-copy">
+        <span class="muted">Sync status</span>
+        <strong class="sync-state-label">
+            {% if sync_status and sync_status.is_running %}
+                Running
+            {% elif sync_status and sync_status.last_sync_status %}
+                {{ sync_status.last_sync_status }}
+            {% else %}
+                Not synced
+            {% endif %}
+        </strong>
+        <small>
+            {% if sync_status and sync_status.record_date %}
+                Data through {{ sync_status.record_date | date_text }}
+            {% elif sync_status and sync_status.last_synced_at %}
+                Last sync {{ sync_status.last_synced_at | date_text }}
+            {% else %}
+                No sync run found
+            {% endif %}
+        </small>
+        {% if sync_status and sync_status.current_run %}
+            <small class="sync-run-detail">
+                Current run #{{ sync_status.current_run.id }}:
+                {{ sync_status.current_run.success_count or 0 }} ok,
+                {{ sync_status.current_run.failed_count or 0 }} failed,
+                {{ sync_status.current_run.rows_saved or 0 }} rows saved
+            </small>
+        {% elif sync_status and sync_status.last_run %}
+            <small class="sync-run-detail">
+                Last run: {{ sync_status.last_run.success_count or 0 }} ok,
+                {{ sync_status.last_run.failed_count or 0 }} failed,
+                {{ sync_status.last_run.rows_saved or 0 }} rows saved
+            </small>
+        {% endif %}
+        {% if sync_message %}
+            <small class="sync-message sync-message-{{ sync_tone or 'info' }}">{{ sync_message }}</small>
+        {% endif %}
+        {% if scheduler_message %}
+            <small class="sync-message sync-message-info">{{ scheduler_message }}</small>
+        {% endif %}
+        {% include "partials/fundamentals_sync_summary.html" %}
+    </div>
+    {% if sync_error %}
+        {% set banner_message = sync_error %}
+        {% set banner_tone = "danger" %}
+        <div class="sync-error-banner">
+            {% include "partials/info_banner.html" %}
+        </div>
+    {% endif %}
+    <div class="sync-actions">
+        <div class="sync-now-wrap">
+            <button
+                class="accent-button"
+                type="button"
+                id="sync-now-button"
+                {% if sync_status and sync_status.is_running %}disabled{% endif %}
+                hx-post="/web/partials/explore/sync-now"
+                hx-target="#sync-status"
+                hx-swap="outerHTML"
+                hx-indicator="#sync-loader">
+                {% if sync_status and sync_status.is_running %}Syncing...{% else %}Sync Now{% endif %}
+            </button>
+            <span id="sync-loader" class="loading-indicator inline">Starting sync...</span>
+        </div>
+        <form
+            class="toggle-form"
+            hx-post="/web/partials/explore/toggle-sync-schedule"
+            hx-target="#sync-status"
+            hx-swap="outerHTML"
+            hx-indicator="#schedule-loader">
+            <input type="hidden" name="enabled" value="false">
+            <label class="toggle-switch">
+                <input
+                    type="checkbox"
+                    name="enabled"
+                    value="true"
+                    {% if scheduler_enabled %}checked{% endif %}
+                    hx-post="/web/partials/explore/toggle-sync-schedule"
+                    hx-trigger="change"
+                    hx-target="#sync-status"
+                    hx-swap="outerHTML"
+                    hx-include=".toggle-form"
+                    hx-indicator="#schedule-loader">
+                <span class="toggle-slider"></span>
+                <span>Persistent sync schedule</span>
+            </label>
+            <span id="schedule-loader" class="loading-indicator inline">Updating...</span>
+            <small class="scheduler-note muted">Toggle is UI-only until backend scheduler control ships.</small>
+        </form>
+        {% if sync_status and sync_status.is_running %}
+            <small class="sync-poll-note muted">Status refreshes every 5s while sync runs.</small>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,93 @@
+{% if errors %}
+    {% include "partials/backtesting_validation_error.html" %}
+{% endif %}
+
+{% if failed %}
+    {% set banner_message = "Some backtests could not be completed." %}
+    {% set banner_tone = "warning" %}
+    {% include "partials/info_banner.html" %}
+    <div class="financial-table-card table-scroll-wrap">
+        <div class="table-scroll">
+            <table class="data-table compact">
+                <thead><tr><th>Instrument</th><th>Reason</th></tr></thead>
+                <tbody>
+                    {% for row in failed %}
+                        <tr><td>{{ row.instrument }}</td><td>{{ row.reason }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}
+
+{% if successful %}
+    {% if persisted_runs %}
+        {% set banner_message = "Runs are saved with run_id in the database. " ~ curve_note %}
+        {% set banner_tone = "info" %}
+        {% include "partials/info_banner.html" %}
+    {% endif %}
+
+    {% if comparison|length > 1 %}
+        <div class="financial-table-card table-scroll-wrap backtest-comparison-table">
+            <div class="table-card-header"><h3>Comparison</h3></div>
+            <div class="table-scroll">
+                <table class="data-table compact">
+                    <thead>
+                        <tr>
+                            <th>Instrument</th>
+                            <th class="num">Return %</th>
+                            <th class="num">Max DD %</th>
+                            <th class="num">Sharpe</th>
+                            <th class="num">Trades</th>
+                            <th>Run ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in comparison %}
+                            <tr>
+                                <td>{{ row.label }}</td>
+                                <td class="num {{ row.total_return_pct | tone }}">{{ row.total_return_pct | pct }}</td>
+                                <td class="num negative">{{ (0 - row.max_drawdown_pct) | pct }}</td>
+                                <td class="num">{{ row.sharpe_ratio | number(2) }}</td>
+                                <td class="num">{{ row.total_trades }}</td>
+                                <td>{{ row.run_id }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <p class="analytics-caption backtest-multi-note">
+            Multi-instrument comparison is shown above. Select an instrument to inspect its individual curves, trades, and assumptions.
+        </p>
+
+        <div class="backtest-instrument-selector" role="tablist" aria-label="Backtest results by instrument">
+            {% for row in successful %}
+                <button
+                    type="button"
+                    class="instrument-result-chip{% if loop.first %} is-active{% endif %}"
+                    data-result-run-id="{{ row.run_id }}"
+                    aria-selected="{{ 'true' if loop.first else 'false' }}">
+                    {{ row.label }}
+                </button>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div id="backtesting-selected-result" class="backtesting-selected-result">
+        {% for row in successful %}
+            <div
+                class="backtest-result-panel-wrap{% if loop.first %} is-active{% endif %}"
+                data-result-panel="{{ row.run_id }}"
+                {% if not loop.first %}hidden{% endif %}>
+                {% set result = row %}
+                {% include "partials/backtesting_results.html" %}
+            </div>
+        {% endfor %}
+    </div>
+{% elif not errors %}
+    {% set empty_title = "No successful backtests" %}
+    {% set empty_message = "Adjust the basket or date range and try again." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

@@ -1,0 +1,77 @@
+{% if errors %}
+    {% include "partials/backtesting_validation_error.html" %}
+{% elif preview %}
+    <article class="signal-preview-card">
+        <div class="signal-preview-header">
+            <div>
+                <span class="signal-preview-label">Signal</span>
+                {% set badge_text = preview.signal_type %}
+                {% set badge_tone = preview.action_tone %}
+                {% include "partials/status_badge.html" %}
+            </div>
+            {% if preview.stock_label %}
+                <span class="signal-preview-stock">{{ preview.stock_label }}</span>
+            {% endif %}
+        </div>
+
+        {% for warning in preview.warnings %}
+            {% set banner_message = warning %}
+            {% set banner_tone = "warning" %}
+            {% include "partials/info_banner.html" %}
+        {% endfor %}
+
+        <div class="summary-grid signal-preview-metrics">
+            <article class="metric-card">
+                <span class="metric-label">Confidence</span>
+                <strong class="metric-value">
+                    {% if preview.confidence_score is not none %}{{ preview.confidence_score | number(2) }}{% else %}—{% endif %}
+                </strong>
+            </article>
+            <article class="metric-card">
+                <span class="metric-label">Suggested price</span>
+                <strong class="metric-value">{{ preview.suggested_price | inr }}</strong>
+            </article>
+            <article class="metric-card">
+                <span class="metric-label">Suggested qty</span>
+                <strong class="metric-value">
+                    {% if preview.suggested_quantity is not none %}{{ preview.suggested_quantity | number(0) }}{% else %}—{% endif %}
+                </strong>
+            </article>
+            <article class="metric-card">
+                <span class="metric-label">Risk / trade</span>
+                <strong class="metric-value">
+                    {% if preview.risk_per_trade_pct is not none %}{{ preview.risk_per_trade_pct | number(1) }}%{% else %}—{% endif %}
+                </strong>
+            </article>
+        </div>
+
+        <div class="signal-preview-body">
+            <p><strong>Strategy:</strong> {{ preview.strategy_name }}</p>
+            {% if preview.reason %}
+                <p class="signal-reason">{{ preview.reason }}</p>
+            {% endif %}
+            {% if preview.stop_price is not none or preview.stop_pct is not none %}
+                <p class="analytics-caption">
+                    {% if preview.stop_price is not none %}Stop price: {{ preview.stop_price | inr }}{% endif %}
+                    {% if preview.stop_pct is not none %} · Stop %: {{ preview.stop_pct | number(2) }}{% endif %}
+                </p>
+            {% endif %}
+            {% if preview.persisted and preview.signal_id %}
+                <p class="analytics-caption">Saved as signal #{{ preview.signal_id }}. Activity log updated on refresh.</p>
+            {% else %}
+                <p class="analytics-caption">Preview only — generate signal to persist and track outcomes.</p>
+            {% endif %}
+        </div>
+
+        {% if preview.indicators %}
+            <details class="signal-indicators-details">
+                <summary>Indicators</summary>
+                <pre>{{ preview.indicators | tojson(indent=2) }}</pre>
+            </details>
+        {% endif %}
+    </article>
+{% else %}
+    {% set empty_title = "No signal yet" %}
+    {% set empty_message = "Select a stock and user strategy, then generate a signal." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

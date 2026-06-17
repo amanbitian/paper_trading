@@ -1,0 +1,16 @@
+<div class="summary-grid backtest-metric-grid">
+    {% set label = "Total Return" %}{% set value = result.total_return_pct | pct %}{% set tone = result.total_return_pct | tone %}{% include "partials/metric_card.html" %}
+    {% if result.cagr_pct is not none %}
+        {% set label = "CAGR" %}{% set value = result.cagr_pct | pct %}{% set tone = result.cagr_pct | tone %}{% include "partials/metric_card.html" %}
+    {% endif %}
+    {% set label = "Sharpe" %}{% set value = result.sharpe_ratio | number(2) %}{% include "partials/metric_card.html" %}
+    {% set label = "Max Drawdown" %}{% set value = (0 - result.max_drawdown_pct) | pct %}{% set tone = "negative" %}{% include "partials/metric_card.html" %}
+    {% set label = "Win Rate" %}{% set value = result.win_rate | pct %}{% include "partials/metric_card.html" %}
+    {% set label = "Trades" %}{% set value = result.total_trades %}{% include "partials/metric_card.html" %}
+    {% set label = "Fees" %}{% set value = result.total_charges | inr %}{% include "partials/metric_card.html" %}
+    {% set label = "Slippage" %}{% set value = result.slippage_cost | inr %}{% include "partials/metric_card.html" %}
+    {% set label = "Final Equity" %}{% set value = result.final_value | inr %}{% include "partials/metric_card.html" %}
+    {% if result.benchmark_return is not none %}
+        {% set label = "Benchmark Return" %}{% set value = result.benchmark_return | pct %}{% include "partials/metric_card.html" %}
+    {% endif %}
+</div>
