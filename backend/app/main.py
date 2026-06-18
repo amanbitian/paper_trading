@@ -24,9 +24,11 @@ from app.web_utils import templates
 from app.database import engine
 from app.limiter import limiter
 from app.utils import route_timing as _route_timing
+from app.auth_middleware import AuthMiddleware
 from app.routers import (
     ai,
     auth,
+    web_auth,
     backtest,
     data,
     index_funds,
@@ -49,7 +51,6 @@ from app.routers import (
     web_index_fund_partials,
     web_ai_think_tank_partials,
     web_explore_stock_partials,
-    web_legacy,
 )
 
 
@@ -111,8 +112,8 @@ def _ensure_price_index() -> None:
             conn.execute(
                 text(
                     """
-                    CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_sp_stock_dt_1d
-                    ON stock_prices (stock_id, price_datetime)
+                    CREATE INDEX CONCURRENTLY IF NOT EXISTS ix_stock_prices_1d_stock_datetime_desc
+                    ON stock_prices (stock_id, price_datetime DESC)
                     WHERE timeframe = '1d'
                     """
                 )
@@ -194,6 +195,34 @@ def _refresh_strategy_explainers_on_startup() -> None:
         logger.exception("Startup strategy explainer refresh failed (non-fatal)")
 
 
+def _refresh_stock_detail_snapshots_on_startup() -> None:
+    import time as _time
+    from app.database import SessionLocal
+    from app.services.web_explore_stock_helpers import refresh_stock_detail_snapshots_for_stocks
+
+    delay = max(0, int(settings.stock_detail_snapshot_startup_delay_seconds))
+    if delay:
+        _time.sleep(delay)
+    exchange = (settings.stock_detail_snapshot_startup_exchange or "").strip().upper() or None
+    limit = max(1, min(int(settings.stock_detail_snapshot_startup_limit or 25), 200))
+    try:
+        with SessionLocal() as db:
+            result = refresh_stock_detail_snapshots_for_stocks(
+                db,
+                exchange=exchange,
+                limit=limit,
+            )
+        logger.info(
+            "Startup stock detail snapshot refresh done: exchange=%s selected=%d refreshed=%d failed=%d",
+            exchange or "ALL",
+            result.get("selected", 0),
+            result.get("refreshed", 0),
+            result.get("failed", 0),
+        )
+    except Exception:
+        logger.exception("Startup stock detail snapshot refresh failed (non-fatal)")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     if settings.auto_migrate_on_start:
@@ -205,6 +234,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     threading.Thread(target=_run_news_sync_loop, daemon=True).start()
     if settings.strategy_explainer_refresh_on_start:
         threading.Thread(target=_refresh_strategy_explainers_on_startup, daemon=True).start()
+    if settings.stock_detail_snapshot_refresh_on_start:
+        threading.Thread(target=_refresh_stock_detail_snapshots_on_startup, daemon=True).start()
     yield
 
 
@@ -220,13 +251,18 @@ app.mount("/static", StaticFiles(directory=str(APP_DIR / "static")), name="stati
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8501", "http://127.0.0.1:8501"],
+    allow_origins=["http://localhost:8000", "http://127.0.0.1:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Authentication gate + persistent ("remember me") session handling for the
+# whole app. The middleware skips OPTIONS so CORS preflight is never blocked.
+app.add_middleware(AuthMiddleware)
+
 app.include_router(auth.router)
+app.include_router(web_auth.router)
 app.include_router(data.router)
 app.include_router(index_funds.router)
 app.include_router(market.router)
@@ -250,7 +286,6 @@ app.include_router(web_data_partials.router)
 app.include_router(web_index_fund_partials.router)
 app.include_router(web_ai_think_tank_partials.router)
 app.include_router(web_explore_stock_partials.router)
-app.include_router(web_legacy.router)
 
 
 @app.middleware("http")

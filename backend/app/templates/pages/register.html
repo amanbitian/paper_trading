@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title or "Create account" }} · Paper Trading App</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <style>
+        .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .auth-card { width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; }
+        .auth-card h1 { margin: 0 0 4px; font-size: 1.4rem; }
+        .auth-card .sub { color: var(--muted); margin: 0 0 24px; font-size: 0.9rem; }
+        .auth-field { margin-bottom: 14px; }
+        .auth-field label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+        .auth-field input { width: 100%; box-sizing: border-box; padding: 11px 12px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: var(--bg-soft); color: var(--text); font-size: 0.95rem; }
+        .auth-field input:focus { outline: none; border-color: var(--accent); }
+        .auth-field .hint { color: var(--muted); font-size: 0.75rem; margin-top: 4px; }
+        .auth-btn { width: 100%; padding: 12px; border: none; border-radius: var(--radius-sm); background: var(--accent);
+            color: #fff; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-top: 6px; }
+        .auth-btn:hover { background: var(--accent-hover); }
+        .auth-error { background: rgba(255, 81, 72, 0.12); border: 1px solid var(--danger); color: var(--text);
+            padding: 10px 12px; border-radius: var(--radius-sm); font-size: 0.85rem; margin-bottom: 18px; }
+        .auth-foot { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 20px; }
+        .auth-foot a { color: var(--info); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="auth-wrap">
+        <div class="auth-card">
+            <h1>Create your account</h1>
+            <p class="sub">Start tracking paper trades on Indian equities.</p>
+            {% if error %}<div class="auth-error">{{ error }}</div>{% endif %}
+            <form method="post" action="/web/register">
+                <div class="auth-field">
+                    <label for="name">Full name</label>
+                    <input id="name" name="name" type="text" autocomplete="name" required
+                           value="{{ form.name or '' }}">
+                </div>
+                <div class="auth-field">
+                    <label for="user_name">Username</label>
+                    <input id="user_name" name="user_name" type="text" autocomplete="username" required
+                           value="{{ form.user_name or '' }}">
+                    <div class="hint">Letters, numbers and underscores. Shown as your @handle.</div>
+                </div>
+                <div class="auth-field">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" autocomplete="email" required
+                           value="{{ form.email or '' }}">
+                </div>
+                <div class="auth-field">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" autocomplete="new-password" required>
+                    <div class="hint">At least 8 characters.</div>
+                </div>
+                <div class="auth-field">
+                    <label for="starting_cash">Starting paper cash (₹)</label>
+                    <input id="starting_cash" name="starting_cash" type="number" min="0" step="1"
+                           value="{{ form.starting_cash or '1000000' }}">
+                </div>
+                <button class="auth-btn" type="submit">Create account</button>
+            </form>
+            <p class="auth-foot">Already have an account? <a href="/web/login">Log in</a></p>
+        </div>
+    </div>
+</body>
+</html>

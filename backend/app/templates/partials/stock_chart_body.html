@@ -1,0 +1,10 @@
+{% if chart.has_chart %}
+    <div class="stock-chart-plot-wrap">
+        <div id="stock-detail-ohlc-chart" class="chart-plot stock-chart-plot"></div>
+    </div>
+    <div class="plotly-payload" data-plotly-json data-target="stock-detail-ohlc-chart" hidden aria-hidden="true">{{ chart.chart_json_str }}</div>
+{% else %}
+    {% set empty_title = "No stored candles" %}
+    {% set empty_message = "Sync or ingest daily prices for this symbol, then reopen the stock detail page." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

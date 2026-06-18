@@ -1,5 +1,9 @@
 # Paper Trading App — Detailed Knowledge Transfer (KT)
 
+> **⚠️ Streamlit has been removed.** The frontend is now the server-rendered
+> FastAPI + Jinja/HTMX web UI (`backend/app/templates`, `backend/app/static`).
+> Any Streamlit / `frontend/` references below are historical.
+
 > **Audience:** New interns and engineers joining this project.  
 > **Purpose:** End-to-end system design, data flows, database schema, algorithms, and how to run every part of the stack.  
 > **Disclaimer:** This is a **paper trading / educational** tool. It does not provide financial advice, live exchange connectivity, or production brokerage execution.

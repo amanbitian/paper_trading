@@ -18021,6 +18021,36 @@
       "symbol": "LYPSAGEMS",
       "updated_at": "2026-06-18T00:01:07.746424+00:00"
     },
+    "NSE:M&M": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 635,
+      "source_url": "https://www.screener.in/company/M&M/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 84
+      },
+      "symbol": "M&M",
+      "updated_at": "2026-06-18T00:06:08.300141+00:00"
+    },
+    "NSE:M&MFIN": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 563,
+      "source_url": "https://www.screener.in/company/M&MFIN/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 12,
+        "shareholding": 72
+      },
+      "symbol": "M&MFIN",
+      "updated_at": "2026-06-18T00:06:11.160964+00:00"
+    },
     "NSE:MAANALU": {
       "exchange": "NSE",
       "fetch_mode": "company_html",
@@ -19288,6 +19318,1958 @@
       "symbol": "MGL",
       "updated_at": "2026-06-18T00:05:30.274901+00:00"
     },
+    "NSE:MHLXMIRU": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 450,
+      "source_url": "https://www.screener.in/company/MHLXMIRU/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 80,
+        "cashflow": 42,
+        "income_statement": 227,
+        "ratios": 41,
+        "shareholding": 60
+      },
+      "symbol": "MHLXMIRU",
+      "updated_at": "2026-06-18T00:05:33.139580+00:00"
+    },
+    "NSE:MHRIL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 619,
+      "source_url": "https://www.screener.in/company/MHRIL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 68,
+        "shareholding": 72
+      },
+      "symbol": "MHRIL",
+      "updated_at": "2026-06-18T00:05:36.081861+00:00"
+    },
+    "NSE:MICEL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 599,
+      "source_url": "https://www.screener.in/company/MICEL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 48
+      },
+      "symbol": "MICEL",
+      "updated_at": "2026-06-18T00:05:39.038438+00:00"
+    },
+    "NSE:MIDHANI": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 468,
+      "source_url": "https://www.screener.in/company/MIDHANI/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 80,
+        "cashflow": 48,
+        "income_statement": 239,
+        "ratios": 41,
+        "shareholding": 60
+      },
+      "symbol": "MIDHANI",
+      "updated_at": "2026-06-18T00:05:41.955983+00:00"
+    },
+    "NSE:MIDWESTLTD": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 280,
+      "source_url": "https://www.screener.in/company/MIDWESTLTD/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 60,
+        "cashflow": 36,
+        "income_statement": 149,
+        "ratios": 25,
+        "shareholding": 10
+      },
+      "symbol": "MIDWESTLTD",
+      "updated_at": "2026-06-18T00:05:44.753002+00:00"
+    },
+    "NSE:MINDACORP": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 623,
+      "source_url": "https://www.screener.in/company/MINDACORP/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 72
+      },
+      "symbol": "MINDACORP",
+      "updated_at": "2026-06-18T00:05:47.609457+00:00"
+    },
+    "NSE:MINDTECK": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 599,
+      "source_url": "https://www.screener.in/company/MINDTECK/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 72
+      },
+      "symbol": "MINDTECK",
+      "updated_at": "2026-06-18T00:05:50.525248+00:00"
+    },
+    "NSE:MIRCELECTR": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 429,
+      "source_url": "https://www.screener.in/company/MIRCELECTR/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 110,
+        "cashflow": 66,
+        "income_statement": 128,
+        "ratios": 65,
+        "shareholding": 60
+      },
+      "symbol": "MIRCELECTR",
+      "updated_at": "2026-06-18T00:05:53.548065+00:00"
+    },
+    "NSE:MIRZAINT": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 604,
+      "source_url": "https://www.screener.in/company/MIRZAINT/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 66,
+        "income_statement": 287,
+        "ratios": 71,
+        "shareholding": 60
+      },
+      "symbol": "MIRZAINT",
+      "updated_at": "2026-06-18T00:05:56.540468+00:00"
+    },
+    "NSE:MITCON": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 524,
+      "source_url": "https://www.screener.in/company/MITCON/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 100,
+        "cashflow": 60,
+        "income_statement": 263,
+        "ratios": 41,
+        "shareholding": 60
+      },
+      "symbol": "MITCON",
+      "updated_at": "2026-06-18T00:05:59.552554+00:00"
+    },
+    "NSE:MITTAL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 185,
+      "source_url": "https://www.screener.in/company/MITTAL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 20,
+        "cashflow": 6,
+        "income_statement": 112,
+        "ratios": 11,
+        "shareholding": 36
+      },
+      "symbol": "MITTAL",
+      "updated_at": "2026-06-18T00:06:02.394415+00:00"
+    },
+    "NSE:MKPL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 48,
+      "source_url": "https://www.screener.in/company/MKPL/consolidated/",
+      "statement_counts": {
+        "shareholding": 48
+      },
+      "symbol": "MKPL",
+      "updated_at": "2026-06-18T00:06:05.190494+00:00"
+    },
+    "NSE:MMFL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 610,
+      "source_url": "https://www.screener.in/company/MMFL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 71,
+        "shareholding": 60
+      },
+      "symbol": "MMFL",
+      "updated_at": "2026-06-18T00:06:14.072393+00:00"
+    },
+    "NSE:MMP": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 610,
+      "source_url": "https://www.screener.in/company/MMP/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 71,
+        "shareholding": 60
+      },
+      "symbol": "MMP",
+      "updated_at": "2026-06-18T00:06:16.976553+00:00"
+    },
+    "NSE:MMTC": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 607,
+      "source_url": "https://www.screener.in/company/MMTC/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 286,
+        "ratios": 69,
+        "shareholding": 60
+      },
+      "symbol": "MMTC",
+      "updated_at": "2026-06-18T00:06:19.914750+00:00"
+    },
+    "NSE:MMWL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 597,
+      "source_url": "https://www.screener.in/company/MMWL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 70,
+        "shareholding": 48
+      },
+      "symbol": "MMWL",
+      "updated_at": "2026-06-18T00:06:22.888436+00:00"
+    },
+    "NSE:MOBIKWIK": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 342,
+      "source_url": "https://www.screener.in/company/MOBIKWIK/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 60,
+        "cashflow": 36,
+        "income_statement": 193,
+        "ratios": 23,
+        "shareholding": 30
+      },
+      "symbol": "MOBIKWIK",
+      "updated_at": "2026-06-18T00:06:25.747111+00:00"
+    },
+    "NSE:MODINATUR": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 394,
+      "source_url": "https://www.screener.in/company/MODINATUR/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 60,
+        "cashflow": 36,
+        "income_statement": 215,
+        "ratios": 35,
+        "shareholding": 48
+      },
+      "symbol": "MODINATUR",
+      "updated_at": "2026-06-18T00:06:28.764326+00:00"
+    },
+    "NSE:MODIRUBBER": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 600,
+      "source_url": "https://www.screener.in/company/MODIRUBBER/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 61,
+        "shareholding": 60
+      },
+      "symbol": "MODIRUBBER",
+      "updated_at": "2026-06-18T00:06:31.783519+00:00"
+    },
+    "NSE:MODIS": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 293,
+      "source_url": "https://www.screener.in/company/MODIS/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 60,
+        "cashflow": 36,
+        "income_statement": 104,
+        "ratios": 33,
+        "shareholding": 60
+      },
+      "symbol": "MODIS",
+      "updated_at": "2026-06-18T00:06:34.662257+00:00"
+    },
+    "NSE:MODISONLTD": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 575,
+      "source_url": "https://www.screener.in/company/MODISONLTD/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 110,
+        "cashflow": 66,
+        "income_statement": 275,
+        "ratios": 64,
+        "shareholding": 60
+      },
+      "symbol": "MODISONLTD",
+      "updated_at": "2026-06-18T00:06:37.649223+00:00"
+    },
+    "NSE:MODTHREAD": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 143,
+      "source_url": "https://www.screener.in/company/MODTHREAD/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 20,
+        "cashflow": 12,
+        "income_statement": 52,
+        "ratios": 11,
+        "shareholding": 48
+      },
+      "symbol": "MODTHREAD",
+      "updated_at": "2026-06-18T00:06:40.512827+00:00"
+    },
+    "NSE:MOHITIND": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 552,
+      "source_url": "https://www.screener.in/company/MOHITIND/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 110,
+        "cashflow": 66,
+        "income_statement": 275,
+        "ratios": 65,
+        "shareholding": 36
+      },
+      "symbol": "MOHITIND",
+      "updated_at": "2026-06-18T00:06:43.597877+00:00"
+    },
+    "NSE:MOIL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 384,
+      "source_url": "https://www.screener.in/company/MOIL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 70,
+        "cashflow": 36,
+        "income_statement": 193,
+        "ratios": 25,
+        "shareholding": 60
+      },
+      "symbol": "MOIL",
+      "updated_at": "2026-06-18T00:06:46.558842+00:00"
+    },
+    "NSE:MOKSH": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 60,
+      "source_url": "https://www.screener.in/company/MOKSH/consolidated/",
+      "statement_counts": {
+        "shareholding": 60
+      },
+      "symbol": "MOKSH",
+      "updated_at": "2026-06-18T00:06:49.372032+00:00"
+    },
+    "NSE:MOL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 452,
+      "source_url": "https://www.screener.in/company/MOL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 70,
+        "cashflow": 42,
+        "income_statement": 227,
+        "ratios": 41,
+        "shareholding": 72
+      },
+      "symbol": "MOL",
+      "updated_at": "2026-06-18T00:06:52.311939+00:00"
+    },
+    "NSE:MOLDTECH": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 587,
+      "source_url": "https://www.screener.in/company/MOLDTECH/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 60
+      },
+      "symbol": "MOLDTECH",
+      "updated_at": "2026-06-18T00:06:55.250717+00:00"
+    },
+    "NSE:MOLDTKPAC": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 440,
+      "source_url": "https://www.screener.in/company/MOLDTKPAC/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 70,
+        "cashflow": 42,
+        "income_statement": 227,
+        "ratios": 41,
+        "shareholding": 60
+      },
+      "symbol": "MOLDTKPAC",
+      "updated_at": "2026-06-18T00:06:58.174640+00:00"
+    },
+    "NSE:MONARCH": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 599,
+      "source_url": "https://www.screener.in/company/MONARCH/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 72
+      },
+      "symbol": "MONARCH",
+      "updated_at": "2026-06-18T00:07:01.094524+00:00"
+    },
+    "NSE:MONEYBOXX": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 60,
+      "source_url": "https://www.screener.in/company/MONEYBOXX/consolidated/",
+      "statement_counts": {
+        "shareholding": 60
+      },
+      "symbol": "MONEYBOXX",
+      "updated_at": "2026-06-18T00:07:03.904746+00:00"
+    },
+    "NSE:MONTECARLO": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 406,
+      "source_url": "https://www.screener.in/company/MONTECARLO/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 60,
+        "cashflow": 36,
+        "income_statement": 215,
+        "ratios": 35,
+        "shareholding": 60
+      },
+      "symbol": "MONTECARLO",
+      "updated_at": "2026-06-18T00:07:06.764545+00:00"
+    },
+    "NSE:MORARJEE": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 619,
+      "source_url": "https://www.screener.in/company/MORARJEE/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 130,
+        "cashflow": 72,
+        "income_statement": 285,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "MORARJEE",
+      "updated_at": "2026-06-18T00:07:09.639699+00:00"
+    },
+    "NSE:MOREPENLAB": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 623,
+      "source_url": "https://www.screener.in/company/MOREPENLAB/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 72
+      },
+      "symbol": "MOREPENLAB",
+      "updated_at": "2026-06-18T00:07:12.582674+00:00"
+    },
+    "NSE:MOSCHIP": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 599,
+      "source_url": "https://www.screener.in/company/MOSCHIP/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 60,
+        "shareholding": 60
+      },
+      "symbol": "MOSCHIP",
+      "updated_at": "2026-06-18T00:07:15.502015+00:00"
+    },
+    "NSE:MOTHERSON": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 635,
+      "source_url": "https://www.screener.in/company/MOTHERSON/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 84
+      },
+      "symbol": "MOTHERSON",
+      "updated_at": "2026-06-18T00:07:18.575701+00:00"
+    },
+    "NSE:MOTILALOFS": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 588,
+      "source_url": "https://www.screener.in/company/MOTILALOFS/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 49,
+        "shareholding": 60
+      },
+      "symbol": "MOTILALOFS",
+      "updated_at": "2026-06-18T00:07:21.595822+00:00"
+    },
+    "NSE:MOTISONS": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 50,
+      "source_url": "https://www.screener.in/company/MOTISONS/consolidated/",
+      "statement_counts": {
+        "shareholding": 50
+      },
+      "symbol": "MOTISONS",
+      "updated_at": "2026-06-18T00:07:24.420026+00:00"
+    },
+    "NSE:MOTOGENFIN": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 585,
+      "source_url": "https://www.screener.in/company/MOTOGENFIN/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 286,
+        "ratios": 47,
+        "shareholding": 60
+      },
+      "symbol": "MOTOGENFIN",
+      "updated_at": "2026-06-18T00:07:27.381778+00:00"
+    },
+    "NSE:MPHASIS": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 599,
+      "source_url": "https://www.screener.in/company/MPHASIS/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 72
+      },
+      "symbol": "MPHASIS",
+      "updated_at": "2026-06-18T00:07:30.372065+00:00"
+    },
+    "NSE:MPSLTD": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 599,
+      "source_url": "https://www.screener.in/company/MPSLTD/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 72
+      },
+      "symbol": "MPSLTD",
+      "updated_at": "2026-06-18T00:07:33.461827+00:00"
+    },
+    "NSE:MRF": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/MRF/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "MRF",
+      "updated_at": "2026-06-18T00:07:36.474902+00:00"
+    },
+    "NSE:MRPL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 623,
+      "source_url": "https://www.screener.in/company/MRPL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 72
+      },
+      "symbol": "MRPL",
+      "updated_at": "2026-06-18T00:07:39.805923+00:00"
+    },
+    "NSE:MSPL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/MSPL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "MSPL",
+      "updated_at": "2026-06-18T00:07:42.859811+00:00"
+    },
+    "NSE:MSTCLTD": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 605,
+      "source_url": "https://www.screener.in/company/MSTCLTD/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 66,
+        "shareholding": 60
+      },
+      "symbol": "MSTCLTD",
+      "updated_at": "2026-06-18T00:07:45.884632+00:00"
+    },
+    "NSE:MSUMI": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 72,
+      "source_url": "https://www.screener.in/company/MSUMI/consolidated/",
+      "statement_counts": {
+        "shareholding": 72
+      },
+      "symbol": "MSUMI",
+      "updated_at": "2026-06-18T00:07:48.689579+00:00"
+    },
+    "NSE:MTARTECH": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 440,
+      "source_url": "https://www.screener.in/company/MTARTECH/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 70,
+        "cashflow": 42,
+        "income_statement": 227,
+        "ratios": 41,
+        "shareholding": 60
+      },
+      "symbol": "MTARTECH",
+      "updated_at": "2026-06-18T00:07:51.621626+00:00"
+    },
+    "NSE:MTEDUCARE": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 563,
+      "source_url": "https://www.screener.in/company/MTEDUCARE/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 36
+      },
+      "symbol": "MTEDUCARE",
+      "updated_at": "2026-06-18T00:07:54.675771+00:00"
+    },
+    "NSE:MTNL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 587,
+      "source_url": "https://www.screener.in/company/MTNL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 60
+      },
+      "symbol": "MTNL",
+      "updated_at": "2026-06-18T00:07:57.664955+00:00"
+    },
+    "NSE:MUFIN": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 268,
+      "source_url": "https://www.screener.in/company/MUFIN/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 30,
+        "cashflow": 18,
+        "income_statement": 157,
+        "ratios": 3,
+        "shareholding": 60
+      },
+      "symbol": "MUFIN",
+      "updated_at": "2026-06-18T00:08:00.542026+00:00"
+    },
+    "NSE:MUFTI": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 340,
+      "source_url": "https://www.screener.in/company/MUFTI/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 50,
+        "cashflow": 30,
+        "income_statement": 181,
+        "ratios": 29,
+        "shareholding": 50
+      },
+      "symbol": "MUFTI",
+      "updated_at": "2026-06-18T00:08:03.446987+00:00"
+    },
+    "NSE:MUKANDLTD": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/MUKANDLTD/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "MUKANDLTD",
+      "updated_at": "2026-06-18T00:08:06.380908+00:00"
+    },
+    "NSE:MUKKA": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 456,
+      "source_url": "https://www.screener.in/company/MUKKA/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 80,
+        "cashflow": 48,
+        "income_statement": 236,
+        "ratios": 47,
+        "shareholding": 45
+      },
+      "symbol": "MUKKA",
+      "updated_at": "2026-06-18T00:08:09.271012+00:00"
+    },
+    "NSE:MUKTAARTS": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 579,
+      "source_url": "https://www.screener.in/company/MUKTAARTS/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 52,
+        "shareholding": 48
+      },
+      "symbol": "MUKTAARTS",
+      "updated_at": "2026-06-18T00:08:12.173385+00:00"
+    },
+    "NSE:MUNJALAU": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 474,
+      "source_url": "https://www.screener.in/company/MUNJALAU/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 80,
+        "cashflow": 48,
+        "income_statement": 239,
+        "ratios": 47,
+        "shareholding": 60
+      },
+      "symbol": "MUNJALAU",
+      "updated_at": "2026-06-18T00:08:15.092477+00:00"
+    },
+    "NSE:MUNJALSHOW": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 60,
+      "source_url": "https://www.screener.in/company/MUNJALSHOW/consolidated/",
+      "statement_counts": {
+        "shareholding": 60
+      },
+      "symbol": "MUNJALSHOW",
+      "updated_at": "2026-06-18T00:08:17.923387+00:00"
+    },
+    "NSE:MURUDCERA": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 393,
+      "source_url": "https://www.screener.in/company/MURUDCERA/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 60,
+        "cashflow": 36,
+        "income_statement": 215,
+        "ratios": 34,
+        "shareholding": 48
+      },
+      "symbol": "MURUDCERA",
+      "updated_at": "2026-06-18T00:08:20.883408+00:00"
+    },
+    "NSE:MUTHOOTCAP": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 60,
+      "source_url": "https://www.screener.in/company/MUTHOOTCAP/consolidated/",
+      "statement_counts": {
+        "shareholding": 60
+      },
+      "symbol": "MUTHOOTCAP",
+      "updated_at": "2026-06-18T00:08:23.702162+00:00"
+    },
+    "NSE:MUTHOOTFIN": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 551,
+      "source_url": "https://www.screener.in/company/MUTHOOTFIN/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 12,
+        "shareholding": 60
+      },
+      "symbol": "MUTHOOTFIN",
+      "updated_at": "2026-06-18T00:08:26.694140+00:00"
+    },
+    "NSE:MUTHOOTMF": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 60,
+      "source_url": "https://www.screener.in/company/MUTHOOTMF/consolidated/",
+      "statement_counts": {
+        "shareholding": 60
+      },
+      "symbol": "MUTHOOTMF",
+      "updated_at": "2026-06-18T00:08:29.522280+00:00"
+    },
+    "NSE:MVGJL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 55,
+      "source_url": "https://www.screener.in/company/MVGJL/consolidated/",
+      "statement_counts": {
+        "shareholding": 55
+      },
+      "symbol": "MVGJL",
+      "updated_at": "2026-06-18T00:08:32.348844+00:00"
+    },
+    "NSE:MWL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 406,
+      "source_url": "https://www.screener.in/company/MWL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 60,
+        "cashflow": 36,
+        "income_statement": 215,
+        "ratios": 35,
+        "shareholding": 60
+      },
+      "symbol": "MWL",
+      "updated_at": "2026-06-18T00:08:35.306346+00:00"
+    },
+    "NSE:NACLIND": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NACLIND/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NACLIND",
+      "updated_at": "2026-06-18T00:08:38.277850+00:00"
+    },
+    "NSE:NAGAFERT": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 616,
+      "source_url": "https://www.screener.in/company/NAGAFERT/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 130,
+        "cashflow": 72,
+        "income_statement": 283,
+        "ratios": 71,
+        "shareholding": 60
+      },
+      "symbol": "NAGAFERT",
+      "updated_at": "2026-06-18T00:08:41.205911+00:00"
+    },
+    "NSE:NAGREEKCAP": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 48,
+      "source_url": "https://www.screener.in/company/NAGREEKCAP/consolidated/",
+      "statement_counts": {
+        "shareholding": 48
+      },
+      "symbol": "NAGREEKCAP",
+      "updated_at": "2026-06-18T00:08:44.015246+00:00"
+    },
+    "NSE:NAGREEKEXP": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 60,
+      "source_url": "https://www.screener.in/company/NAGREEKEXP/consolidated/",
+      "statement_counts": {
+        "shareholding": 60
+      },
+      "symbol": "NAGREEKEXP",
+      "updated_at": "2026-06-18T00:08:46.800982+00:00"
+    },
+    "NSE:NAHARCAP": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 586,
+      "source_url": "https://www.screener.in/company/NAHARCAP/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 47,
+        "shareholding": 60
+      },
+      "symbol": "NAHARCAP",
+      "updated_at": "2026-06-18T00:08:49.738084+00:00"
+    },
+    "NSE:NAHARINDUS": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 610,
+      "source_url": "https://www.screener.in/company/NAHARINDUS/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 71,
+        "shareholding": 60
+      },
+      "symbol": "NAHARINDUS",
+      "updated_at": "2026-06-18T00:08:52.672646+00:00"
+    },
+    "NSE:NAHARPOLY": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 604,
+      "source_url": "https://www.screener.in/company/NAHARPOLY/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 66,
+        "income_statement": 287,
+        "ratios": 71,
+        "shareholding": 60
+      },
+      "symbol": "NAHARPOLY",
+      "updated_at": "2026-06-18T00:08:55.588578+00:00"
+    },
+    "NSE:NAHARSPING": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 60,
+      "source_url": "https://www.screener.in/company/NAHARSPING/consolidated/",
+      "statement_counts": {
+        "shareholding": 60
+      },
+      "symbol": "NAHARSPING",
+      "updated_at": "2026-06-18T00:08:58.399404+00:00"
+    },
+    "NSE:NAM-INDIA": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 587,
+      "source_url": "https://www.screener.in/company/NAM-INDIA/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 60
+      },
+      "symbol": "NAM-INDIA",
+      "updated_at": "2026-06-18T00:09:01.447175+00:00"
+    },
+    "NSE:NARMADA": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 60,
+      "source_url": "https://www.screener.in/company/NARMADA/consolidated/",
+      "statement_counts": {
+        "shareholding": 60
+      },
+      "symbol": "NARMADA",
+      "updated_at": "2026-06-18T00:09:04.252056+00:00"
+    },
+    "NSE:NATCAPSUQ": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 496,
+      "source_url": "https://www.screener.in/company/NATCAPSUQ/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 90,
+        "cashflow": 54,
+        "income_statement": 251,
+        "ratios": 53,
+        "shareholding": 48
+      },
+      "symbol": "NATCAPSUQ",
+      "updated_at": "2026-06-18T00:09:07.176739+00:00"
+    },
+    "NSE:NATCOPHARM": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NATCOPHARM/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NATCOPHARM",
+      "updated_at": "2026-06-18T00:09:10.235343+00:00"
+    },
+    "NSE:NATHBIOGEN": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 419,
+      "source_url": "https://www.screener.in/company/NATHBIOGEN/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 70,
+        "cashflow": 30,
+        "income_statement": 227,
+        "ratios": 32,
+        "shareholding": 60
+      },
+      "symbol": "NATHBIOGEN",
+      "updated_at": "2026-06-18T00:09:13.175479+00:00"
+    },
+    "NSE:NATIONALUM": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 610,
+      "source_url": "https://www.screener.in/company/NATIONALUM/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 71,
+        "shareholding": 60
+      },
+      "symbol": "NATIONALUM",
+      "updated_at": "2026-06-18T00:09:16.190953+00:00"
+    },
+    "NSE:NATIONSTD": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 36,
+      "source_url": "https://www.screener.in/company/NATIONSTD/consolidated/",
+      "statement_counts": {
+        "shareholding": 36
+      },
+      "symbol": "NATIONSTD",
+      "updated_at": "2026-06-18T00:09:18.986734+00:00"
+    },
+    "NSE:NAUKRI": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NAUKRI/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 84
+      },
+      "symbol": "NAUKRI",
+      "updated_at": "2026-06-18T00:09:22.035288+00:00"
+    },
+    "NSE:NAVA": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NAVA/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NAVA",
+      "updated_at": "2026-06-18T00:09:25.063945+00:00"
+    },
+    "NSE:NAVINFLUOR": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NAVINFLUOR/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NAVINFLUOR",
+      "updated_at": "2026-06-18T00:09:28.051973+00:00"
+    },
+    "NSE:NAVKARCORP": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 396,
+      "source_url": "https://www.screener.in/company/NAVKARCORP/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 70,
+        "cashflow": 36,
+        "income_statement": 204,
+        "ratios": 26,
+        "shareholding": 60
+      },
+      "symbol": "NAVKARCORP",
+      "updated_at": "2026-06-18T00:09:30.974487+00:00"
+    },
+    "NSE:NAVKARURB": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 48,
+      "source_url": "https://www.screener.in/company/NAVKARURB/consolidated/",
+      "statement_counts": {
+        "shareholding": 48
+      },
+      "symbol": "NAVKARURB",
+      "updated_at": "2026-06-18T00:09:33.814058+00:00"
+    },
+    "NSE:NAVNETEDUL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NAVNETEDUL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NAVNETEDUL",
+      "updated_at": "2026-06-18T00:09:36.805128+00:00"
+    },
+    "NSE:NAZARA": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 556,
+      "source_url": "https://www.screener.in/company/NAZARA/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 110,
+        "cashflow": 66,
+        "income_statement": 275,
+        "ratios": 45,
+        "shareholding": 60
+      },
+      "symbol": "NAZARA",
+      "updated_at": "2026-06-18T00:09:39.814455+00:00"
+    },
+    "NSE:NBCC": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 589,
+      "source_url": "https://www.screener.in/company/NBCC/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 50,
+        "shareholding": 60
+      },
+      "symbol": "NBCC",
+      "updated_at": "2026-06-18T00:09:42.806487+00:00"
+    },
+    "NSE:NBIFIN": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 183,
+      "source_url": "https://www.screener.in/company/NBIFIN/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 30,
+        "cashflow": 12,
+        "income_statement": 79,
+        "ratios": 2,
+        "shareholding": 60
+      },
+      "symbol": "NBIFIN",
+      "updated_at": "2026-06-18T00:09:45.772626+00:00"
+    },
+    "NSE:NCC": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NCC/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NCC",
+      "updated_at": "2026-06-18T00:09:48.800970+00:00"
+    },
+    "NSE:NCLIND": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 486,
+      "source_url": "https://www.screener.in/company/NCLIND/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 80,
+        "cashflow": 48,
+        "income_statement": 239,
+        "ratios": 47,
+        "shareholding": 72
+      },
+      "symbol": "NCLIND",
+      "updated_at": "2026-06-18T00:09:51.796441+00:00"
+    },
+    "NSE:NDGL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 510,
+      "source_url": "https://www.screener.in/company/NDGL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 110,
+        "cashflow": 66,
+        "income_statement": 275,
+        "ratios": 11,
+        "shareholding": 48
+      },
+      "symbol": "NDGL",
+      "updated_at": "2026-06-18T00:09:54.741468+00:00"
+    },
+    "NSE:NDL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 72,
+      "source_url": "https://www.screener.in/company/NDL/consolidated/",
+      "statement_counts": {
+        "shareholding": 72
+      },
+      "symbol": "NDL",
+      "updated_at": "2026-06-18T00:09:57.629110+00:00"
+    },
+    "NSE:NDLVENTURE": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 601,
+      "source_url": "https://www.screener.in/company/NDLVENTURE/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 130,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 52,
+        "shareholding": 60
+      },
+      "symbol": "NDLVENTURE",
+      "updated_at": "2026-06-18T00:10:00.723820+00:00"
+    },
+    "NSE:NDRAUTO": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 440,
+      "source_url": "https://www.screener.in/company/NDRAUTO/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 70,
+        "cashflow": 42,
+        "income_statement": 227,
+        "ratios": 41,
+        "shareholding": 60
+      },
+      "symbol": "NDRAUTO",
+      "updated_at": "2026-06-18T00:10:03.705524+00:00"
+    },
+    "NSE:NDTV": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 587,
+      "source_url": "https://www.screener.in/company/NDTV/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 60
+      },
+      "symbol": "NDTV",
+      "updated_at": "2026-06-18T00:10:06.610576+00:00"
+    },
+    "NSE:NEAGI": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 598,
+      "source_url": "https://www.screener.in/company/NEAGI/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 71,
+        "shareholding": 48
+      },
+      "symbol": "NEAGI",
+      "updated_at": "2026-06-18T00:10:09.549261+00:00"
+    },
+    "NSE:NECCLTD": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 328,
+      "source_url": "https://www.screener.in/company/NECCLTD/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 50,
+        "cashflow": 24,
+        "income_statement": 191,
+        "ratios": 15,
+        "shareholding": 48
+      },
+      "symbol": "NECCLTD",
+      "updated_at": "2026-06-18T00:10:12.408167+00:00"
+    },
+    "NSE:NECLIFE": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 620,
+      "source_url": "https://www.screener.in/company/NECLIFE/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 286,
+        "ratios": 70,
+        "shareholding": 72
+      },
+      "symbol": "NECLIFE",
+      "updated_at": "2026-06-18T00:10:15.311644+00:00"
+    },
+    "NSE:NELCAST": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NELCAST/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NELCAST",
+      "updated_at": "2026-06-18T00:10:18.226676+00:00"
+    },
+    "NSE:NELCO": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 623,
+      "source_url": "https://www.screener.in/company/NELCO/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 72
+      },
+      "symbol": "NELCO",
+      "updated_at": "2026-06-18T00:10:21.201281+00:00"
+    },
+    "NSE:NEOGEN": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NEOGEN/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NEOGEN",
+      "updated_at": "2026-06-18T00:10:24.139614+00:00"
+    },
+    "NSE:NEPHROPLUS": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 264,
+      "source_url": "https://www.screener.in/company/NEPHROPLUS/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 60,
+        "cashflow": 36,
+        "income_statement": 127,
+        "ratios": 31,
+        "shareholding": 10
+      },
+      "symbol": "NEPHROPLUS",
+      "updated_at": "2026-06-18T00:10:27.014751+00:00"
+    },
+    "NSE:NESCO": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 605,
+      "source_url": "https://www.screener.in/company/NESCO/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 66,
+        "shareholding": 60
+      },
+      "symbol": "NESCO",
+      "updated_at": "2026-06-18T00:10:30.048093+00:00"
+    },
+    "NSE:NESTLEIND": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 272,
+      "source_url": "https://www.screener.in/company/NESTLEIND/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 30,
+        "cashflow": 18,
+        "income_statement": 147,
+        "ratios": 17,
+        "shareholding": 60
+      },
+      "symbol": "NESTLEIND",
+      "updated_at": "2026-06-18T00:10:32.953731+00:00"
+    },
+    "NSE:NETWEB": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 55,
+      "source_url": "https://www.screener.in/company/NETWEB/consolidated/",
+      "statement_counts": {
+        "shareholding": 55
+      },
+      "symbol": "NETWEB",
+      "updated_at": "2026-06-18T00:10:35.808280+00:00"
+    },
+    "NSE:NETWORK18": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 587,
+      "source_url": "https://www.screener.in/company/NETWORK18/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 60
+      },
+      "symbol": "NETWORK18",
+      "updated_at": "2026-06-18T00:10:38.800009+00:00"
+    },
+    "NSE:NEUEON": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 583,
+      "source_url": "https://www.screener.in/company/NEUEON/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 286,
+        "ratios": 57,
+        "shareholding": 48
+      },
+      "symbol": "NEUEON",
+      "updated_at": "2026-06-18T00:10:41.785707+00:00"
+    },
+    "NSE:NEULANDLAB": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 623,
+      "source_url": "https://www.screener.in/company/NEULANDLAB/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 72
+      },
+      "symbol": "NEULANDLAB",
+      "updated_at": "2026-06-18T00:10:44.825870+00:00"
+    },
+    "NSE:NEWGEN": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 598,
+      "source_url": "https://www.screener.in/company/NEWGEN/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 47,
+        "shareholding": 72
+      },
+      "symbol": "NEWGEN",
+      "updated_at": "2026-06-18T00:10:47.828177+00:00"
+    },
+    "NSE:NEXTMEDIA": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 575,
+      "source_url": "https://www.screener.in/company/NEXTMEDIA/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 48
+      },
+      "symbol": "NEXTMEDIA",
+      "updated_at": "2026-06-18T00:10:50.827508+00:00"
+    },
+    "NSE:NFL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 610,
+      "source_url": "https://www.screener.in/company/NFL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 71,
+        "shareholding": 60
+      },
+      "symbol": "NFL",
+      "updated_at": "2026-06-18T00:10:53.922724+00:00"
+    },
+    "NSE:NGIL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 48,
+      "source_url": "https://www.screener.in/company/NGIL/consolidated/",
+      "statement_counts": {
+        "shareholding": 48
+      },
+      "symbol": "NGIL",
+      "updated_at": "2026-06-18T00:10:56.733560+00:00"
+    },
+    "NSE:NGLFINE": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 474,
+      "source_url": "https://www.screener.in/company/NGLFINE/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 80,
+        "cashflow": 48,
+        "income_statement": 239,
+        "ratios": 47,
+        "shareholding": 60
+      },
+      "symbol": "NGLFINE",
+      "updated_at": "2026-06-18T00:10:59.722772+00:00"
+    },
+    "NSE:NH": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 635,
+      "source_url": "https://www.screener.in/company/NH/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 84
+      },
+      "symbol": "NH",
+      "updated_at": "2026-06-18T00:11:02.756169+00:00"
+    },
+    "NSE:NHPC": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 599,
+      "source_url": "https://www.screener.in/company/NHPC/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 72
+      },
+      "symbol": "NHPC",
+      "updated_at": "2026-06-18T00:11:05.771790+00:00"
+    },
+    "NSE:NIACL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 587,
+      "source_url": "https://www.screener.in/company/NIACL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 60
+      },
+      "symbol": "NIACL",
+      "updated_at": "2026-06-18T00:11:09.797004+00:00"
+    },
+    "NSE:NIBE": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 338,
+      "source_url": "https://www.screener.in/company/NIBE/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 40,
+        "cashflow": 24,
+        "income_statement": 191,
+        "ratios": 23,
+        "shareholding": 60
+      },
+      "symbol": "NIBE",
+      "updated_at": "2026-06-18T00:11:12.692623+00:00"
+    },
+    "NSE:NIBL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 530,
+      "source_url": "https://www.screener.in/company/NIBL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 100,
+        "cashflow": 60,
+        "income_statement": 263,
+        "ratios": 59,
+        "shareholding": 48
+      },
+      "symbol": "NIBL",
+      "updated_at": "2026-06-18T00:11:15.741880+00:00"
+    },
+    "NSE:NIITLTD": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 605,
+      "source_url": "https://www.screener.in/company/NIITLTD/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 54,
+        "shareholding": 72
+      },
+      "symbol": "NIITLTD",
+      "updated_at": "2026-06-18T00:11:18.816670+00:00"
+    },
+    "NSE:NIITMTS": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 365,
+      "source_url": "https://www.screener.in/company/NIITMTS/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 50,
+        "cashflow": 30,
+        "income_statement": 200,
+        "ratios": 19,
+        "shareholding": 66
+      },
+      "symbol": "NIITMTS",
+      "updated_at": "2026-06-18T00:11:21.738274+00:00"
+    },
+    "NSE:NILAINFRA": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 583,
+      "source_url": "https://www.screener.in/company/NILAINFRA/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 56,
+        "shareholding": 48
+      },
+      "symbol": "NILAINFRA",
+      "updated_at": "2026-06-18T00:11:24.766276+00:00"
+    },
+    "NSE:NILASPACES": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 507,
+      "source_url": "https://www.screener.in/company/NILASPACES/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 100,
+        "cashflow": 60,
+        "income_statement": 258,
+        "ratios": 41,
+        "shareholding": 48
+      },
+      "symbol": "NILASPACES",
+      "updated_at": "2026-06-18T00:11:27.772246+00:00"
+    },
+    "NSE:NILE": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 440,
+      "source_url": "https://www.screener.in/company/NILE/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 70,
+        "cashflow": 42,
+        "income_statement": 227,
+        "ratios": 41,
+        "shareholding": 60
+      },
+      "symbol": "NILE",
+      "updated_at": "2026-06-18T00:11:30.764198+00:00"
+    },
+    "NSE:NILKAMAL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NILKAMAL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NILKAMAL",
+      "updated_at": "2026-06-18T00:11:33.762116+00:00"
+    },
+    "NSE:NIMBSPROJ": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 576,
+      "source_url": "https://www.screener.in/company/NIMBSPROJ/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 49,
+        "shareholding": 48
+      },
+      "symbol": "NIMBSPROJ",
+      "updated_at": "2026-06-18T00:11:36.781445+00:00"
+    },
+    "NSE:NINSYS": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 256,
+      "source_url": "https://www.screener.in/company/NINSYS/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 30,
+        "cashflow": 18,
+        "income_statement": 146,
+        "ratios": 14,
+        "shareholding": 48
+      },
+      "symbol": "NINSYS",
+      "updated_at": "2026-06-18T00:11:39.696979+00:00"
+    },
+    "NSE:NIPPOBATRY": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 576,
+      "source_url": "https://www.screener.in/company/NIPPOBATRY/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 110,
+        "cashflow": 66,
+        "income_statement": 275,
+        "ratios": 65,
+        "shareholding": 60
+      },
+      "symbol": "NIPPOBATRY",
+      "updated_at": "2026-06-18T00:11:42.704003+00:00"
+    },
+    "NSE:NIRAJ": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 396,
+      "source_url": "https://www.screener.in/company/NIRAJ/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 60,
+        "cashflow": 36,
+        "income_statement": 215,
+        "ratios": 25,
+        "shareholding": 60
+      },
+      "symbol": "NIRAJ",
+      "updated_at": "2026-06-18T00:11:45.664037+00:00"
+    },
+    "NSE:NIRAJISPAT": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 36,
+      "source_url": "https://www.screener.in/company/NIRAJISPAT/consolidated/",
+      "statement_counts": {
+        "shareholding": 36
+      },
+      "symbol": "NIRAJISPAT",
+      "updated_at": "2026-06-18T00:11:48.492498+00:00"
+    },
+    "NSE:NIRLON": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 60,
+      "source_url": "https://www.screener.in/company/NIRLON/consolidated/",
+      "statement_counts": {
+        "shareholding": 60
+      },
+      "symbol": "NIRLON",
+      "updated_at": "2026-06-18T00:11:51.324894+00:00"
+    },
+    "NSE:NITCO": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NITCO/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NITCO",
+      "updated_at": "2026-06-18T00:11:54.334240+00:00"
+    },
+    "NSE:NITINSPIN": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 60,
+      "source_url": "https://www.screener.in/company/NITINSPIN/consolidated/",
+      "statement_counts": {
+        "shareholding": 60
+      },
+      "symbol": "NITINSPIN",
+      "updated_at": "2026-06-18T00:11:57.148679+00:00"
+    },
+    "NSE:NITIRAJ": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 462,
+      "source_url": "https://www.screener.in/company/NITIRAJ/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 80,
+        "cashflow": 48,
+        "income_statement": 239,
+        "ratios": 47,
+        "shareholding": 48
+      },
+      "symbol": "NITIRAJ",
+      "updated_at": "2026-06-18T00:12:00.135114+00:00"
+    },
+    "NSE:NITTAGELA": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NITTAGELA/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NITTAGELA",
+      "updated_at": "2026-06-18T00:12:03.148848+00:00"
+    },
+    "NSE:NIVABUPA": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 30,
+      "source_url": "https://www.screener.in/company/NIVABUPA/consolidated/",
+      "statement_counts": {
+        "shareholding": 30
+      },
+      "symbol": "NIVABUPA",
+      "updated_at": "2026-06-18T00:12:05.968452+00:00"
+    },
+    "NSE:NKIND": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 573,
+      "source_url": "https://www.screener.in/company/NKIND/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 46,
+        "shareholding": 48
+      },
+      "symbol": "NKIND",
+      "updated_at": "2026-06-18T00:12:08.840139+00:00"
+    },
+    "NSE:NLCINDIA": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 599,
+      "source_url": "https://www.screener.in/company/NLCINDIA/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 48,
+        "shareholding": 72
+      },
+      "symbol": "NLCINDIA",
+      "updated_at": "2026-06-18T00:12:11.724431+00:00"
+    },
+    "NSE:NMDC": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 589,
+      "source_url": "https://www.screener.in/company/NMDC/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 50,
+        "shareholding": 60
+      },
+      "symbol": "NMDC",
+      "updated_at": "2026-06-18T00:12:14.646035+00:00"
+    },
+    "NSE:NOCIL": {
+      "exchange": "NSE",
+      "fetch_mode": "company_html",
+      "rows_upserted": 611,
+      "source_url": "https://www.screener.in/company/NOCIL/consolidated/",
+      "statement_counts": {
+        "balance_sheet": 120,
+        "cashflow": 72,
+        "income_statement": 287,
+        "ratios": 72,
+        "shareholding": 60
+      },
+      "symbol": "NOCIL",
+      "updated_at": "2026-06-18T00:12:17.575165+00:00"
+    },
     "NSE:RELIANCE": {
       "exchange": "NSE",
       "fetch_mode": "company_html",
@@ -19479,4 +21461,23 @@
       "all": false,
       "exchange": "NSE",
       "limit": 50,
-      "mode": "consolid
+      "mode": "consolidated",
+      "offset": 0,
+      "selected_count": 50,
+      "source": "screener",
+      "started_at": "2026-06-17T22:58:22.629800+00:00",
+      "symbol": null
+    },
+    {
+      "all": true,
+      "exchange": "NSE",
+      "limit": null,
+      "mode": "consolidated",
+      "offset": 0,
+      "selected_count": 2390,
+      "source": "screener",
+      "started_at": "2026-06-17T23:00:18.055102+00:00",
+      "symbol": null
+    }
+  ]
+}

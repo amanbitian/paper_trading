@@ -1,0 +1,95 @@
+{% if error_message %}
+    <div class="info-banner danger data-refresh-banner">
+        <span class="info-dot"></span>
+        <p>{{ error_message }}</p>
+    </div>
+{% elif payload %}
+    <div class="data-quality-result">
+        <div class="info-banner {{ tone or 'info' }} data-refresh-banner">
+            <span class="info-dot"></span>
+            <p>
+                Stock detail snapshots refreshed:
+                {{ payload.selected }} stocks selected,
+                {{ payload.refreshed }} snapshots updated,
+                {{ payload.failed }} failed.
+            </p>
+        </div>
+
+        <div class="stats-card-grid data-strategy-explainer-stats">
+            <div class="stats-card">
+                <p class="stats-card__label">Snapshots</p>
+                <p class="stats-card__value">{{ stats.total_rows }}</p>
+            </div>
+            <div class="stats-card">
+                <p class="stats-card__label">Stale</p>
+                <p class="stats-card__value">{{ stats.stale_rows }}</p>
+            </div>
+            <div class="stats-card">
+                <p class="stats-card__label">Batch</p>
+                <p class="stats-card__value">{{ exchange }} {{ offset }}-{{ offset + limit }}</p>
+            </div>
+            <div class="stats-card">
+                <p class="stats-card__label">TTL</p>
+                <p class="stats-card__value">{{ ttl_hours }}h</p>
+            </div>
+        </div>
+
+        {% if stats.exchange_rows %}
+            <div class="data-ops-table-scroll">
+                <table class="data-ops-table">
+                    <thead>
+                        <tr>
+                            <th>Exchange</th>
+                            <th class="num">Snapshots</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in stats.exchange_rows %}
+                        <tr>
+                            <td>{{ row.exchange }}</td>
+                            <td class="num">{{ row.rows }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        {% set failed_results = payload.results | selectattr("failed") | list %}
+        {% if failed_results %}
+            <div class="info-banner warning data-refresh-banner">
+                <span class="info-dot"></span>
+                <p>{{ failed_results | length }} stock(s) failed snapshot refresh.</p>
+            </div>
+            <div class="data-ops-table-scroll">
+                <table class="data-ops-table">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Issue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in failed_results[:20] %}
+                        <tr>
+                            <td>{{ row.exchange }}:{{ row.symbol }}</td>
+                            <td class="data-ops-message-cell">{{ row.error }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% elif stats %}
+    <div class="stats-card-grid data-strategy-explainer-stats">
+        <div class="stats-card">
+            <p class="stats-card__label">Snapshots</p>
+            <p class="stats-card__value">{{ stats.total_rows }}</p>
+        </div>
+        <div class="stats-card">
+            <p class="stats-card__label">Stale</p>
+            <p class="stats-card__value">{{ stats.stale_rows }}</p>
+        </div>
+    </div>
+{% endif %}

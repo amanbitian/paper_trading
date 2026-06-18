@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title or "Log in" }} · Paper Trading App</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <style>
+        .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .auth-card { width: 100%; max-width: 400px; background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; }
+        .auth-card h1 { margin: 0 0 4px; font-size: 1.4rem; }
+        .auth-card .sub { color: var(--muted); margin: 0 0 24px; font-size: 0.9rem; }
+        .auth-field { margin-bottom: 16px; }
+        .auth-field label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+        .auth-field input { width: 100%; box-sizing: border-box; padding: 11px 12px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: var(--bg-soft); color: var(--text); font-size: 0.95rem; }
+        .auth-field input:focus { outline: none; border-color: var(--accent); }
+        .auth-btn { width: 100%; padding: 12px; border: none; border-radius: var(--radius-sm); background: var(--accent);
+            color: #fff; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+        .auth-btn:hover { background: var(--accent-hover); }
+        .auth-error { background: rgba(255, 81, 72, 0.12); border: 1px solid var(--danger); color: var(--text);
+            padding: 10px 12px; border-radius: var(--radius-sm); font-size: 0.85rem; margin-bottom: 18px; }
+        .auth-foot { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 20px; }
+        .auth-foot a { color: var(--info); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="auth-wrap">
+        <div class="auth-card">
+            <h1>Welcome back</h1>
+            <p class="sub">Log in to your paper trading account.</p>
+            {% if error %}<div class="auth-error">{{ error }}</div>{% endif %}
+            <form method="post" action="/web/login">
+                <input type="hidden" name="next" value="{{ next }}">
+                <div class="auth-field">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" autocomplete="email" required
+                           value="{{ email or '' }}">
+                </div>
+                <div class="auth-field">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required>
+                </div>
+                <button class="auth-btn" type="submit">Log in</button>
+            </form>
+            <p class="auth-foot">New here? <a href="/web/register">Create an account</a></p>
+        </div>
+    </div>
+</body>
+</html>

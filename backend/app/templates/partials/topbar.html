@@ -16,5 +16,15 @@
             {% set badge_tone = "success" if overview.source in ["database", "yfinance"] else "warning" %}
             {% include "partials/status_badge.html" %}
         {% endif %}
+        {% if request.state.auth_user_display %}
+            <div class="topbar-user">
+                <span class="topbar-user-name" title="{{ request.state.auth_user_display.email }}">
+                    {{ request.state.auth_user_display.name }}
+                </span>
+                <form method="post" action="/web/logout" class="topbar-logout-form">
+                    <button type="submit" class="topbar-logout">Log out</button>
+                </form>
+            </div>
+        {% endif %}
     </div>
 </div>

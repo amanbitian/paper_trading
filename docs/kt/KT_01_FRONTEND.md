@@ -1,6 +1,11 @@
 # KT-01: Frontend Knowledge Transfer
 ### Paper Trading App — New Intern Onboarding Guide
 
+> **⚠️ Outdated — the Streamlit frontend has been removed.** The app now serves a
+> single server-rendered FastAPI + Jinja/HTMX web UI (`backend/app/templates`,
+> `backend/app/static`). References to Streamlit, `frontend/`, or a "legacy UI"
+> below are historical and no longer apply.
+
 ---
 
 ## Table of Contents

@@ -13,20 +13,13 @@
                 {% endif %}
             </div>
         </div>
-        <div class="stock-detail-price-block">
-            {% if detail.latest_close is not none %}
-                <div class="stock-detail-latest-price">{{ detail.latest_close | inr }}</div>
-                {% if detail.change_1d_pct is not none %}
-                    <div class="stock-detail-change {{ detail.change_1d_pct | tone }}">
-                        1D {{ detail.change_1d_pct | pct }}
-                    </div>
-                {% endif %}
-                {% if detail.to_date %}
-                    <small class="muted">As of {{ detail.to_date | date_text }}</small>
-                {% endif %}
-            {% else %}
-                <div class="stock-detail-latest-price muted">No price data</div>
-            {% endif %}
+        <div class="stock-detail-price-block"
+             {% if detail.stock.stock_id %}data-live-price-url="/web/partials/explore/stock/{{ detail.stock.stock_id }}/price"
+             data-poll-seconds="30"{% endif %}>
+            {# Initial paint from the snapshot; live_price.js then refreshes this
+               block on load and every 30s with the freshest stored price. #}
+            {% set price = {"latest_close": detail.latest_close, "change_1d_pct": detail.change_1d_pct, "as_of": detail.to_date} %}
+            {% include "partials/stock_live_price.html" %}
         </div>
     </div>
     <div class="stock-detail-actions">

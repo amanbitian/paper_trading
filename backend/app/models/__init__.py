@@ -19,7 +19,14 @@ from app.models.portfolio import (
     PortfolioHolding,
     Transaction,
 )
-from app.models.stock import IngestionRun, MarketAnalyticsCache, Stock, StockPerformanceSnapshot, StockPrice
+from app.models.stock import (
+    IngestionRun,
+    MarketAnalyticsCache,
+    Stock,
+    StockDetailSnapshot,
+    StockPerformanceSnapshot,
+    StockPrice,
+)
 from app.models.strategy import (
     StockStrategyExplanation,
     StrategySignal,
@@ -51,6 +58,7 @@ __all__ = [
     "AiActionLog",
     "SearchQueryLog",
     "Stock",
+    "StockDetailSnapshot",
     "StockFinancialStatement",
     "StockFundamentalsLatest",
     "StockIndexMembership",

@@ -3,10 +3,10 @@ from __future__ import annotations
 import json
 import logging
 from collections import Counter
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Any
 
-from sqlalchemy import desc, select
+from sqlalchemy import case, desc, select
 from sqlalchemy.orm import Session
 
 from app.models.stock import Stock, StockPrice
@@ -17,9 +17,29 @@ from app.services.algo_finding_service import (
 from app.services.fundamentals_service import get_stock_fundamentals, serialize_stock_fundamentals
 from app.services.market_data_service import DAILY_TIMEFRAME, get_latest_price
 from app.services.news_service import list_stock_news
+from app.services.stock_detail_snapshot_service import (
+    DEFAULT_TTL_HOURS as SNAPSHOT_TTL_HOURS,
+    get_stock_detail_snapshot,
+    upsert_stock_detail_snapshot,
+)
 from app.services.stock_performance_service import list_stock_performance
 from app.services.strategy_explainer_service import list_stock_strategy_explanations
 from app.services.ticker_service import normalize_bse_symbol, normalize_nse_symbol, search_stocks
+from app.utils.cache import TTLCache, single_flight
+
+# Dedupes concurrent cold-miss snapshot builds for the same stock so a sudden
+# burst of first-time views (the "thundering herd") triggers exactly one live
+# rebuild; the rest wait and share its result instead of each rebuilding.
+_detail_build_sf = single_flight()
+
+# Per-range Plotly chart payloads are cached so switching 6M/1Y/Max (or a repeat
+# open) reads a ready JSON string instead of rebuilding Plotly each time. In
+# process for now (Redis/DB-persisted later, per the phased plan); single-flight
+# collapses concurrent identical builds.
+_CHART_RANGE_DAYS: dict[str, int | None] = {"6m": 182, "1y": 365, "max": None}
+_CHART_CACHE_TTL_SECONDS = 6 * 3600  # daily-bar charts only change once a day
+_chart_cache: TTLCache = TTLCache(fresh_ttl=_CHART_CACHE_TTL_SECONDS)
+_chart_build_sf = single_flight()
 from app.services.web_backtesting_helpers import list_strategy_templates
 
 logger = logging.getLogger(__name__)
@@ -436,6 +456,207 @@ def serialize_algo_findings(findings: list[dict[str, Any]]) -> list[dict[str, An
 
 
 def build_stock_detail_context(
+    db: Session,
+    stock: Stock,
+    *,
+    chart_type: str = "candlestick",
+    start_date: date | None = None,
+    end_date: date | None = None,
+    use_snapshot: bool = True,
+) -> dict[str, Any]:
+    default_view = chart_type == "candlestick" and start_date is None and end_date is None
+    if use_snapshot and default_view:
+        cached = get_stock_detail_snapshot(db, stock.id, allow_stale=True)
+        if cached is not None:
+            # A snapshot exists (fresh or stale) — serve it immediately. Stale
+            # rows are refreshed out-of-band by the background refresher, so a
+            # burst of views never triggers an in-request rebuild here.
+            return cached
+        # Cold miss (no row yet): build live, but collapse concurrent first-time
+        # builds for this stock into a single rebuild via single-flight. Only the
+        # leader runs the expensive build + upsert; other callers wait and share
+        # the same result rather than each launching a duplicate build.
+        return _detail_build_sf.do(
+            ("stock_detail", stock.id),
+            lambda: _build_and_store_stock_detail(db, stock),
+        )
+
+    return _build_stock_detail_context_live(
+        db,
+        stock,
+        chart_type=chart_type,
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+
+def _build_and_store_stock_detail(db: Session, stock: Stock) -> dict[str, Any]:
+    """Build the default-view detail live and persist it as a snapshot.
+
+    Invoked under single-flight so it runs once per stock per concurrent burst.
+    """
+    detail = _build_stock_detail_context_live(db, stock)
+    upsert_stock_detail_snapshot(db, stock, detail, ttl_hours=SNAPSHOT_TTL_HOURS, commit=True)
+    detail["snapshot"] = {
+        "source": "live_refresh",
+        "refreshed_at": datetime.now(),
+        "expires_at": None,
+        "is_stale": False,
+    }
+    return detail
+
+
+def build_live_price_view(db: Session, stock_id: int) -> dict[str, Any]:
+    """Lightweight latest-price lookup for the polled live-price overlay.
+
+    Deliberately decoupled from the heavy stock-detail snapshot: a single
+    two-row query for the freshest close + previous close, so the ticker can be
+    refreshed cheaply on a short poll while the rest of the page is served from
+    the (much larger, slower-changing) snapshot. Swapping in a real-time quote
+    source later only means changing this function.
+    """
+    rows = db.execute(
+        select(StockPrice.close, StockPrice.volume, StockPrice.price_datetime)
+        .where(
+            StockPrice.stock_id == stock_id,
+            StockPrice.timeframe == DAILY_TIMEFRAME,
+            StockPrice.close.is_not(None),
+        )
+        .order_by(StockPrice.price_datetime.desc())
+        .limit(2)
+    ).all()
+    if not rows:
+        return {"latest_close": None, "change_1d_pct": None, "latest_volume": None, "as_of": None}
+    latest_close = float(rows[0].close)
+    previous_close = (
+        float(rows[1].close) if len(rows) > 1 and rows[1].close is not None else None
+    )
+    change_1d_pct = (
+        (latest_close - previous_close) / previous_close * 100 if previous_close else None
+    )
+    return {
+        "latest_close": latest_close,
+        "change_1d_pct": change_1d_pct,
+        "latest_volume": int(rows[0].volume) if rows[0].volume is not None else None,
+        "as_of": rows[0].price_datetime,
+    }
+
+
+def build_cached_chart_view(
+    db: Session,
+    stock_id: int,
+    *,
+    range_key: str = "max",
+    chart_type: str = "candlestick",
+) -> dict[str, Any]:
+    """Return a ready-to-render Plotly chart payload for a range, cached.
+
+    Builds the chart JSON once per (stock, range, chart_type) and serves it from
+    an in-process TTL cache thereafter, so range switching and repeat opens skip
+    the Plotly rebuild. Concurrent identical builds collapse via single-flight.
+    """
+    range_key = range_key if range_key in _CHART_RANGE_DAYS else "max"
+    chart_type = chart_type if chart_type in ("candlestick", "line") else "candlestick"
+    cache_key = (stock_id, range_key, chart_type)
+
+    cached = _chart_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    def _build() -> dict[str, Any]:
+        # A concurrent leader may have just populated the cache while we queued.
+        hit = _chart_cache.get(cache_key)
+        if hit is not None:
+            return hit
+        days = _CHART_RANGE_DAYS[range_key]
+        start = (date.today() - timedelta(days=days)) if days else None
+        prices = _load_daily_prices(db, stock_id, start_date=start)
+        payload = build_stock_ohlc_plotly(prices, chart_type=chart_type)
+        view = {
+            "chart_json_str": json.dumps(payload) if payload else "",
+            "has_chart": bool(payload),
+            "range_key": range_key,
+            "chart_type": chart_type,
+        }
+        _chart_cache.set(cache_key, view)
+        return view
+
+    return _chart_build_sf.do(cache_key, _build)
+
+
+def refresh_stock_detail_snapshot(
+    db: Session,
+    stock: Stock,
+    *,
+    ttl_hours: int = SNAPSHOT_TTL_HOURS,
+    commit: bool = True,
+) -> dict[str, Any]:
+    detail = _build_stock_detail_context_live(db, stock)
+    upsert_stock_detail_snapshot(db, stock, detail, ttl_hours=ttl_hours, commit=commit)
+    return {
+        "stock_id": stock.id,
+        "symbol": stock.symbol,
+        "exchange": stock.exchange,
+        "price_row_count": int(detail.get("price_row_count") or 0),
+        "findings": len(detail.get("findings") or []),
+        "has_chart": bool(detail.get("chart_json")),
+    }
+
+
+def refresh_stock_detail_snapshots_for_stocks(
+    db: Session,
+    *,
+    limit: int = 25,
+    exchange: str | None = None,
+    symbol: str | None = None,
+    offset: int | None = None,
+    ttl_hours: int = SNAPSHOT_TTL_HOURS,
+) -> dict[str, Any]:
+    exchange_priority = case(
+        (Stock.exchange == "NSE", 0),
+        (Stock.exchange == "BSE", 1),
+        else_=2,
+    )
+    stmt = select(Stock).where(Stock.is_active.is_(True)).order_by(exchange_priority, Stock.symbol.asc())
+    if exchange:
+        stmt = stmt.where(Stock.exchange == exchange.strip().upper())
+    if symbol:
+        stmt = stmt.where(Stock.symbol == symbol.strip().upper())
+    if offset:
+        stmt = stmt.offset(max(0, int(offset)))
+    if limit and not symbol:
+        stmt = stmt.limit(max(1, int(limit)))
+    stocks = list(db.scalars(stmt))
+
+    results: list[dict[str, Any]] = []
+    for stock in stocks:
+        try:
+            result = refresh_stock_detail_snapshot(
+                db,
+                stock,
+                ttl_hours=ttl_hours,
+                commit=True,
+            )
+            result["failed"] = False
+        except Exception as exc:
+            db.rollback()
+            result = {
+                "stock_id": stock.id,
+                "symbol": stock.symbol,
+                "exchange": stock.exchange,
+                "failed": True,
+                "error": str(exc),
+            }
+        results.append(result)
+    return {
+        "selected": len(stocks),
+        "refreshed": sum(1 for row in results if not row.get("failed")),
+        "failed": sum(1 for row in results if row.get("failed")),
+        "results": results,
+    }
+
+
+def _build_stock_detail_context_live(
     db: Session,
     stock: Stock,
     *,

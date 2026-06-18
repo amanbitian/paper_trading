@@ -23,12 +23,19 @@ class Settings(BaseSettings):
     auth_debug_log_password_checks: bool = Field(
         default=False, alias="AUTH_DEBUG_LOG_PASSWORD_CHECKS"
     )
-    debug_auth_bypass: bool = Field(default=False, alias="DEBUG_AUTH_BYPASS")
-    debug_auth_user_email: str = Field(
-        default="debug@example.com", alias="DEBUG_AUTH_USER_EMAIL"
-    )
-    debug_auth_user_name: str = Field(default="debug_user", alias="DEBUG_AUTH_USER_NAME")
-    debug_auth_name: str = Field(default="Debug User", alias="DEBUG_AUTH_NAME")
+    # --- Persistent ("remember me") browser session cookie ---
+    # The web UI logs in once and stays logged in until explicit logout, using a
+    # long-lived httpOnly cookie with sliding renewal (industry-standard pattern).
+    session_cookie_name: str = Field(default="pt_session", alias="SESSION_COOKIE_NAME")
+    # Absolute cap on a session's life (days). Renewed on activity, so an active
+    # user is effectively "logged in until logout"; an idle session expires after this.
+    session_max_age_days: int = Field(default=365, alias="SESSION_MAX_AGE_DAYS")
+    # Re-extend the session when it has been used and its remaining life has
+    # dropped by more than this many days (limits renewal writes to ~1/day/user).
+    session_renew_after_days: int = Field(default=1, alias="SESSION_RENEW_AFTER_DAYS")
+    # Send the cookie only over HTTPS. Keep False for local http dev; set True in prod.
+    session_cookie_secure: bool = Field(default=False, alias="SESSION_COOKIE_SECURE")
+    session_cookie_samesite: str = Field(default="lax", alias="SESSION_COOKIE_SAMESITE")
     yfinance_default_period: str = Field(default="1y", alias="YFINANCE_DEFAULT_PERIOD")
     yfinance_default_interval: str = Field(default="1d", alias="YFINANCE_DEFAULT_INTERVAL")
     market_movers_max_abs_daily_change_pct: float = Field(
@@ -49,7 +56,7 @@ class Settings(BaseSettings):
     password_reset_token_expire_minutes: int = Field(
         default=30, alias="PASSWORD_RESET_TOKEN_EXPIRE_MINUTES"
     )
-    app_base_url: str = Field(default="http://localhost:8501", alias="APP_BASE_URL")
+    app_base_url: str = Field(default="http://localhost:8000", alias="APP_BASE_URL")
     ollama_base_url: str = Field(
         default="http://localhost:11434", alias="OLLAMA_BASE_URL"
     )
@@ -79,28 +86,31 @@ class Settings(BaseSettings):
     strategy_explainer_startup_delay_seconds: int = Field(
         default=120, alias="STRATEGY_EXPLAINER_STARTUP_DELAY_SECONDS"
     )
-    legacy_streamlit_url: str = Field(
-        default="http://localhost:8501",
-        alias="LEGACY_STREAMLIT_URL",
+    stock_detail_snapshot_refresh_on_start: bool = Field(
+        default=False, alias="STOCK_DETAIL_SNAPSHOT_REFRESH_ON_START"
     )
-    enable_legacy_start: bool = Field(default=True, alias="ENABLE_LEGACY_START")
-    legacy_compose_root: str = Field(default="", alias="LEGACY_COMPOSE_ROOT")
-    legacy_start_command: str = Field(
-        default="docker compose --profile legacy up -d streamlit",
-        alias="LEGACY_START_COMMAND",
+    stock_detail_snapshot_startup_exchange: str = Field(
+        default="NSE", alias="STOCK_DETAIL_SNAPSHOT_STARTUP_EXCHANGE"
+    )
+    stock_detail_snapshot_startup_limit: int = Field(
+        default=25, alias="STOCK_DETAIL_SNAPSHOT_STARTUP_LIMIT"
+    )
+    stock_detail_snapshot_startup_delay_seconds: int = Field(
+        default=180, alias="STOCK_DETAIL_SNAPSHOT_STARTUP_DELAY_SECONDS"
     )
 
     model_config = SettingsConfigDict(
         env_file=(BACKEND_DIR / ".env", ".env"),
         env_file_encoding="utf-8",
+        extra="ignore",
     )
 
     @model_validator(mode="after")
     def validate_production_secrets(self) -> "Settings":
         if self.app_env.lower() == "production" and self.jwt_secret_key == "change_me":
             raise ValueError("JWT_SECRET_KEY must be changed when APP_ENV=production")
-        if self.app_env.lower() == "production" and self.debug_auth_bypass:
-            raise ValueError("DEBUG_AUTH_BYPASS cannot be enabled when APP_ENV=production")
+        if self.app_env.lower() == "production" and not self.session_cookie_secure:
+            raise ValueError("SESSION_COOKIE_SECURE must be true when APP_ENV=production")
         return self
 
 

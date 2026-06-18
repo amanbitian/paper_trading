@@ -11,6 +11,7 @@ from app.models.stock import Stock
 from app.services.news_service import list_stock_news, refresh_stock_news
 from app.services.stock_brief_service import generate_stock_brief
 from app.services.web_backtesting_helpers import get_strategy_template, validate_strategy_parameters
+from app.services.web_explore_stock_helpers import build_cached_chart_view, build_live_price_view
 from app.services.web_strategy_lab_helpers import parse_parameters_json, run_preview_signal
 from app.web_utils import templates
 
@@ -26,6 +27,40 @@ def _log_route(route: str, started_at: float, status: str = "ok") -> None:
         route,
         status,
         (time.perf_counter() - started_at) * 1000,
+    )
+
+
+@router.get("/stock/{stock_id}/price", include_in_schema=False)
+def explore_stock_live_price(
+    request: Request,
+    stock_id: int,
+    db: Session = Depends(get_db),
+):
+    """Lightweight polled price ticker, decoupled from the stock-detail snapshot."""
+    started_at = time.perf_counter()
+    price = build_live_price_view(db, stock_id)
+    _log_route("explore.stock_live_price", started_at)
+    return templates.TemplateResponse(
+        "partials/stock_live_price.html",
+        {"request": request, "price": price},
+    )
+
+
+@router.get("/stock/{stock_id}/chart", include_in_schema=False)
+def explore_stock_chart(
+    request: Request,
+    stock_id: int,
+    range: str = "max",
+    chart_type: str = "candlestick",
+    db: Session = Depends(get_db),
+):
+    """Cached per-range Plotly chart payload, swapped into the chart card only."""
+    started_at = time.perf_counter()
+    chart = build_cached_chart_view(db, stock_id, range_key=range, chart_type=chart_type)
+    _log_route("explore.stock_chart", started_at)
+    return templates.TemplateResponse(
+        "partials/stock_chart_body.html",
+        {"request": request, "chart": chart},
     )
 
 

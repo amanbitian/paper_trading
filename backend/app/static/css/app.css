@@ -131,46 +131,6 @@ textarea {
     cursor: not-allowed;
 }
 
-.sidebar-legacy {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border-soft);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.legacy-mode-btn {
-    width: 100%;
-    justify-content: center;
-    font-size: 13px;
-}
-
-.sidebar-legacy-caption {
-    margin: 0;
-    font-size: 11px;
-    line-height: 1.35;
-}
-
-.legacy-mode-result-host {
-    margin-top: 4px;
-}
-
-.legacy-mode-result-host .info-banner {
-    font-size: 12px;
-}
-
-.legacy-mode-command {
-    margin: 8px 0 0;
-    padding: 10px 12px;
-    border-radius: var(--radius-sm);
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    font-size: 12px;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-
 .sidebar-footer {
     margin-top: auto;
     display: flex;
@@ -4862,3 +4822,27 @@ a.search-result-card.stock-result-link .search-result-action {
 .audit-discrepancy-badge--clean  { background: rgba(2, 197, 138, 0.14); color: var(--success); }
 .audit-discrepancy-badge--warn   { background: rgba(240, 184, 77, 0.14); color: var(--warning); }
 .audit-discrepancy-badge--danger { background: rgba(255, 81, 72, 0.14); color: var(--danger); }
+
+/* --- Auth: topbar user + logout --- */
+.topbar-user { display: flex; align-items: center; gap: 12px; }
+.topbar-user-name { color: var(--text); font-size: 0.85rem; font-weight: 600; max-width: 180px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar-logout-form { margin: 0; }
+.topbar-logout { background: transparent; border: 1px solid var(--border); color: var(--muted);
+    padding: 6px 12px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer; }
+.topbar-logout:hover { color: var(--text); border-color: var(--accent); }
+
+/* --- Live price overlay (polled ticker) --- */
+.stock-live-price-asof { display: inline-flex; align-items: center; gap: 6px; }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success);
+    display: inline-block; box-shadow: 0 0 0 0 rgba(2, 197, 138, 0.6); animation: live-pulse 2s infinite; }
+@keyframes live-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(2, 197, 138, 0.5); }
+    70% { box-shadow: 0 0 0 6px rgba(2, 197, 138, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(2, 197, 138, 0); }
+}
+.stock-detail-price-block .stock-detail-latest-price { transition: color 0.3s ease; }
+
+/* --- Chart range buttons --- */
+.chart-range-buttons { display: inline-flex; gap: 6px; margin-right: 12px; }
+.chart-range-buttons .chip.is-active { border-color: var(--accent); color: var(--text); }

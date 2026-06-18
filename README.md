@@ -6,7 +6,7 @@ Stack:
 
 - Python
 - FastAPI backend
-- FastAPI web UI (default) + legacy Streamlit UI (on demand)
+- FastAPI web UI
 - PostgreSQL
 - SQLAlchemy ORM
 - Alembic migrations
@@ -24,7 +24,7 @@ Disclaimer: this is a paper trading and educational tool. It does not provide fi
 - `backend/app/schemas` defines Pydantic request and response models.
 - `backend/app/services` contains business logic for prices, portfolios, paper orders, strategies, and backtests.
 - `backend/app/strategies` contains RSI, SMA crossover, breakout, execution algo proxies, statistical models, ML-style proxies, and risk sizing logic.
-- `frontend` contains the Streamlit multipage UI. It calls the backend only through HTTP.
+- `backend/app/templates` and `backend/app/static` contain the FastAPI web UI.
 - `scripts` contains CLI helpers for migrations, ticker loading, price fetching, and strategy seeding.
 - `data` contains sample NSE/BSE ticker CSV files and index/commodity ticker CSV data.
 
@@ -91,9 +91,7 @@ Or on Windows:
 .\run.ps1 -d
 ```
 
-Open http://localhost:8000/web/explore (default web UI)
-
-Legacy Streamlit (optional): click **Enable Legacy Mode** in the sidebar, or run `py -3 run.py --with-streamlit -d`, then open http://localhost:8501
+Open http://localhost:8000/web/explore
 
 **4. Optional: load index funds and commodities**
 
@@ -136,9 +134,8 @@ py -3 scripts/run.py load-index-memberships --membership-source csv
 |--------|-----|
 | `python was not found` | Use `py -3` instead of `python` on Windows |
 | `failed to connect to the docker API` | Start **Docker Desktop** and wait until the engine is running |
-| Port 8000 / 8501 in use | Stop local `uvicorn` or old containers: `py -3 run.py stop` |
+| Port 8000 in use | Stop local `uvicorn` or old containers: `py -3 run.py stop` |
 | Web UI not loading | Wait for backend health; check `py -3 run.py logs` |
-| Legacy Streamlit blank | Start with `py -3 run.py --with-streamlit -d` or Enable Legacy Mode |
 
 Other commands:
 
@@ -146,7 +143,6 @@ Other commands:
 py -3 scripts/run.py stop      # stop containers
 py -3 scripts/run.py status    # show container status
 py -3 scripts/run.py logs      # follow backend logs
-py -3 scripts/run.py logs --with-streamlit  # include legacy Streamlit logs
 py -3 scripts/run.py migrate   # run Alembic migrations
 py -3 scripts/run.py load-index-funds
 py -3 scripts/run.py ingest-index-funds --start-date 2010-01-01
@@ -172,6 +168,13 @@ The historical sync prints a terminal progress bar and checkpoints after every s
 
 The `Quality Momentum` strategy uses long-term price momentum, trend, volatility, liquidity, ATR risk controls, and available point-in-time fundamental quality data from `stock_financials`.
 
+Stock detail pages can be precomputed into `stock_detail_snapshots` so opening a stock mostly reads cached chart payloads, algorithm findings, fundamentals, news, and strategy options:
+
+```powershell
+.\backend\.venv\Scripts\python.exe backend\scripts\refresh_stock_detail_snapshots.py --symbol RELIANCE --exchange NSE
+.\backend\.venv\Scripts\python.exe backend\scripts\refresh_stock_detail_snapshots.py --exchange NSE --limit 100
+```
+
 ## Docker Setup
 
 From the parent workspace:
@@ -186,7 +189,6 @@ Open:
 - Web UI (default): http://localhost:8000/web/explore
 - FastAPI: http://localhost:8000
 - API docs: http://localhost:8000/docs
-- Legacy Streamlit (on demand): http://localhost:8501
 
 The backend container runs `alembic upgrade head` before starting Uvicorn.
 
@@ -472,28 +474,7 @@ python scripts/ingest_index_funds.py --incremental --sleep-seconds 1
 python scripts/migrate_index_funds_to_main_db.py --source-url postgresql+psycopg2://postgres:postgres@localhost:5432/index_funds --target-url postgresql+psycopg2://postgres:postgres@localhost:5432/paper_trading
 ```
 
-The Streamlit **Index Fund** page shows the stored universe, 1M/3M/6M/1Y return changes, individual historical candles, strategy previews, algorithm findings, and multi-index return comparison plots.
-
-## Streamlit Setup
-
-In a second terminal:
-
-```powershell
-cd "C:\Users\Aman\Documents\New project\paper_trading_app\frontend"
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-set PAPER_TRADING_API_URL=http://localhost:8000
-streamlit run streamlit_app.py --server.port 8501
-```
-
-On macOS/Linux, use:
-
-```bash
-source .venv/bin/activate
-export PAPER_TRADING_API_URL=http://localhost:8000
-streamlit run streamlit_app.py --server.port 8501
-```
+The FastAPI web **Index Fund** page shows the stored universe, 1M/3M/6M/1Y return changes, individual historical candles, strategy previews, algorithm findings, and multi-index return comparison plots.
 
 ## Alembic Development Commands
 
@@ -508,7 +489,7 @@ alembic upgrade head
 ## Example Flow
 
 1. Start PostgreSQL and run migrations.
-2. Register a user in Streamlit or call `POST /auth/register`.
+2. Register a user in the web UI or call `POST /auth/register`.
 3. Load Indian tickers with `python scripts/load_indian_tickers.py --source csv`.
 4. Seed strategies with `python scripts/seed_strategy_templates.py`.
 5. Search `RELIANCE` with `GET /stocks/search?query=RELIANCE`.

@@ -1,0 +1,12 @@
+{% if price.latest_close is not none %}
+    <div class="stock-detail-latest-price">{{ price.latest_close | inr }}</div>
+    {% if price.change_1d_pct is not none %}
+        <div class="stock-detail-change {{ price.change_1d_pct | tone }}">1D {{ price.change_1d_pct | pct }}</div>
+    {% endif %}
+    <small class="muted stock-live-price-asof">
+        <span class="live-dot" aria-hidden="true"></span>
+        {% if price.as_of %}As of {{ price.as_of | date_text }}{% else %}Live{% endif %}
+    </small>
+{% else %}
+    <div class="stock-detail-latest-price muted">No price data</div>
+{% endif %}

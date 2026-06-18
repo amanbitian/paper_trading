@@ -1,18 +1,15 @@
 """
 Start or stop the paper trading app.
 
-Default startup starts PostgreSQL + FastAPI web UI only (Streamlit is dormant).
+Default startup starts PostgreSQL + FastAPI web UI.
 
 Examples:
   py -3 scripts/run.py              # Docker: build + start web UI (foreground)
   py -3 scripts/run.py -d           # Docker: detached background
   py -3 run.py -d                   # Same from repo root
-  py -3 scripts/run.py --with-streamlit -d   # Also start legacy Streamlit
-  py -3 scripts/run.py --legacy -d           # Alias for --with-streamlit
   py -3 scripts/run.py stop         # Stop containers
   py -3 scripts/run.py status       # Show container status
   py -3 scripts/run.py logs         # Follow backend logs
-  py -3 scripts/run.py logs --with-streamlit # Include Streamlit logs
   py -3 scripts/run.py check        # Verify Docker + Python setup
   py -3 scripts/run.py load-index-funds
   py -3 scripts/run.py ingest-index-funds --limit 3
@@ -146,11 +143,9 @@ def require_docker_daemon(*, wait_seconds: int = 0) -> None:
     sys.exit(1)
 
 
-def _compose(cmd: list[str], *, check: bool = True, profile_legacy: bool = False) -> int:
+def _compose(cmd: list[str], *, check: bool = True) -> int:
     require_docker_daemon()
     full = ["docker", "compose"]
-    if profile_legacy:
-        full.extend(["--profile", "legacy"])
     full.extend(cmd)
     print(f">>> {' '.join(full)}")
     print(f"    (from {ROOT})")
@@ -184,7 +179,7 @@ def _wait_for_backend_health(*, timeout_seconds: int = 90) -> bool:
 def _print_backend_startup_help() -> None:
     print("Error: Backend API is not responding on http://localhost:8000", file=sys.stderr)
     print(file=sys.stderr)
-    print("The frontend shows 'API request failed' when this happens.", file=sys.stderr)
+    print("The web UI can show API request failures when this happens.", file=sys.stderr)
     print("Check backend logs:", file=sys.stderr)
     print("  py -3 scripts/run.py logs", file=sys.stderr)
     print("Or rebuild and restart:", file=sys.stderr)
@@ -204,7 +199,6 @@ def run_docker(
     detached: bool,
     build: bool,
     wait_docker: int,
-    with_streamlit: bool,
 ) -> None:
     if not COMPOSE_FILE.exists():
         print(f"Error: missing {COMPOSE_FILE}", file=sys.stderr)
@@ -219,12 +213,9 @@ def run_docker(
         cmd.append("--build")
     if detached:
         cmd.append("-d")
-    if with_streamlit:
-        cmd.extend([*DEFAULT_SERVICES, "streamlit"])
-    else:
-        cmd.extend(DEFAULT_SERVICES)
+    cmd.extend(DEFAULT_SERVICES)
 
-    _compose(cmd, profile_legacy=with_streamlit)
+    _compose(cmd)
     if detached:
         print()
         print("Waiting for backend API...")
@@ -234,7 +225,7 @@ def run_docker(
         print("Backend API is healthy.")
         print()
         print("App is running in the background.")
-        _print_urls(with_streamlit=with_streamlit)
+        _print_urls()
         _maybe_open_web_ui()
 
 
@@ -249,18 +240,16 @@ def status() -> None:
         print("[OK] Backend API: http://localhost:8000/health")
     else:
         print("[FAIL] Backend API is not responding on http://localhost:8000")
-        print("       Frontend will show 'API request failed' until backend is up.")
+        print("       Web UI requests can fail until backend is up.")
         print("       Run: py -3 scripts/run.py logs")
 
 
-def logs(follow: bool, *, with_streamlit: bool) -> None:
+def logs(follow: bool) -> None:
     services = ["backend"]
-    if with_streamlit:
-        services.append("streamlit")
     cmd = ["logs", *services]
     if follow:
         cmd.append("-f")
-    _compose(cmd, check=False, profile_legacy=with_streamlit)
+    _compose(cmd, check=False)
 
 
 def migrate() -> None:
@@ -450,14 +439,10 @@ def _maybe_open_web_ui() -> None:
         pass
 
 
-def _print_urls(*, with_streamlit: bool = False) -> None:
+def _print_urls() -> None:
     print("  Web UI (default):", WEB_UI_URL)
     print("  FastAPI root     : http://localhost:8000")
     print("  API docs         : http://localhost:8000/docs")
-    if with_streamlit:
-        print("  Legacy Streamlit : http://localhost:8501")
-    else:
-        print("  Legacy Streamlit : dormant (Enable Legacy Mode in sidebar, or run with --with-streamlit)")
 
 
 def main() -> None:
@@ -571,13 +556,6 @@ def main() -> None:
         help="Hide per-chunk progress for index ingestion.",
     )
     parser.add_argument(
-        "--with-streamlit",
-        "--legacy",
-        action="store_true",
-        dest="with_streamlit",
-        help="Also start legacy Streamlit UI (docker compose --profile legacy).",
-    )
-    parser.add_argument(
         "--bhavcopy-exchange",
         choices=["NSE", "BSE", "ALL"],
         default="ALL",
@@ -671,12 +649,11 @@ def main() -> None:
             detached=args.detach,
             build=not args.no_build,
             wait_docker=args.wait_docker if sys.platform == "win32" else 0,
-            with_streamlit=args.with_streamlit,
         )
         if not args.detach:
             print()
             print("Press Ctrl+C to stop.")
-            _print_urls(with_streamlit=args.with_streamlit)
+            _print_urls()
             print()
             print("Open the web UI:", WEB_UI_URL)
         else:
@@ -687,7 +664,7 @@ def main() -> None:
     elif args.command == "status":
         status()
     elif args.command == "logs":
-        logs(follow=True, with_streamlit=args.with_streamlit)
+        logs(follow=True)
 
 
 if __name__ == "__main__":

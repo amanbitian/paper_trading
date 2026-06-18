@@ -1,6 +1,10 @@
 # Knowledge Transfer Documents
 ### Paper Trading App — Intern Onboarding
 
+> **Note:** The Streamlit frontend has been removed. The current UI is the
+> server-rendered FastAPI + Jinja/HTMX app under `backend/app`. Streamlit
+> mentions in these KT docs are historical.
+
 Welcome! These 5 KT documents are your onboarding guide. Start with the one matching your role.
 
 ---

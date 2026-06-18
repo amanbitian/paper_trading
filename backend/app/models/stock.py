@@ -6,6 +6,7 @@ from sqlalchemy import (
     Date,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     Numeric,
     String,
@@ -137,6 +138,42 @@ class StockPerformanceSnapshot(Base):
     change_6m_pct: Mapped[float | None] = mapped_column(Numeric(10, 4))
     change_1y_pct: Mapped[float | None] = mapped_column(Numeric(10, 4))
     refreshed_at = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class StockDetailSnapshot(Base):
+    __tablename__ = "stock_detail_snapshots"
+    __table_args__ = (
+        Index("ix_stock_detail_snapshots_exchange_refreshed", "exchange", "refreshed_at"),
+        Index("ix_stock_detail_snapshots_expires_at", "expires_at"),
+    )
+
+    stock_id: Mapped[int] = mapped_column(
+        ForeignKey("stocks.id", ondelete="CASCADE"), primary_key=True
+    )
+    symbol: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    yahoo_symbol: Mapped[str] = mapped_column(String(80), nullable=False, index=True)
+    exchange: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
+    summary_json = mapped_column(JSONB, nullable=False, default=dict)
+    price_rows_json = mapped_column(JSONB, nullable=False, default=list)
+    chart_json = mapped_column(JSONB)
+    algo_findings_json = mapped_column(JSONB, nullable=False, default=list)
+    fundamentals_json = mapped_column(JSONB)
+    strategy_explanations_json = mapped_column(JSONB, nullable=False, default=list)
+    news_json = mapped_column(JSONB, nullable=False, default=list)
+    strategy_options_json = mapped_column(JSONB, nullable=False, default=list)
+    price_row_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    from_date = mapped_column(Date)
+    to_date = mapped_column(Date)
+    latest_close: Mapped[float | None] = mapped_column(Numeric(18, 4))
+    change_1d_pct: Mapped[float | None] = mapped_column(Numeric(10, 4))
+    latest_volume: Mapped[int | None] = mapped_column(BigInteger)
+    source_version: Mapped[str] = mapped_column(String(40), nullable=False)
+    refreshed_at = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    expires_at = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    stock = relationship("Stock")
 
 
 class MarketAnalyticsCache(Base):

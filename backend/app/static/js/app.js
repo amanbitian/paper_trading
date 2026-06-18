@@ -377,43 +377,8 @@
         backdrop && backdrop.addEventListener("click", toggle);
     }
 
-    function bindLegacyMode() {
-        const button = document.getElementById("legacy-mode-btn");
-        const host = document.getElementById("legacy-mode-result");
-        const loader = document.getElementById("legacy-mode-loader");
-        if (!button || button.dataset.legacyBound === "true") return;
-        button.dataset.legacyBound = "true";
-        button.addEventListener("click", async () => {
-            if (loader) loader.classList.add("is-visible");
-            button.disabled = true;
-            try {
-                const { response, html } = await fetchPartial(
-                    "/web/legacy/start",
-                    "POST",
-                    new URLSearchParams()
-                );
-                if (host) {
-                    host.innerHTML = html;
-                    bindHtmxLite(host);
-                }
-                const openUrl = host?.querySelector("[data-legacy-url]")?.getAttribute("data-legacy-url");
-                if (response.ok && openUrl) {
-                    window.open(openUrl, "_blank", "noopener,noreferrer");
-                }
-            } catch (error) {
-                if (host) {
-                    host.innerHTML = `<div class="info-banner danger"><span class="info-dot"></span><p>${error.message}</p></div>`;
-                }
-            } finally {
-                if (loader) loader.classList.remove("is-visible");
-                button.disabled = false;
-            }
-        });
-    }
-
     document.addEventListener("DOMContentLoaded", function () {
         bindSidebar();
-        bindLegacyMode();
         bindHtmxLite(document);
         maybeStartSyncPolling();
     });

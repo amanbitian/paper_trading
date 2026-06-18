@@ -14,10 +14,14 @@ from app.services.data_quality_service import get_suspected_corrupt_data_points,
 from app.services.news_service import bulk_sync_news
 from app.services.market_sync_service import get_market_sync_status, start_market_sync
 from app.services.strategy_explainer_service import (
-    DEFAULT_TTL_HOURS,
+    DEFAULT_TTL_HOURS as STRATEGY_EXPLAINER_TTL_HOURS,
     SUPPORTED_STRATEGY_TYPES,
     get_strategy_explanation_cache_stats,
     refresh_strategy_explanations_for_stocks,
+)
+from app.services.stock_detail_snapshot_service import (
+    DEFAULT_TTL_HOURS as STOCK_DETAIL_SNAPSHOT_TTL_HOURS,
+    get_stock_detail_snapshot_stats,
 )
 from app.services.web_data_helpers import (
     build_database_stats_context,
@@ -32,6 +36,7 @@ from app.services.web_data_helpers import (
     query_failed_symbols,
     query_stale_symbols,
 )
+from app.services.web_explore_stock_helpers import refresh_stock_detail_snapshots_for_stocks
 from app.web_utils import templates
 from app.utils import route_timing
 
@@ -229,7 +234,7 @@ def data_refresh_strategy_explainers(
     exchange: str | None = Form(default="NSE"),
     limit: int = Form(default=100, ge=1, le=500),
     offset: int = Form(default=0, ge=0),
-    ttl_hours: int = Form(default=DEFAULT_TTL_HOURS, ge=1, le=168),
+    ttl_hours: int = Form(default=STRATEGY_EXPLAINER_TTL_HOURS, ge=1, le=168),
     strategies: str | None = Form(default=None),
     db: Session = Depends(get_db),
 ):
@@ -272,6 +277,58 @@ def data_refresh_strategy_explainers(
                 "request": request,
                 "payload": None,
                 "stats": get_strategy_explanation_cache_stats(db),
+                "error_message": http_error_message(exc),
+                "tone": "danger",
+            },
+            status_code=500,
+        )
+
+
+@router.post("/refresh-stock-detail-snapshots", include_in_schema=False)
+def data_refresh_stock_detail_snapshots(
+    request: Request,
+    exchange: str | None = Form(default="NSE"),
+    limit: int = Form(default=25, ge=1, le=200),
+    offset: int = Form(default=0, ge=0),
+    ttl_hours: int = Form(default=STOCK_DETAIL_SNAPSHOT_TTL_HOURS, ge=1, le=168),
+    db: Session = Depends(get_db),
+):
+    started_at = time.perf_counter()
+    try:
+        clean_exchange = exchange.strip().upper() if exchange and exchange.strip() else None
+        payload = refresh_stock_detail_snapshots_for_stocks(
+            db,
+            exchange=clean_exchange,
+            limit=limit,
+            offset=offset,
+            ttl_hours=ttl_hours,
+        )
+        stats = get_stock_detail_snapshot_stats(db)
+        _log_route("/web/partials/data/refresh-stock-detail-snapshots", started_at)
+        return templates.TemplateResponse(
+            "partials/data_stock_detail_snapshot_result.html",
+            {
+                "request": request,
+                "payload": payload,
+                "stats": stats,
+                "error_message": None,
+                "tone": "success" if payload.get("failed", 0) == 0 else "warning",
+                "exchange": clean_exchange or "All",
+                "limit": limit,
+                "offset": offset,
+                "ttl_hours": ttl_hours,
+            },
+        )
+    except Exception as exc:
+        db.rollback()
+        logger.exception("data refresh-stock-detail-snapshots failed")
+        _log_route("/web/partials/data/refresh-stock-detail-snapshots", started_at, "error")
+        return templates.TemplateResponse(
+            "partials/data_stock_detail_snapshot_result.html",
+            {
+                "request": request,
+                "payload": None,
+                "stats": get_stock_detail_snapshot_stats(db),
                 "error_message": http_error_message(exc),
                 "tone": "danger",
             },
@@ -517,12 +574,15 @@ def data_bhavcopy_audit(
 
 
 @router.get("/api-timings", include_in_schema=False)
-def data_api_timings(request: Request):
+def data_api_timings(
+    request: Request,
+    limit: int = Query(default=50, ge=5, le=200),
+):
     started_at = time.perf_counter()
-    rows = route_timing.get_all()
+    rows = route_timing.get_all(limit=limit)
     response = templates.TemplateResponse(
         "partials/data_api_timings.html",
-        {"request": request, "rows": rows},
+        {"request": request, "rows": rows, "limit": limit},
     )
     _log_route("/web/partials/data/api-timings", started_at)
     return response

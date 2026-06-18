@@ -156,11 +156,6 @@ def me(current_user: User = Depends(get_current_user)) -> User:
     return current_user
 
 
-@router.get("/debug-status")
-def debug_status() -> dict[str, bool]:
-    return {"debug_auth_bypass": settings.debug_auth_bypass}
-
-
 @router.post("/logout")
 @timed("auth.logout")
 def logout(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> dict[str, bool]:

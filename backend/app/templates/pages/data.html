@@ -103,6 +103,50 @@
         <div id="data-strategy-explainer-result" aria-live="polite"></div>
     </section>
 
+    <section class="data-ops-section" id="data-stock-detail-snapshots-section">
+        <div class="section-heading compact">
+            <h2>Stock detail snapshots</h2>
+            <p>Precompute chart payloads, algorithm findings, fundamentals, news, and strategy options for fast stock pages.</p>
+        </div>
+        <form id="data-stock-detail-snapshot-form" class="data-ops-control-grid" autocomplete="off">
+            <label class="field compact">
+                <span>Exchange</span>
+                <select name="exchange">
+                    <option value="NSE" selected>NSE</option>
+                    <option value="BSE">BSE</option>
+                    <option value="">All</option>
+                </select>
+            </label>
+            <label class="field compact">
+                <span>Limit</span>
+                <input type="number" name="limit" min="1" max="200" value="25">
+            </label>
+            <label class="field compact">
+                <span>Offset</span>
+                <input type="number" name="offset" min="0" value="0">
+            </label>
+            <label class="field compact">
+                <span>TTL hours</span>
+                <input type="number" name="ttl_hours" min="1" max="168" value="12">
+            </label>
+            <div class="data-ops-button-cell">
+                <button
+                    type="button"
+                    class="accent-button"
+                    hx-post="/web/partials/data/refresh-stock-detail-snapshots"
+                    hx-include="#data-stock-detail-snapshot-form"
+                    hx-target="#data-stock-detail-snapshot-result"
+                    hx-swap="innerHTML"
+                    hx-indicator="#data-stock-detail-snapshot-loader"
+                    hx-disabled-elt="this">
+                    Process Detail Snapshots
+                </button>
+                <span id="data-stock-detail-snapshot-loader" class="loading-indicator">Processing...</span>
+            </div>
+        </form>
+        <div id="data-stock-detail-snapshot-result" aria-live="polite"></div>
+    </section>
+
     <section class="data-ops-section" id="data-freshness-section">
         <div class="section-heading compact">
             <h2>Freshness</h2>

@@ -1,6 +1,8 @@
 # FastAPI Web UI Upgrade — Audit, Changelog, and Operations Guide
 
-This document records the migration from the legacy **Streamlit** UI to the new **FastAPI + Jinja2 + HTML/CSS + HTMX-lite** web UI, including parity hotfixes and Phase 9 final cleanup. It is intended as the single reference for what changed, why, and how to run the app afterward.
+This document records the migration from the legacy **Streamlit** UI to the new **FastAPI + Jinja2 + HTML/CSS + HTMX-lite** web UI, including parity hotfixes and Phase 9 final cleanup.
+
+Current state as of 2026-06-18: Streamlit has been decommissioned and removed from the runtime. The active application is the FastAPI web UI on `http://localhost:8000/web/explore`. Historical sections below may still describe the old migration/legacy-mode plan for audit context, but they are no longer the operating model.
 
 ---
 
@@ -13,7 +15,7 @@ This document records the migration from the legacy **Streamlit** UI to the new 
 5. [Changelog by phase](#changelog-by-phase)
 6. [Key files reference](#key-files-reference)
 7. [Startup and operations](#startup-and-operations)
-8. [Legacy Streamlit mode](#legacy-streamlit-mode)
+8. [Legacy Streamlit mode - historical](#legacy-streamlit-mode)
 9. [Testing checklists](#testing-checklists)
 10. [Known limitations](#known-limitations)
 
@@ -45,7 +47,7 @@ This document records the migration from the legacy **Streamlit** UI to the new 
 
 ### Hard rules (all phases)
 
-- Do **not** delete Streamlit
+- Keep current UI work in FastAPI/Jinja/static assets
 - Do **not** change database schema for UI migration work
 - Do **not** fake data or move trading/strategy/risk/AI business logic to JavaScript
 - Do **not** add React / Next / Vue
