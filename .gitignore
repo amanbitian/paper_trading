@@ -12,9 +12,11 @@ env/
 data/failed_tickers.log
 frontend/.streamlit/secrets.toml
 
-# VS Code — track shared config, ignore personal overrides
-.vscode/*.code-workspace
-# (settings.json, extensions.json, launch.json ARE tracked — they help new contributors)
+# VS Code
+.vscode/
+
+# Claude Code
+.claude/
 
 # JetBrains / PyCharm
 .idea/
