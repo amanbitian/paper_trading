@@ -1,0 +1,60 @@
+<section class="section-card stock-detail-card stock-strategy-explainer-card">
+    <div class="section-heading compact">
+        <h3>Strategy confidence explainer</h3>
+        <p class="muted">Cached signal rationale from stored prices and historical fundamentals.</p>
+    </div>
+
+    {% if not detail.strategy_explanations %}
+        {% set empty_title = "No cached explanations yet" %}
+        {% set empty_message = "Run the strategy explanation refresh job to precompute signal rationale for this stock." %}
+        {% include "partials/empty_state.html" %}
+    {% else %}
+        <div class="strategy-explainer-grid">
+            {% for row in detail.strategy_explanations %}
+            <article class="strategy-explainer-item">
+                <div class="strategy-explainer-head">
+                    <div>
+                        <p class="strategy-explainer-kicker">{{ row.strategy_type | replace("_", " ") | title }}</p>
+                        <h4>{{ row.strategy_name }}</h4>
+                    </div>
+                    <div class="strategy-explainer-signal">
+                        <span class="signal-badge signal-{{ row.signal_type | lower }}">{{ row.signal_type }}</span>
+                        <span class="strategy-confidence-pill">{{ row.confidence_score | round(0) | int }}%</span>
+                    </div>
+                </div>
+
+                <div class="strategy-confidence-meter" aria-hidden="true">
+                    <div class="strategy-confidence-fill {% if row.confidence_score >= 70 %}is-high{% elif row.confidence_score <= 20 %}is-low{% endif %}" style="width: {{ row.confidence_pct }}%"></div>
+                </div>
+
+                <p class="strategy-explainer-headline">{{ row.headline }}</p>
+                <p class="muted strategy-explainer-summary">{{ row.explanation_summary }}</p>
+
+                <div class="strategy-explainer-meta">
+                    <span>Price: {{ row.price_as_of | date_text if row.price_as_of else "n/a" }}</span>
+                    <span>Fundamentals: {{ row.fundamentals_as_of | date_text if row.fundamentals_as_of else "n/a" }}</span>
+                    <span>Updated: {{ row.calculated_at | date_text if row.calculated_at else "n/a" }}</span>
+                    {% if row.is_stale %}
+                    <span class="strategy-stale-badge">stale</span>
+                    {% endif %}
+                </div>
+
+                {% if row.reasons %}
+                <div class="strategy-reason-grid">
+                    {% for reason in row.reasons %}
+                    <div class="strategy-reason-card is-{{ reason.status }}">
+                        <div class="strategy-reason-top">
+                            <strong>{{ reason.label }}</strong>
+                            <span>{{ reason.value }}</span>
+                        </div>
+                        <p>{{ reason.message }}</p>
+                        <small>Threshold: {{ reason.threshold }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>

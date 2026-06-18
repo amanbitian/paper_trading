@@ -1,0 +1,71 @@
+{% if not query %}
+    {% set empty_title = "Search stored instruments" %}
+    {% set empty_message = "Type a company name, ticker, sector, or industry to search the stocks table." %}
+    {% include "partials/empty_state.html" %}
+{% elif not stocks %}
+    {% set empty_title = "No matching stocks" %}
+    {% set empty_message = "No active NSE/BSE stock matched '" ~ query ~ "'." %}
+    {% include "partials/empty_state.html" %}
+{% else %}
+    <div class="search-result-grid">
+        {% for stock in stocks %}
+            {% if mode == 'link' %}
+            <a
+                class="search-result-card stock-result-link"
+                href="{{ stock | stock_detail_url }}">
+                <div class="search-result-copy">
+                    <strong>{{ stock.company_name or stock.symbol }}</strong>
+                    <span>{{ stock.symbol }} · {{ stock.exchange }} · {{ stock.yahoo_symbol }}</span>
+                </div>
+                <div class="search-meta">
+                    {% if stock.sector %}
+                        {% set badge_text = stock.sector %}
+                        {% set badge_tone = "neutral" %}
+                        {% include "partials/status_badge.html" %}
+                    {% endif %}
+                    {% if stock.industry %}
+                        <small>{{ stock.industry }}</small>
+                    {% endif %}
+                    <span class="search-result-action">Open</span>
+                </div>
+            </a>
+            {% else %}
+            <article
+                class="search-result-card{% if selectable %} is-selectable{% endif %}"
+                {% if selectable %}
+                data-stock-id="{{ stock.id }}"
+                data-stock-symbol="{{ stock.symbol }}"
+                data-stock-label="{{ stock.company_name or stock.symbol }}"
+                data-stock-exchange="{{ stock.exchange }}"
+                data-stock-yahoo="{{ stock.yahoo_symbol }}"
+                data-stock-sector="{{ stock.sector or '' }}"
+                data-stock-industry="{{ stock.industry or '' }}"
+                {% if latest_prices and latest_prices.get(stock.id) is not none %}
+                data-latest-price="{{ latest_prices.get(stock.id) }}"
+                {% endif %}
+                {% if latest_dates and latest_dates.get(stock.id) %}
+                data-latest-date="{{ latest_dates.get(stock.id) }}"
+                {% endif %}
+                {% endif %}>
+                <div>
+                    <strong>{{ stock.company_name or stock.symbol }}</strong>
+                    <span>{{ stock.symbol }} · {{ stock.exchange }} · {{ stock.yahoo_symbol }}</span>
+                </div>
+                <div class="search-meta">
+                    {% if stock.sector %}
+                        {% set badge_text = stock.sector %}
+                        {% set badge_tone = "neutral" %}
+                        {% include "partials/status_badge.html" %}
+                    {% endif %}
+                    {% if stock.industry %}
+                        <small>{{ stock.industry }}</small>
+                    {% endif %}
+                    {% if selectable %}
+                        <button type="button" class="ghost-button stock-pick-button">Select</button>
+                    {% endif %}
+                </div>
+            </article>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}

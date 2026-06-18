@@ -1,0 +1,74 @@
+<div
+    id="sync-status"
+    class="sync-status-card"
+    data-sync-running="true">
+    <div class="sync-copy">
+        <span class="muted">Sync status</span>
+        <strong class="sync-state-label">
+            
+                Running
+            
+        </strong>
+        <small>
+            
+                Data through 2026-05-28
+            
+        </small>
+        
+            <small class="sync-run-detail">
+                Last run: 26 ok,
+                0 failed,
+                0 rows saved
+            </small>
+        
+        
+            <small class="sync-message sync-message-success">Market sync started. Prices and analytics will refresh in the background.</small>
+        
+        
+    </div>
+    
+    <div class="sync-actions">
+        <div class="sync-now-wrap">
+            <button
+                class="accent-button"
+                type="button"
+                id="sync-now-button"
+                disabled
+                hx-post="/web/partials/explore/sync-now"
+                hx-target="#sync-status"
+                hx-swap="outerHTML"
+                hx-indicator="#sync-loader">
+                Syncing...
+            </button>
+            <span id="sync-loader" class="loading-indicator inline">Starting sync...</span>
+        </div>
+        <form
+            class="toggle-form"
+            hx-post="/web/partials/explore/toggle-sync-schedule"
+            hx-target="#sync-status"
+            hx-swap="outerHTML"
+            hx-indicator="#schedule-loader">
+            <input type="hidden" name="enabled" value="false">
+            <label class="toggle-switch">
+                <input
+                    type="checkbox"
+                    name="enabled"
+                    value="true"
+                    
+                    hx-post="/web/partials/explore/toggle-sync-schedule"
+                    hx-trigger="change"
+                    hx-target="#sync-status"
+                    hx-swap="outerHTML"
+                    hx-include=".toggle-form"
+                    hx-indicator="#schedule-loader">
+                <span class="toggle-slider"></span>
+                <span>Persistent sync schedule</span>
+            </label>
+            <span id="schedule-loader" class="loading-indicator inline">Updating...</span>
+            <small class="scheduler-note muted">Toggle is UI-only until backend scheduler control ships.</small>
+        </form>
+        
+            <small class="sync-poll-note muted">Status refreshes every 5s while sync runs.</small>
+        
+    </div>
+</div>

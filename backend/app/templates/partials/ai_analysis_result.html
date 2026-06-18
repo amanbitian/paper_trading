@@ -1,0 +1,129 @@
+{% if not result.ok %}
+    {% set banner_message = result.error or "Could not run AI analysis. Check the selected mode and inputs." %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+    {% if result.validation_errors and result.validation_errors|length > 1 %}
+    <ul class="ai-validation-detail muted">
+        {% for err in result.validation_errors %}
+        <li>{{ err }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% else %}
+<article class="ai-result-card">
+    <div class="ai-result-header">
+        <h3>{{ result.mode_label or result.mode }}</h3>
+        {% if duration_ms %}
+            <span class="muted">{{ duration_ms | number(0) }} ms</span>
+        {% endif %}
+    </div>
+    {% if result.highlights %}
+    <div class="ai-result-highlights">
+        {% for item in result.highlights %}
+        <article class="metric-card ai-result-metric">
+            <span class="metric-label">{{ item.label }}</span>
+            <strong class="metric-value">{{ item.value }}</strong>
+        </article>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% for section in result.sections %}
+    <div class="ai-result-section-block ai-tone-{{ section.tone or 'neutral' }}">
+        <h4>{{ section.title }}</h4>
+        <p class="ai-result-body">{{ section.body }}</p>
+    </div>
+    {% endfor %}
+
+    {% if result.mode == "nl_screener" and result.nl_screener %}
+    {% set screener = result.nl_screener %}
+    {% if screener.matched_count == 0 %}
+        {% set banner_message = screener.summary or "No stocks matched your screen." %}
+        {% set banner_tone = "warning" %}
+        {% include "partials/info_banner.html" %}
+    {% else %}
+        {% if screener.showing_note %}
+        <p class="muted ai-screener-showing-note">{{ screener.showing_note }}</p>
+        {% endif %}
+        <div class="table-scroll ai-table-scroll ai-screener-table-scroll">
+            <table class="ai-table compact-table ai-screener-table">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Symbol</th>
+                        <th>Exchange</th>
+                        <th>Latest Price</th>
+                        <th>Return %</th>
+                        <th>Latest Date</th>
+                        <th>Volume</th>
+                        <th>Sector</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in screener.stocks %}
+                    <tr>
+                        <td>
+                            {% if stock.detail_url %}
+                            <a href="{{ stock.detail_url }}" class="stock-link">{{ stock.company_name }}</a>
+                            {% else %}
+                            {{ stock.company_name }}
+                            <span class="muted ai-route-missing">(no detail link)</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ stock.symbol }}</td>
+                        <td>{{ stock.exchange or "—" }}</td>
+                        <td>{% if stock.latest_price is not none %}{{ stock.latest_price | inr }}{% else %}—{% endif %}</td>
+                        <td class="{{ stock.return_pct | tone }}">{% if stock.return_pct is not none %}{{ stock.return_pct | pct }}{% else %}—{% endif %}</td>
+                        <td>{{ stock.latest_date or "—" }}</td>
+                        <td>{{ stock.volume | volume }}</td>
+                        <td>{{ stock.sector or "—" }}</td>
+                        <td class="muted">{{ stock.reason or "—" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    {% elif result.stocks %}
+    <div class="table-scroll ai-table-scroll">
+        <table class="ai-table compact-table">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Exchange</th>
+                    <th>Sector</th>
+                    <th>1M</th>
+                    <th>3M</th>
+                    <th>1Y</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in result.stocks[:50] %}
+                <tr>
+                    <td>{{ row.symbol }}</td>
+                    <td>{{ row.exchange or "—" }}</td>
+                    <td>{{ row.sector or "—" }}</td>
+                    <td class="{{ row.change_1m_pct | tone }}">{% if row.change_1m_pct is not none %}{{ row.change_1m_pct | pct }}{% else %}—{% endif %}</td>
+                    <td class="{{ row.change_3m_pct | tone }}">{% if row.change_3m_pct is not none %}{{ row.change_3m_pct | pct }}{% else %}—{% endif %}</td>
+                    <td class="{{ row.change_1y_pct | tone }}">{% if row.change_1y_pct is not none %}{{ row.change_1y_pct | pct }}{% else %}—{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</article>
+{% endif %}
+
+{% if result.disclaimer %}
+{% set banner_message = result.disclaimer %}
+{% set banner_tone = "info" %}
+<div class="ai-result-disclaimer">
+    {% include "partials/info_banner.html" %}
+</div>
+{% endif %}
+
+<details class="ai-raw-output">
+    <summary>Advanced: raw model response</summary>
+    <pre class="ai-raw-pre">{% if result.raw_json %}{{ result.raw_json }}{% elif result.raw_json_error %}{{ result.raw_json_error }}{% else %}No raw payload.{% endif %}</pre>
+</details>

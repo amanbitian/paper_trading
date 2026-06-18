@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Analytics</p>
+        <h1>Trends</h1>
+        <p class="page-subtitle">{{ subtitle }}</p>
+        <div class="header-badges">
+            {% set badge_text = "Web UI" %}
+            {% set badge_tone = "info" %}
+            {% include "partials/status_badge.html" %}
+        </div>
+    </div>
+</header>
+
+<section class="analytics-page" id="trends-page" data-default-period="{{ default_period }}">
+    <form id="trends-filter-form" class="trends-filter-shell" autocomplete="off">
+        <input type="hidden" name="period" id="trends-period-input" value="{{ default_period }}">
+
+        <div class="period-selector" role="group" aria-label="Trend period">
+            {% for label, value in period_options %}
+                <button
+                    type="button"
+                    class="period-chip {% if value == default_period %}is-active{% endif %}"
+                    data-period="{{ value }}"
+                    data-trends-period>
+                    {{ label }}
+                </button>
+            {% endfor %}
+        </div>
+
+        <span id="trends-filters-loader" class="loading-indicator">Loading filters...</span>
+        <div id="trends-filters-panel"></div>
+    </form>
+
+    <section class="section-stack">
+        <div class="section-heading compact">
+            <h2>Summary</h2>
+        </div>
+        <span id="trends-summary-loader" class="loading-indicator">Loading summary...</span>
+        <div id="trends-summary-panel" class="trends-summary-shell"></div>
+    </section>
+
+    <section class="section-card chart-section">
+        <div class="section-heading compact">
+            <h2>Heatmap</h2>
+            <p>Sector and industry treemap colored by period change.</p>
+        </div>
+        <span id="trends-treemap-loader" class="loading-indicator">Loading treemap...</span>
+        <div id="trends-treemap-panel" class="treemap-container trends-treemap-shell"></div>
+    </section>
+
+    <section class="section-stack">
+        <div class="section-heading compact">
+            <h2>Trend rows</h2>
+        </div>
+        <span id="trends-table-loader" class="loading-indicator">Loading table...</span>
+        <div id="trends-table-panel"></div>
+    </section>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+<script src="/static/js/analytics.js" defer></script>
+{% endblock %}

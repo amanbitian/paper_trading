@@ -1,0 +1,148 @@
+{% if error_message %}
+<div class="info-banner danger">
+    <span class="info-dot"></span>
+    <p>Audit failed: {{ error_message }}</p>
+</div>
+{% elif audit %}
+
+{# ── Summary metric row ─────────────────────────────────────────────────── #}
+<div class="audit-summary-grid">
+    <div class="audit-metric-card">
+        <span class="metric-label">Bhavcopy Coverage</span>
+        <span class="metric-value {% if audit.coverage_pct >= 80 %}positive{% elif audit.coverage_pct >= 50 %}neutral{% else %}negative{% endif %}">{{ audit.coverage_pct }}%</span>
+        <span class="muted">{{ audit.db_covered_stocks }} / {{ audit.db_total_stocks }} stocks matched</span>
+    </div>
+    <div class="audit-metric-card">
+        <span class="metric-label">Date Range</span>
+        <span class="metric-value" style="font-size:clamp(13px,1.4vw,17px)">{{ audit.bhavcopy_date_start or "—" }}</span>
+        <span class="muted">to {{ audit.bhavcopy_date_end or "—" }} · {{ audit.bhavcopy_trading_days }} days</span>
+    </div>
+    <div class="audit-metric-card">
+        <span class="metric-label">Bhavcopy Index</span>
+        <span class="metric-value" style="font-size:clamp(13px,1.4vw,17px)">{{ "{:,}".format(audit.bhavcopy_total_candles) }}</span>
+        <span class="muted">NSE {{ audit.bhavcopy_nse_symbols }} · BSE {{ audit.bhavcopy_bse_symbols }} symbols</span>
+    </div>
+    <div class="audit-metric-card">
+        <span class="metric-label">Audit Duration</span>
+        <span class="metric-value" style="font-size:clamp(13px,1.4vw,17px)">{{ audit.elapsed_ms }}ms</span>
+        <span class="muted">Index load {{ audit.load_ms }}ms</span>
+    </div>
+</div>
+
+{# ── DB issue counts ─────────────────────────────────────────────────────── #}
+<div class="audit-issues-row">
+    <p class="audit-section-label">Database issues detected</p>
+    <div class="audit-issues-grid">
+        {% set dup = audit.issues.duplicate_daily_candles %}
+        {% set inv = audit.issues.invalid_ohlc_rows %}
+        {% set miss = audit.issues.missing_price_symbols %}
+        {% set stale = audit.issues.stale_symbols %}
+        <div class="audit-issue-chip {% if dup > 0 %}audit-issue-chip--warn{% endif %}">
+            <strong>{{ dup }}</strong>
+            <span>Duplicate candles</span>
+        </div>
+        <div class="audit-issue-chip {% if inv > 0 %}audit-issue-chip--danger{% endif %}">
+            <strong>{{ inv }}</strong>
+            <span>Invalid OHLC rows</span>
+        </div>
+        <div class="audit-issue-chip {% if miss > 0 %}audit-issue-chip--warn{% endif %}">
+            <strong>{{ miss }}</strong>
+            <span>Missing price symbols</span>
+        </div>
+        <div class="audit-issue-chip {% if stale > 0 %}audit-issue-chip--warn{% endif %}">
+            <strong>{{ stale }}</strong>
+            <span>Stale symbols</span>
+        </div>
+    </div>
+    {% if dup > 0 or inv > 0 %}
+    <p class="muted" style="font-size:12px;margin-top:8px">
+        Use <strong>Optimize Data Quality</strong> (below) to fix duplicate candles and invalid OHLC rows automatically.
+    </p>
+    {% endif %}
+</div>
+
+{# ── Cross-check results ──────────────────────────────────────────────────── #}
+{% set cc = audit.cross_check %}
+{% set discrepancy_pct = (100 - cc.match_rate_pct) | round(1) if cc.match_rate_pct is not none else none %}
+<div class="audit-crosscheck-section">
+    <p class="audit-section-label">Cross-check results
+        <span class="muted" style="font-weight:400">— {{ cc.stocks_sampled }} stocks sampled · {{ cc.candles_checked }} candles checked</span>
+        {% if discrepancy_pct is not none %}
+        <span class="audit-discrepancy-badge {% if discrepancy_pct == 0 %}audit-discrepancy-badge--clean{% elif discrepancy_pct < 5 %}audit-discrepancy-badge--warn{% else %}audit-discrepancy-badge--danger{% endif %}">
+            {% if discrepancy_pct == 0 %}✓ 0% discrepancy{% else %}⚠ {{ discrepancy_pct }}% discrepancy{% endif %}
+        </span>
+        {% endif %}
+    </p>
+    <div class="audit-crosscheck-grid">
+        <div class="audit-crosscheck-card audit-crosscheck-card--match">
+            <strong>{{ cc.matched }}</strong>
+            <span>Matched bhavcopy</span>
+        </div>
+        <div class="audit-crosscheck-card audit-crosscheck-card--mismatch">
+            <strong>{{ cc.mismatched }}</strong>
+            <span>Mismatched</span>
+        </div>
+        <div class="audit-crosscheck-card">
+            <strong>{{ cc.no_bhavcopy_entry }}</strong>
+            <span>No bhavcopy entry</span>
+        </div>
+        {% if cc.match_rate_pct is not none %}
+        <div class="audit-crosscheck-card {% if cc.match_rate_pct >= 95 %}audit-crosscheck-card--match{% elif cc.match_rate_pct < 80 %}audit-crosscheck-card--mismatch{% endif %}">
+            <strong>{{ cc.match_rate_pct }}%</strong>
+            <span>Match rate</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if cc.mismatch_examples %}
+    <details class="details-card" style="margin-top:12px">
+        <summary>{{ cc.mismatch_examples | length }} mismatch example(s)</summary>
+        <div style="overflow-x:auto;margin-top:8px">
+            <table class="financial-table" style="min-width:520px">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Exchange</th>
+                        <th>Date</th>
+                        <th class="num">DB Close</th>
+                        <th class="num">Bhavcopy Close</th>
+                        <th>Mismatched Fields</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ex in cc.mismatch_examples %}
+                    <tr>
+                        <td><strong>{{ ex.symbol }}</strong></td>
+                        <td>{{ ex.exchange }}</td>
+                        <td>{{ ex.date }}</td>
+                        <td class="num">{{ "%.2f"|format(ex.db_close) }}</td>
+                        <td class="num">{{ "%.2f"|format(ex.bhav_close) }}</td>
+                        <td><code class="algo-status-code">{{ ex.fields | join(", ") }}</code></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </details>
+    {% endif %}
+</div>
+
+{# ── Not covered stocks ───────────────────────────────────────────────────── #}
+{% if audit.not_covered_sample %}
+<details class="details-card">
+    <summary>{{ audit.db_total_stocks - audit.db_covered_stocks }} stocks not in bhavcopy (showing first {{ audit.not_covered_sample | length }})</summary>
+    <div class="badge-list" style="margin-top:8px">
+        {% for sym in audit.not_covered_sample %}
+        <span class="stock-meta-chip">{{ sym }}</span>
+        {% endfor %}
+    </div>
+</details>
+{% endif %}
+
+<p class="muted" style="font-size:11px;margin-top:12px">Audit ran at {{ audit.ran_at[:19] | replace("T"," ") }} UTC</p>
+
+{% else %}
+<div class="empty-state">
+    <p>No audit data returned.</p>
+</div>
+{% endif %}

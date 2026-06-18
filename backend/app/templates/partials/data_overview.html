@@ -1,0 +1,57 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif overview %}
+<div class="data-ops-overview-grid">
+    {% set label = "Latest candle date" %}
+    {% set value = overview.latest_candle_date | date_text %}
+    {% set card_class = "data-ops-metric" %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Latest provider / session date" %}
+    {% set value = overview.latest_provider_date | date_text %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Last sync run time" %}
+    {% set value = overview.last_sync_run_time | date_text %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Last sync status" %}
+    {% set value = overview.last_sync_status or "—" %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Rows saved (last sync)" %}
+    {% set value = overview.last_sync_rows_saved | default(0) | number(0) %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Active symbols (universe)" %}
+    {% set value = overview.active_symbols_selected | default(0) | number(0) %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Failed / missing symbols" %}
+    {% set value = overview.failed_symbols_count | default(0) | number(0) %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Stale symbols" %}
+    {% set value = overview.stale_symbols_count | default(0) | number(0) %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Analytics refreshed at" %}
+    {% set value = overview.analytics_refreshed_at | date_text %}
+    {% include "partials/metric_card.html" %}
+</div>
+{% if overview.provider_date_note %}
+    <p class="data-ops-note muted">{{ overview.provider_date_note }}</p>
+{% endif %}
+{% if overview.sync_is_running %}
+    {% set banner_message = "Market sync is running. Metrics refresh automatically when sync completes." %}
+    {% set banner_tone = "info" %}
+    {% include "partials/info_banner.html" %}
+{% endif %}
+<p class="data-ops-as-of muted">Snapshot as of {{ overview.as_of | date_text }}</p>
+{% else %}
+    {% set empty_title = "Overview unavailable" %}
+    {% set empty_message = "Could not load health summary." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

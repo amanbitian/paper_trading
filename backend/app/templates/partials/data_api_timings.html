@@ -1,0 +1,55 @@
+{% if not rows %}
+<div class="empty-state">
+    <p>No requests recorded yet — make a few page loads then refresh.</p>
+</div>
+{% else %}
+<div style="overflow-x:auto">
+    <table class="financial-table api-timing-table">
+        <thead>
+            <tr>
+                <th>Route</th>
+                <th class="num">Calls</th>
+                <th class="num">Avg (ms)</th>
+                <th class="num">Min (ms)</th>
+                <th class="num">Max (ms)</th>
+                <th class="num">Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            {% set avg = row.avg_ms %}
+            {% if avg < 200 %}
+                {% set grade = "fast" %}
+                {% set grade_label = "Fast" %}
+            {% elif avg < 1000 %}
+                {% set grade = "ok" %}
+                {% set grade_label = "OK" %}
+            {% elif avg < 3000 %}
+                {% set grade = "slow" %}
+                {% set grade_label = "Slow" %}
+            {% else %}
+                {% set grade = "very-slow" %}
+                {% set grade_label = "Very slow" %}
+            {% endif %}
+            <tr>
+                <td class="api-timing-route">
+                    <code>{{ row.route }}</code>
+                </td>
+                <td class="num muted">{{ "{:,}".format(row.calls) }}</td>
+                <td class="num">
+                    <span class="api-timing-badge api-timing-badge--{{ grade }}">{{ "{:,.1f}".format(avg) }}</span>
+                </td>
+                <td class="num muted">{{ "{:,.1f}".format(row.min_ms) if row.min_ms is not none else "—" }}</td>
+                <td class="num muted">{{ "{:,.1f}".format(row.max_ms) }}</td>
+                <td class="num">
+                    <span class="api-timing-grade api-timing-grade--{{ grade }}">{{ grade_label }}</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="muted" style="font-size:11px;margin-top:10px">
+    Timings accumulate since last container restart · static assets excluded · route templates used (not raw URLs)
+</p>
+{% endif %}

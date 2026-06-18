@@ -1,0 +1,11 @@
+<div class="chart-card">
+    {% if chart_title %}
+        <div class="chart-card-header">
+            <h3>{{ chart_title }}</h3>
+            {% if chart_subtitle %}<p>{{ chart_subtitle }}</p>{% endif %}
+        </div>
+    {% endif %}
+    <div class="chart-frame">
+        {{ chart_content | safe }}
+    </div>
+</div>

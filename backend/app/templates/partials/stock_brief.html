@@ -1,0 +1,23 @@
+<section class="stock-detail-card stock-brief-card" id="stock-brief-card">
+    <div class="stock-brief-header">
+        <div class="stock-brief-title">
+            <span class="stock-brief-icon">✦</span>
+            <h3>Stock Brief</h3>
+            <span class="stock-brief-subtitle muted">AI-generated analyst note</span>
+        </div>
+        <button
+            class="ghost-button compact"
+            type="button"
+            hx-post="/web/partials/explore/stock-brief/{{ detail.stock.id }}"
+            hx-target="#stock-brief-card"
+            hx-swap="outerHTML"
+            hx-indicator="#stock-brief-spinner"
+            id="stock-brief-generate-btn">
+            Generate Brief
+        </button>
+        <span id="stock-brief-spinner" class="loading-indicator">Generating…</span>
+    </div>
+    <div class="stock-brief-placeholder">
+        <p class="muted">Click <strong>Generate Brief</strong> to get an AI-written summary of this stock's fundamentals, news, and price trend.</p>
+    </div>
+</section>

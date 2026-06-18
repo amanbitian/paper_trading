@@ -1,0 +1,109 @@
+{% if error_message %}
+    <div class="info-banner danger data-refresh-banner">
+        <span class="info-dot"></span>
+        <p>{{ error_message }}</p>
+    </div>
+{% elif payload %}
+    <div class="data-quality-result">
+        <div class="info-banner {{ tone or 'info' }} data-refresh-banner">
+            <span class="info-dot"></span>
+            <p>
+                Data quality check completed:
+                {{ payload.checked_symbols }} symbols checked in
+                {{ "%.1f"|format(payload.duration_seconds or 0) }}s.
+            </p>
+        </div>
+
+        <div class="data-quality-grid">
+            <div class="data-quality-panel">
+                <h3>Issues before</h3>
+                <dl class="data-ingestion-dl">
+                    {% for label, value in payload.before.items() %}
+                        <div>
+                            <dt>{{ label.replace("_", " ") }}</dt>
+                            <dd>{{ value }}</dd>
+                        </div>
+                    {% endfor %}
+                </dl>
+            </div>
+            <div class="data-quality-panel">
+                <h3>Issues after</h3>
+                <dl class="data-ingestion-dl">
+                    {% for label, value in payload.after.items() %}
+                        <div>
+                            <dt>{{ label.replace("_", " ") }}</dt>
+                            <dd>{{ value }}</dd>
+                        </div>
+                    {% endfor %}
+                </dl>
+            </div>
+        </div>
+
+        <div class="data-quality-grid">
+            <div class="data-quality-panel">
+                <h3>Repairs applied</h3>
+                {% if payload.repairs %}
+                    <dl class="data-ingestion-dl">
+                        {% for label, value in payload.repairs.items() %}
+                            <div>
+                                <dt>{{ label.replace("_", " ") }}</dt>
+                                <dd>{{ value }}</dd>
+                            </div>
+                        {% endfor %}
+                    </dl>
+                {% else %}
+                    <p class="muted data-ops-note">No safe repairs were needed in this bounded pass.</p>
+                {% endif %}
+            </div>
+            <div class="data-quality-panel">
+                <h3>Source check status</h3>
+                {% if payload.status_counts %}
+                    <dl class="data-ingestion-dl">
+                        {% for label, value in payload.status_counts.items() %}
+                            <div>
+                                <dt>{{ label.replace("_", " ") }}</dt>
+                                <dd>{{ value }}</dd>
+                            </div>
+                        {% endfor %}
+                    </dl>
+                {% else %}
+                    <p class="muted data-ops-note">No source checks were run.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if payload.checked_rows %}
+            <div class="data-ops-table-scroll">
+                <table class="data-ops-table">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Exchange</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in payload.checked_rows %}
+                            <tr>
+                                <td>{{ row.symbol }}</td>
+                                <td>{{ row.exchange }}</td>
+                                <td>{{ row.date | date_text }}</td>
+                                <td>{{ row.status }}</td>
+                                <td class="data-ops-message-cell">{{ row.details }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        {% if payload.errors %}
+            <div class="info-banner warning data-refresh-banner">
+                <span class="info-dot"></span>
+                <p>{{ payload.errors | join("; ") }}</p>
+            </div>
+        {% endif %}
+    </div>
+{% endif %}

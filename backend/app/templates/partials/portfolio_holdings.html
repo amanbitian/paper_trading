@@ -1,0 +1,50 @@
+<div id="portfolio-holdings" class="financial-table-card">
+    {% if error_message %}
+        {% set banner_message = error_message %}
+        {% set banner_tone = "danger" %}
+        {% include "partials/info_banner.html" %}
+    {% elif not portfolio_id %}
+        {% set empty_title = "Select a portfolio" %}
+        {% set empty_message = "Choose a portfolio to view holdings." %}
+        {% include "partials/empty_state.html" %}
+    {% elif not rows %}
+        {% set empty_title = "No holdings yet" %}
+        {% set empty_message = "Add a manual buy to populate this portfolio." %}
+        {% include "partials/empty_state.html" %}
+    {% else %}
+        <table class="financial-table wide-table">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Company</th>
+                    <th>Exchange</th>
+                    <th>Qty</th>
+                    <th>Avg/Buy</th>
+                    <th>Latest</th>
+                    <th>Invested</th>
+                    <th>Current</th>
+                    <th>P&amp;L</th>
+                    <th>P&amp;L %</th>
+                    <th>Purchase</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>{{ row.symbol }}</td>
+                        <td>{{ row.company_name or row.symbol }}</td>
+                        <td>{{ row.exchange or "-" }}</td>
+                        <td>{{ row.quantity | number(2) }}</td>
+                        <td>{{ row.average_buy_price | inr }}</td>
+                        <td>{{ row.current_price | inr }}</td>
+                        <td>{{ row.total_invested | inr }}</td>
+                        <td>{{ row.market_value | inr }}</td>
+                        <td class="{{ row.unrealized_pnl | tone }}">{{ row.unrealized_pnl | inr }}</td>
+                        <td class="{{ row.return_pct | tone }}">{{ row.return_pct | pct }}</td>
+                        <td>{{ row.purchase_date | date_text }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>

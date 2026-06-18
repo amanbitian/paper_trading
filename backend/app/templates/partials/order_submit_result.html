@@ -1,0 +1,11 @@
+{% if success %}
+    <div class="form-banner {{ tone or 'success' }}">
+        <span class="info-dot"></span>
+        <p>{{ message }}</p>
+    </div>
+{% else %}
+    <div class="form-banner {{ tone or 'danger' }}">
+        <span class="info-dot"></span>
+        <p>{{ message }}</p>
+    </div>
+{% endif %}

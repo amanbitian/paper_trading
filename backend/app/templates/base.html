@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title or "Paper Trading App" }}</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+        {% include "partials/sidebar.html" %}
+        <main class="main-shell">
+            {% include "partials/topbar.html" %}
+            <section class="page-container">
+                {% block content %}{% endblock %}
+            </section>
+        </main>
+    </div>
+    {% block scripts %}{% endblock %}
+    <script src="/static/js/app.js" defer></script>
+    <script src="/static/js/charts.js" defer></script>
+</body>
+</html>

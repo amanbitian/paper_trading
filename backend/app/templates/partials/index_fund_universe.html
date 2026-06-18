@@ -1,0 +1,136 @@
+<form
+    id="index-fund-universe-form"
+    class="index-fund-filter-bar"
+    autocomplete="off"
+    hx-get="/web/partials/index-fund/universe"
+    hx-target="#index-fund-universe-panel"
+    hx-swap="innerHTML"
+    hx-include="#index-fund-universe-form"
+    hx-indicator="#index-fund-universe-loader">
+    <label class="field compact wide">
+        <span>Search</span>
+        <input
+            type="search"
+            name="query"
+            value="{{ filters.query }}"
+            placeholder="NIFTY, GOLD, ^NSEI..."
+            data-index-fund-search
+            minlength="0">
+    </label>
+    <label class="field compact">
+        <span>Category</span>
+        <select name="category" data-index-fund-filter>
+            <option value="">All</option>
+            {% for cat in filter_options.categories %}
+                <option value="{{ cat }}" {% if filters.category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label class="field compact">
+        <span>Currency</span>
+        <select name="currency" data-index-fund-filter>
+            <option value="">All</option>
+            {% for cur in filter_options.currencies %}
+                <option value="{{ cur }}" {% if filters.currency == cur %}selected{% endif %}>{{ cur }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label class="field compact">
+        <span>Has prices</span>
+        <select name="has_prices" data-index-fund-filter>
+            <option value="all" {% if filters.has_prices == 'all' %}selected{% endif %}>All</option>
+            <option value="with" {% if filters.has_prices == 'with' %}selected{% endif %}>With prices</option>
+            <option value="without" {% if filters.has_prices == 'without' %}selected{% endif %}>Without prices</option>
+        </select>
+    </label>
+    <label class="field compact">
+        <span>Sort by</span>
+        <select name="sort_by" data-index-fund-filter>
+            <option value="latest_date" {% if filters.sort_by == 'latest_date' %}selected{% endif %}>Latest date</option>
+            <option value="symbol" {% if filters.sort_by == 'symbol' %}selected{% endif %}>Symbol</option>
+            <option value="latest_price" {% if filters.sort_by == 'latest_price' %}selected{% endif %}>Latest price</option>
+            <option value="change_1m_pct" {% if filters.sort_by == 'change_1m_pct' %}selected{% endif %}>1M return</option>
+            <option value="change_3m_pct" {% if filters.sort_by == 'change_3m_pct' %}selected{% endif %}>3M return</option>
+            <option value="change_6m_pct" {% if filters.sort_by == 'change_6m_pct' %}selected{% endif %}>6M return</option>
+            <option value="change_1y_pct" {% if filters.sort_by == 'change_1y_pct' %}selected{% endif %}>1Y return</option>
+            <option value="volume" {% if filters.sort_by == 'volume' %}selected{% endif %}>Volume</option>
+        </select>
+    </label>
+    <label class="field compact">
+        <span>Order</span>
+        <select name="descending" data-index-fund-filter>
+            <option value="true" {% if filters.descending %}selected{% endif %}>Descending</option>
+            <option value="false" {% if not filters.descending %}selected{% endif %}>Ascending</option>
+        </select>
+    </label>
+    <label class="field compact">
+        <span>Rows</span>
+        <select name="limit" data-index-fund-filter>
+            <option value="50" {% if filters.limit == 50 %}selected{% endif %}>50</option>
+            <option value="100" {% if filters.limit == 100 %}selected{% endif %}>100</option>
+            <option value="200" {% if filters.limit == 200 %}selected{% endif %}>200</option>
+        </select>
+    </label>
+</form>
+
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif rows %}
+<div class="table-scroll index-fund-table-scroll">
+    <table class="index-fund-table compact-table">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Yahoo Ticker</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Currency</th>
+                <th>Latest Date</th>
+                <th>Latest Price</th>
+                <th>1M</th>
+                <th>3M</th>
+                <th>6M</th>
+                <th>1Y</th>
+                <th>Volume</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.symbol }}</td>
+                <td>{{ row.yahoo_symbol }}</td>
+                <td>{{ row.symbol }}</td>
+                <td>{{ row.category }}</td>
+                <td>{{ row.base_currency }}</td>
+                <td>{{ row.latest_price_datetime | date_text }}</td>
+                <td>
+                    {% if row.base_currency == 'INR' %}
+                        {{ row.latest_price | inr }}
+                    {% else %}
+                        {{ row.latest_price | number(2) }} {{ row.base_currency }}
+                    {% endif %}
+                </td>
+                <td class="{{ row.change_1m_pct | tone }}">{% if row.change_1m_pct is not none %}{{ row.change_1m_pct | pct }}{% else %}—{% endif %}</td>
+                <td class="{{ row.change_3m_pct | tone }}">{% if row.change_3m_pct is not none %}{{ row.change_3m_pct | pct }}{% else %}—{% endif %}</td>
+                <td class="{{ row.change_6m_pct | tone }}">{% if row.change_6m_pct is not none %}{{ row.change_6m_pct | pct }}{% else %}—{% endif %}</td>
+                <td class="{{ row.change_1y_pct | tone }}">{% if row.change_1y_pct is not none %}{{ row.change_1y_pct | pct }}{% else %}—{% endif %}</td>
+                <td>{{ row.latest_volume | volume if row.latest_volume is not none else "—" }}</td>
+                <td>
+                    {% set badge_text = row.status_label %}
+                    {% set badge_tone = row.status_tone %}
+                    {% include "partials/status_badge.html" %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="index-fund-note muted">Showing up to {{ filters.limit }} instruments. Bulk ingestion: <code>scripts/ingest_index_funds.py</code></p>
+{% else %}
+    {% set empty_title = "No index instruments" %}
+    {% set empty_message = "Load index funds CSV and run ingestion before using this page." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

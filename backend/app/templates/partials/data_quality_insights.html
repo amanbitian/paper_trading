@@ -1,0 +1,94 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif payload and payload.points %}
+    <div class="data-quality-insights">
+        <div class="data-ops-mini-metrics">
+            <div class="metric-card data-ops-metric">
+                <span class="metric-label">Suspected candles</span>
+                <strong class="metric-value">{{ payload.points | length }}</strong>
+            </div>
+            <div class="metric-card data-ops-metric">
+                <span class="metric-label">High severity</span>
+                <strong class="metric-value">{{ payload.severity_counts.high or 0 }}</strong>
+            </div>
+            <div class="metric-card data-ops-metric">
+                <span class="metric-label">Extreme move threshold</span>
+                <strong class="metric-value">{{ payload.change_threshold_pct }}%</strong>
+            </div>
+            <div class="metric-card data-ops-metric">
+                <span class="metric-label">Lookback</span>
+                <strong class="metric-value">{{ payload.lookback_days }} days</strong>
+            </div>
+        </div>
+
+        {% if payload.issue_counts %}
+            <div class="data-quality-issue-list">
+                {% for reason, count in payload.issue_counts.items() %}
+                    <span class="data-quality-chip">{{ count }} {{ reason }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="table-scroll data-ops-table-scroll">
+            <table class="data-ops-table compact-table data-quality-table">
+                <thead>
+                    <tr>
+                        <th>Severity</th>
+                        <th>Symbol</th>
+                        <th>Exchange</th>
+                        <th>Date</th>
+                        <th>Open</th>
+                        <th>High</th>
+                        <th>Low</th>
+                        <th>Close</th>
+                        <th>Prev close</th>
+                        <th>Change</th>
+                        <th>Volume</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in payload.points %}
+                        <tr>
+                            <td>
+                                {% if row.severity == "high" %}
+                                    <span class="status-badge danger">High</span>
+                                {% elif row.severity == "medium" %}
+                                    <span class="status-badge warning">Medium</span>
+                                {% else %}
+                                    <span class="status-badge info">Low</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ row.symbol }}</td>
+                            <td>{{ row.exchange }}</td>
+                            <td>{{ row.price_date | date_text }}</td>
+                            <td>{{ "%.2f"|format(row.open) if row.open is not none else "-" }}</td>
+                            <td>{{ "%.2f"|format(row.high) if row.high is not none else "-" }}</td>
+                            <td>{{ "%.2f"|format(row.low) if row.low is not none else "-" }}</td>
+                            <td>{{ "%.2f"|format(row.close) if row.close is not none else "-" }}</td>
+                            <td>{{ "%.2f"|format(row.previous_close) if row.previous_close is not none else "-" }}</td>
+                            <td>
+                                {% if row.daily_change_pct is not none %}
+                                    {{ "%.2f"|format(row.daily_change_pct) }}%
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>{{ row.volume if row.volume is not none else "-" }}</td>
+                            <td class="data-ops-message-cell">{{ row.reasons | join("; ") }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p class="muted data-ops-note">
+            Showing up to {{ payload.limit }} suspected candles. Use Check &amp; Optimize Data to cross-check priority rows with yfinance and repair safe mismatches.
+        </p>
+    </div>
+{% else %}
+    {% set empty_title = "No suspected corrupted candles" %}
+    {% set empty_message = "No invalid OHLC rows, duplicate daily candles, zero-volume candles, or extreme daily moves were found in the current lookback window." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

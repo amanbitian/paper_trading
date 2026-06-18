@@ -1,0 +1,64 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif freshness %}
+<div class="data-freshness-summary">
+    <div class="data-ops-mini-metrics">
+        <article class="metric-card data-ops-metric">
+            <span class="metric-label">Latest candle (overall)</span>
+            <strong class="metric-value">{{ freshness.latest_candle_date | date_text }}</strong>
+        </article>
+        <article class="metric-card data-ops-metric">
+            <span class="metric-label">Provider / session date</span>
+            <strong class="metric-value">{{ freshness.provider_latest_date | date_text }}</strong>
+        </article>
+        <article class="metric-card data-ops-metric">
+            <span class="metric-label">At latest date</span>
+            <strong class="metric-value">{{ freshness.stocks_at_latest | number(0) }}</strong>
+        </article>
+        <article class="metric-card data-ops-metric">
+            <span class="metric-label">Behind 1 day</span>
+            <strong class="metric-value">{{ freshness.stocks_behind_one_day | number(0) }}</strong>
+        </article>
+        <article class="metric-card data-ops-metric">
+            <span class="metric-label">Behind 2+ days</span>
+            <strong class="metric-value">{{ freshness.stocks_behind_two_plus | number(0) }}</strong>
+        </article>
+    </div>
+    {% if freshness.trading_day_note %}
+        <p class="data-ops-note muted">{{ freshness.trading_day_note }}</p>
+    {% endif %}
+    <div class="table-scroll data-ops-table-scroll">
+        <table class="data-ops-table compact-table">
+            <thead>
+                <tr>
+                    <th>Exchange</th>
+                    <th>Latest date</th>
+                    <th>Symbols</th>
+                    <th>Stale</th>
+                    <th>Max lag (days)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in freshness.exchange_rows %}
+                <tr>
+                    <td>{{ row.exchange or "—" }}</td>
+                    <td>{{ row.latest_date | date_text }}</td>
+                    <td>{{ row.symbols_count | number(0) }}</td>
+                    <td>{{ row.stale_count | number(0) }}</td>
+                    <td>{{ row.max_lag_days | default(0) }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">No exchange breakdown available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    {% set empty_title = "Freshness unavailable" %}
+    {% set empty_message = "Could not compute freshness metrics." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

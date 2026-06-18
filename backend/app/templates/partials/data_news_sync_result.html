@@ -1,0 +1,28 @@
+{% if error_message %}
+<div class="alert alert--danger" role="alert">
+    <strong>News sync failed:</strong> {{ error_message }}
+</div>
+{% elif result %}
+<div class="stats-card-grid" style="gap:10px;margin-top:4px">
+    <div class="stats-card" style="padding:10px 14px">
+        <p class="stats-card__label">Selected</p>
+        <p class="stats-card__value">{{ result.stocks_selected }}</p>
+    </div>
+    <div class="stats-card" style="padding:10px 14px">
+        <p class="stats-card__label">Synced</p>
+        <p class="stats-card__value" style="color:var(--success)">{{ result.synced }}</p>
+    </div>
+    <div class="stats-card" style="padding:10px 14px">
+        <p class="stats-card__label">Skipped</p>
+        <p class="stats-card__value" style="color:var(--muted)">{{ result.skipped }}</p>
+    </div>
+    <div class="stats-card" style="padding:10px 14px">
+        <p class="stats-card__label">Failed</p>
+        <p class="stats-card__value" style="color:{% if result.failed > 0 %}var(--danger){% else %}var(--muted){% endif %}">{{ result.failed }}</p>
+    </div>
+    <div class="stats-card" style="padding:10px 14px">
+        <p class="stats-card__label">New articles linked</p>
+        <p class="stats-card__value" style="color:var(--accent)">{{ result.links_new }}</p>
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,75 @@
+<section class="section-card stock-detail-card stock-news-card" id="stock-news-panel">
+    <div class="section-heading compact">
+        <div>
+            <h3>News</h3>
+            <p class="muted">Latest matched headlines</p>
+        </div>
+        <form
+            class="stock-news-refresh"
+            hx-post="/web/partials/explore/stock-news/{{ detail.stock.id }}/refresh"
+            hx-target="#stock-news-panel"
+            hx-swap="outerHTML"
+            hx-indicator="#stock-news-loader">
+            <button class="ghost-button compact" type="submit">Refresh</button>
+            <span id="stock-news-loader" class="loading-indicator inline">Refreshing…</span>
+        </form>
+    </div>
+
+    {% if detail.news_refresh_error %}
+        {% set banner_message = detail.news_refresh_error %}
+        {% set banner_tone = "danger" %}
+        {% include "partials/info_banner.html" %}
+    {% endif %}
+
+    {% if detail.news %}
+    <div class="news-list">
+        {% for item in detail.news %}
+        {% if item.sentiment_score is not none %}
+            {% if item.sentiment_score > 0.15 %}
+                {% set _sent_cls = "positive" %}
+                {% set _sent_label = "Positive" %}
+            {% elif item.sentiment_score < -0.15 %}
+                {% set _sent_cls = "negative" %}
+                {% set _sent_label = "Negative" %}
+            {% else %}
+                {% set _sent_cls = "neutral" %}
+                {% set _sent_label = "Neutral" %}
+            {% endif %}
+        {% else %}
+            {% set _sent_cls = "" %}
+            {% set _sent_label = "" %}
+        {% endif %}
+
+        <a class="news-card{% if _sent_cls %} news-card--{{ _sent_cls }}{% endif %}"
+           href="{{ item.url }}"
+           target="_blank"
+           rel="noopener noreferrer">
+            <div class="news-card-body">
+                <p class="news-headline">{{ item.headline }}</p>
+                {% if item.summary %}
+                <p class="news-summary">{{ item.summary }}</p>
+                {% endif %}
+                <div class="news-meta">
+                    <span class="news-source">{{ item.source or item.source_domain or item.provider }}</span>
+                    <span class="news-sep">·</span>
+                    <span class="news-time">{{ item.published_at | time_ago }}</span>
+                    {% if _sent_label %}
+                    <span class="news-sentiment news-sentiment--{{ _sent_cls }}">{{ _sent_label }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <svg class="news-external-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="news-empty">
+        <p class="muted">No news articles matched yet.</p>
+        <p class="muted" style="font-size:12px;margin-top:4px;">Click Refresh to fetch latest headlines.</p>
+    </div>
+    {% endif %}
+</section>

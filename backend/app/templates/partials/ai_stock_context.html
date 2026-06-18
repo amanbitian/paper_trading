@@ -1,0 +1,29 @@
+{% if context.error %}
+    {% set banner_message = context.error %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif context.selected %}
+<article class="ai-context-card">
+    <strong>{{ context.selected.symbol }}</strong>
+    <span class="muted">{{ context.selected.exchange }} · {{ context.selected.yahoo_symbol }}</span>
+    <p>{{ context.selected.company_name }}</p>
+    {% if context.selected.sector %}
+        <small class="muted">{{ context.selected.sector }}{% if context.selected.industry %} · {{ context.selected.industry }}{% endif %}</small>
+    {% endif %}
+    <p class="ai-context-meta">{{ context.findings_count }} algorithm findings available</p>
+    {% if context.findings %}
+    <details class="ai-findings-details">
+        <summary>View findings</summary>
+        <ul class="ai-findings-list">
+            {% for row in context.findings %}
+            <li>{{ row.algorithm_name }} — {{ row.action }} ({{ row.confidence_score | number(2) }})</li>
+            {% endfor %}
+        </ul>
+    </details>
+    {% endif %}
+</article>
+{% else %}
+    {% set empty_title = "No stock selected" %}
+    {% set empty_message = "Search and select a stock to load context." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

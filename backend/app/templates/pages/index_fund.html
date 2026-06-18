@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Indexes &amp; ETFs</p>
+        <h1>Index Fund</h1>
+        <p class="page-subtitle">{{ subtitle }}</p>
+        <div class="header-badges">
+            {% set badge_text = "Stored history" %}
+            {% set badge_tone = "info" %}
+            {% include "partials/status_badge.html" %}
+        </div>
+    </div>
+</header>
+
+<section class="index-fund-page" id="index-fund-page">
+    <section class="index-fund-section">
+        <span id="index-fund-summary-loader" class="loading-indicator is-visible">Loading summary...</span>
+        <div
+            id="index-fund-summary-panel"
+            class="index-fund-host"
+            data-lazy-url="/web/partials/index-fund/summary"
+            data-lazy-swap="innerHTML">
+            <div class="index-fund-skeleton-grid">
+                {% for _ in range(5) %}
+                    <div class="skeleton index-fund-skeleton-card"></div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="index-fund-section">
+        <span id="index-fund-sync-loader" class="loading-indicator is-visible">Loading sync status...</span>
+        <div
+            id="index-fund-sync-panel"
+            class="index-fund-host"
+            data-lazy-url="/web/partials/index-fund/sync-status"
+            data-lazy-swap="outerHTML">
+            <div class="skeleton index-fund-skeleton-bar"></div>
+        </div>
+    </section>
+
+    <div class="index-fund-tabs tab-row" role="tablist" aria-label="Index fund views">
+        <button type="button" class="tab-button is-active" data-index-fund-tab="universe" aria-selected="true">
+            Index Universe
+        </button>
+        <button type="button" class="tab-button" data-index-fund-tab="plots" aria-selected="false">
+            Return Plots
+        </button>
+        <button type="button" class="tab-button" data-index-fund-tab="history" aria-selected="false">
+            History &amp; Strategy
+        </button>
+    </div>
+
+    <section
+        class="index-fund-tab-panel is-active"
+        id="index-fund-tab-universe"
+        data-tab-panel="universe"
+        data-tab-url="/web/partials/index-fund/universe?limit=100">
+        <span id="index-fund-universe-loader" class="loading-indicator is-visible">Loading universe...</span>
+        <div id="index-fund-universe-panel" class="index-fund-host"></div>
+    </section>
+
+    <section
+        class="index-fund-tab-panel"
+        id="index-fund-tab-plots"
+        data-tab-panel="plots"
+        data-tab-url="/web/partials/index-fund/return-plots"
+        hidden>
+        <span id="index-fund-plots-loader" class="loading-indicator">Loading return plots...</span>
+        <div id="index-fund-plots-panel" class="index-fund-host"></div>
+    </section>
+
+    <section
+        class="index-fund-tab-panel"
+        id="index-fund-tab-history"
+        data-tab-panel="history"
+        hidden>
+        <span id="index-fund-history-loader" class="loading-indicator">Loading history...</span>
+        <div
+            id="index-fund-history-panel"
+            class="index-fund-host"
+            data-tab-url="/web/partials/index-fund/history">
+        </div>
+        <div class="index-fund-strategy-ready-wrap">
+            <div class="section-heading compact">
+                <h3>Strategy-ready instruments</h3>
+            </div>
+            <span id="index-fund-strategy-loader" class="loading-indicator">Loading strategy-ready list...</span>
+            <div
+                id="index-fund-strategy-panel"
+                class="index-fund-host"
+                data-tab-url="/web/partials/index-fund/strategy-ready">
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+<script src="/static/js/index_fund.js" defer></script>
+{% endblock %}

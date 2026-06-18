@@ -1,0 +1,168 @@
+<div id="news-curator-panel">
+
+    <!-- Toolbar -->
+    <div class="curator-toolbar">
+        <form id="curator-filter-form" class="curator-filters">
+
+            <!-- Search -->
+            <label class="field">
+                <span>Search</span>
+                <input
+                    name="search"
+                    type="search"
+                    value="{{ search }}"
+                    placeholder="Headline or source…"
+                    hx-get="/web/partials/explore/news-curator"
+                    hx-trigger="keyup changed delay:400ms"
+                    hx-target="#news-curator-panel"
+                    hx-swap="outerHTML"
+                    hx-include="#curator-filter-form">
+            </label>
+
+            <!-- Provider filter -->
+            <label class="field">
+                <span>Source</span>
+                <select
+                    name="provider"
+                    hx-get="/web/partials/explore/news-curator"
+                    hx-trigger="change"
+                    hx-target="#news-curator-panel"
+                    hx-swap="outerHTML"
+                    hx-include="#curator-filter-form">
+                    <option value="" {% if not provider %}selected{% endif %}>All providers</option>
+                    <option value="yahoo_finance"  {% if provider == "yahoo_finance"  %}selected{% endif %}>Yahoo Finance</option>
+                    <option value="yahoo_rss"      {% if provider == "yahoo_rss"      %}selected{% endif %}>Yahoo RSS</option>
+                    <option value="marketaux"      {% if provider == "marketaux"      %}selected{% endif %}>Marketaux</option>
+                    <option value="alpha_vantage"  {% if provider == "alpha_vantage"  %}selected{% endif %}>Alpha Vantage</option>
+                    <option value="gdelt"          {% if provider == "gdelt"          %}selected{% endif %}>GDELT</option>
+                </select>
+            </label>
+
+            <!-- Per page -->
+            <label class="field narrow">
+                <span>Per page</span>
+                <select
+                    name="per_page"
+                    hx-get="/web/partials/explore/news-curator"
+                    hx-trigger="change"
+                    hx-target="#news-curator-panel"
+                    hx-swap="outerHTML"
+                    hx-include="#curator-filter-form">
+                    {% for n in [10, 20, 30, 50] %}
+                    <option value="{{ n }}" {% if per_page == n %}selected{% endif %}>{{ n }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </form>
+
+        <p class="curator-count muted">
+            {{ curator.total }} article{{ "s" if curator.total != 1 else "" }} ·
+            page {{ curator.page }} of {{ curator.total_pages }}
+        </p>
+    </div>
+
+    <!-- Article list -->
+    {% if curator.articles %}
+    <div class="news-list curator-list">
+        {% for item in curator.articles %}
+        {% if item.sentiment_score is not none %}
+            {% if item.sentiment_score > 0.15 %}{% set _sc = "positive" %}{% set _sl = "Positive" %}
+            {% elif item.sentiment_score < -0.15 %}{% set _sc = "negative" %}{% set _sl = "Negative" %}
+            {% else %}{% set _sc = "neutral" %}{% set _sl = "Neutral" %}{% endif %}
+        {% else %}
+            {% set _sc = "" %}{% set _sl = "" %}
+        {% endif %}
+
+        <a class="news-card{% if _sc %} news-card--{{ _sc }}{% endif %}"
+           href="{{ item.url }}"
+           target="_blank"
+           rel="noopener noreferrer">
+
+            <div class="news-card-body">
+                <p class="news-headline">{{ item.headline }}</p>
+                {% if item.summary %}
+                <p class="news-summary">{{ item.summary }}</p>
+                {% endif %}
+
+                <!-- Company tags -->
+                {% if item.stock_tags %}
+                <div class="curator-tags">
+                    {% for tag in item.stock_tags %}
+                    <span class="curator-tag">{{ tag.symbol }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="news-meta">
+                    <span class="news-source">{{ item.source or item.source_domain or item.provider }}</span>
+                    <span class="news-sep">·</span>
+                    <span class="news-time">{{ item.published_at | time_ago }}</span>
+                    <span class="news-sep">·</span>
+                    <span class="curator-provider-badge">{{ item.provider | replace("_", " ") }}</span>
+                    {% if _sl %}
+                    <span class="news-sentiment news-sentiment--{{ _sc }}">{{ _sl }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <svg class="news-external-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if curator.total_pages > 1 %}
+    <div class="curator-pagination">
+        {% if curator.has_prev %}
+        <button class="ghost-button compact"
+            hx-get="/web/partials/explore/news-curator?page={{ curator.page - 1 }}&per_page={{ per_page }}&provider={{ provider }}&search={{ search }}"
+            hx-target="#news-curator-panel"
+            hx-swap="outerHTML">← Prev</button>
+        {% else %}
+        <button class="ghost-button compact" disabled>← Prev</button>
+        {% endif %}
+
+        <div class="curator-page-numbers">
+            {% set start_p = [curator.page - 2, 1] | max %}
+            {% set end_p   = [curator.page + 2, curator.total_pages] | min %}
+            {% if start_p > 1 %}
+                <button class="ghost-button compact"
+                    hx-get="/web/partials/explore/news-curator?page=1&per_page={{ per_page }}&provider={{ provider }}&search={{ search }}"
+                    hx-target="#news-curator-panel" hx-swap="outerHTML">1</button>
+                {% if start_p > 2 %}<span class="muted">…</span>{% endif %}
+            {% endif %}
+            {% for p in range(start_p, end_p + 1) %}
+                <button class="ghost-button compact {% if p == curator.page %}is-active{% endif %}"
+                    hx-get="/web/partials/explore/news-curator?page={{ p }}&per_page={{ per_page }}&provider={{ provider }}&search={{ search }}"
+                    hx-target="#news-curator-panel" hx-swap="outerHTML">{{ p }}</button>
+            {% endfor %}
+            {% if end_p < curator.total_pages %}
+                {% if end_p < curator.total_pages - 1 %}<span class="muted">…</span>{% endif %}
+                <button class="ghost-button compact"
+                    hx-get="/web/partials/explore/news-curator?page={{ curator.total_pages }}&per_page={{ per_page }}&provider={{ provider }}&search={{ search }}"
+                    hx-target="#news-curator-panel" hx-swap="outerHTML">{{ curator.total_pages }}</button>
+            {% endif %}
+        </div>
+
+        {% if curator.has_next %}
+        <button class="ghost-button compact"
+            hx-get="/web/partials/explore/news-curator?page={{ curator.page + 1 }}&per_page={{ per_page }}&provider={{ provider }}&search={{ search }}"
+            hx-target="#news-curator-panel"
+            hx-swap="outerHTML">Next →</button>
+        {% else %}
+        <button class="ghost-button compact" disabled>Next →</button>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="news-empty" style="padding:40px 16px;">
+        <p class="muted">No articles found{% if search %} matching "{{ search }}"{% endif %}.</p>
+    </div>
+    {% endif %}
+
+</div>

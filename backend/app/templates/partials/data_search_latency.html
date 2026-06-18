@@ -1,0 +1,60 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif persisted and summary %}
+<div class="data-latency-cards">
+    <article class="metric-card data-ops-metric">
+        <span class="metric-label">Total searches</span>
+        <strong class="metric-value">{{ summary.total_searches | number(0) }}</strong>
+    </article>
+    <article class="metric-card data-ops-metric">
+        <span class="metric-label">Average response</span>
+        <strong class="metric-value">{{ summary.avg_response_ms | ms_text }}</strong>
+    </article>
+    <article class="metric-card data-ops-metric">
+        <span class="metric-label">P95</span>
+        <strong class="metric-value">{{ summary.p95_response_ms | ms_text }}</strong>
+    </article>
+    <article class="metric-card data-ops-metric">
+        <span class="metric-label">Max</span>
+        <strong class="metric-value">{{ summary.max_response_ms | ms_text }}</strong>
+    </article>
+    <article class="metric-card data-ops-metric">
+        <span class="metric-label">Latest search</span>
+        <strong class="metric-value">{{ summary.latest_search_at | date_text }}</strong>
+    </article>
+</div>
+{% if summary.recent_searches %}
+<div class="table-scroll data-ops-table-scroll">
+    <table class="data-ops-table compact-table">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Type</th>
+                <th>Query</th>
+                <th>Results</th>
+                <th>Duration</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in summary.recent_searches %}
+            <tr>
+                <td>{{ row.created_at | date_text }}</td>
+                <td>{{ row.search_type }}</td>
+                <td>{{ row.query_text }}</td>
+                <td>{{ row.result_count }}</td>
+                <td>{{ row.duration_ms | ms_text }}</td>
+                <td>{{ row.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% else %}
+    {% set banner_message = "Search latency is logged but not persisted yet." %}
+    {% set banner_tone = "info" %}
+    {% include "partials/info_banner.html" %}
+{% endif %}

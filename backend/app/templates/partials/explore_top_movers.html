@@ -1,0 +1,155 @@
+<div id="market-movers-panel" class="movers-panel">
+    {% if error_message %}
+        {% set banner_message = error_message %}
+        {% set banner_tone = "danger" %}
+        {% include "partials/info_banner.html" %}
+    {% endif %}
+    <div class="section-card compact-card">
+        <div class="section-heading compact">
+            <div>
+                <h3>Market movers</h3>
+                <p>
+                    Top 50 gainers, losers, and volume leaders
+                    {% if movers.nifty_index_label %}
+                        within {{ movers.nifty_index_label }}
+                    {% else %}
+                        across stocks
+                    {% endif %}
+                    using stored daily candles.
+                </p>
+            </div>
+            {% if movers.eligible_count %}
+                {% set badge_text = (movers.eligible_count | number(0)) ~ " eligible" %}
+                {% set badge_tone = "success" %}
+                {% include "partials/status_badge.html" %}
+            {% endif %}
+        </div>
+        {% if movers.quality_excluded_count %}
+            <div class="info-banner warning data-quality-banner">
+                <span class="info-dot"></span>
+                <p>
+                    Data quality check excluded {{ movers.quality_excluded_count | number(0) }}
+                    suspicious mover row{% if movers.quality_excluded_count != 1 %}s{% endif %}
+                    with extreme 1D changes, stale candle pairs, or missing volume.
+                    Current max 1D move: {{ movers.quality_rules.max_abs_daily_change_pct | number(0) }}%.
+                    Let the current ingestion finish, then refresh analytics if the list still looks wrong.
+                </p>
+            </div>
+        {% endif %}
+        <form id="movers-filter-form" class="filter-grid movers-filter-grid" autocomplete="off">
+            <label class="field">
+                <span>NIFTY Index</span>
+                <select
+                    name="index"
+                    hx-get="/web/partials/explore/top-movers"
+                    hx-trigger="change"
+                    hx-target="#market-movers-panel"
+                    hx-swap="outerHTML"
+                    hx-include="#movers-filter-form"
+                    hx-indicator="#movers-loader">
+                    <option value="" {% if not selected_index %}selected{% endif %}>All indices</option>
+                    {% for option in nifty_index_options %}
+                        <option value="{{ option.value }}" {% if selected_index == option.value %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <input type="hidden" name="bucket" value="{{ active_group }}">
+            <input type="hidden" name="sort" value="{{ active_sort }}">
+        </form>
+    </div>
+
+    <div class="tab-row" role="tablist" aria-label="Top movers">
+        <button
+            class="tab-button {% if active_group == 'gainers' %}is-active{% endif %}"
+            type="button"
+            hx-get="/web/partials/explore/top-movers?bucket=gainers&sort=trend&index={{ selected_index }}"
+            hx-target="#market-movers-panel"
+            hx-swap="outerHTML"
+            hx-indicator="#movers-loader">
+            Top 50 gainers
+        </button>
+        <button
+            class="tab-button {% if active_group == 'losers' %}is-active{% endif %}"
+            type="button"
+            hx-get="/web/partials/explore/top-movers?bucket=losers&sort=trend&index={{ selected_index }}"
+            hx-target="#market-movers-panel"
+            hx-swap="outerHTML"
+            hx-indicator="#movers-loader">
+            Top 50 losers
+        </button>
+        <button
+            class="tab-button {% if active_group == 'volume' %}is-active{% endif %}"
+            type="button"
+            hx-get="/web/partials/explore/top-movers?bucket=volume&sort=volume&index={{ selected_index }}"
+            hx-target="#market-movers-panel"
+            hx-swap="outerHTML"
+            hx-indicator="#movers-loader">
+            Top 50 volume
+        </button>
+        <span id="movers-loader" class="loading-indicator inline">Loading...</span>
+    </div>
+
+    <div class="toolbar-row">
+        <span class="muted">Sort by</span>
+        <button class="chip {% if active_sort == 'trend' %}is-active{% endif %}" type="button" hx-get="/web/partials/explore/top-movers?bucket={{ active_group }}&sort=trend&index={{ selected_index }}" hx-target="#market-movers-panel" hx-swap="outerHTML" hx-indicator="#movers-loader">Trend</button>
+        <button class="chip {% if active_sort == 'price' %}is-active{% endif %}" type="button" hx-get="/web/partials/explore/top-movers?bucket={{ active_group }}&sort=price&index={{ selected_index }}" hx-target="#market-movers-panel" hx-swap="outerHTML" hx-indicator="#movers-loader">Market price</button>
+        <button class="chip {% if active_sort == 'volume' %}is-active{% endif %}" type="button" hx-get="/web/partials/explore/top-movers?bucket={{ active_group }}&sort=volume&index={{ selected_index }}" hx-target="#market-movers-panel" hx-swap="outerHTML" hx-indicator="#movers-loader">Volume</button>
+        <span class="active-sort-label">Active sort: {{ active_sort }} ({% if active_direction == "desc" %}high to low{% else %}low to high{% endif %})</span>
+    </div>
+
+    <div class="financial-table-card">
+        {% if not quotes %}
+            {% set empty_title = "No mover rows" %}
+            {% if movers.quality_excluded_count %}
+                {% set empty_message = "Candidate mover rows were excluded by data quality checks. Let ingestion finish, then refresh analytics." %}
+            {% else %}
+                {% set empty_message = "Stored daily candles are required before market movers can be calculated." %}
+            {% endif %}
+            {% include "partials/empty_state.html" %}
+        {% else %}
+            <table class="financial-table">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Trend</th>
+                        <th>Market price (1D)</th>
+                        <th>Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for quote in quotes %}
+                        {% set change_tone = quote.change_pct | tone %}
+                        <tr>
+                            <td>
+                                <div class="company-cell">
+                                    {% if quote.yahoo_symbol %}
+                                    <a class="company-link" href="/web/explore?stock={{ quote.yahoo_symbol }}">
+                                        <strong>{{ quote.label }}</strong>
+                                    </a>
+                                    {% else %}
+                                    <strong>{{ quote.label }}</strong>
+                                    {% endif %}
+                                    <span>{{ quote.symbol }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <svg class="sparkline {{ change_tone }}" viewBox="0 0 150 42" preserveAspectRatio="none" aria-hidden="true">
+                                    <polyline points="{{ quote.sparkline | sparkline_points }}" />
+                                </svg>
+                            </td>
+                            <td>
+                                <div class="price-cell">
+                                    <strong>{{ quote.price | inr }}</strong>
+                                    <span class="{{ change_tone }}">
+                                        {{ quote.change | inr }} ({{ quote.change_pct | pct }})
+                                    </span>
+                                </div>
+                            </td>
+                            <td>{{ quote.volume | volume }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,9 @@
+{% if error %}
+    {% set banner_message = "Refresh failed: " ~ error %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% else %}
+    {% set banner_message = "Risk metrics refreshed at " ~ (refreshed_at or "now") ~ "." %}
+    {% set banner_tone = "success" %}
+    {% include "partials/info_banner.html" %}
+{% endif %}

@@ -1,0 +1,36 @@
+{% if errors %}
+    {% for message in errors %}
+        {% set banner_message = message %}
+        {% set banner_tone = "danger" %}
+        {% include "partials/info_banner.html" %}
+    {% endfor %}
+{% elif preview %}
+    <article class="strategy-preview-card stock-detail-card">
+        <div class="strategy-preview-grid">
+            <div class="mini-stat-card">
+                <span class="mini-stat-label">Signal</span>
+                <span class="signal-badge signal-{{ preview.signal_type | lower }}">{{ preview.signal_type }}</span>
+            </div>
+            <div class="mini-stat-card">
+                <span class="mini-stat-label">Confidence</span>
+                <span class="mini-stat-value">{{ preview.confidence_score | float | round(2) if preview.confidence_score is not none else "—" }}</span>
+            </div>
+            <div class="mini-stat-card">
+                <span class="mini-stat-label">Latest price</span>
+                <span class="mini-stat-value">{{ preview.suggested_price | inr }}</span>
+            </div>
+            <div class="mini-stat-card mini-stat-card-wide">
+                <span class="mini-stat-label">Strategy</span>
+                <span class="mini-stat-value text-wrap">{{ preview.strategy_name }}</span>
+            </div>
+        </div>
+        {% if preview.reason %}
+            <p class="strategy-preview-reason reason-text">{{ preview.reason }}</p>
+        {% endif %}
+        {% if preview.indicators %}
+            <pre class="params-code-block">{{ preview.indicators | tojson(indent=2) }}</pre>
+        {% endif %}
+    </article>
+{% else %}
+    <p class="muted strategy-preview-empty">{{ empty_message | default("Select a strategy and preview.") }}</p>
+{% endif %}

@@ -1,0 +1,52 @@
+{% if error %}
+    {% set banner_message = "Trend table failed: " ~ error %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif not rows %}
+    {% set empty_title = "No rows" %}
+    {% set empty_message = "Adjust filters or sync latest prices to populate the trend table." %}
+    {% include "partials/empty_state.html" %}
+{% else %}
+    <div class="financial-table-card trends-table-card table-scroll-wrap">
+        <div class="table-card-header">
+            <h3>Trend rows</h3>
+            <p>{{ rows | length }} instruments · {{ payload.period_label }} · {{ payload.market_label }}</p>
+        </div>
+        <div class="table-scroll">
+            <table class="data-table trends-data-table">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th class="num">Symbol</th>
+                        <th class="num">Exchange</th>
+                        <th>Sector</th>
+                        <th>Industry</th>
+                        <th class="num">Latest date</th>
+                        <th class="num">Latest price</th>
+                        <th class="num">Change %</th>
+                        <th class="num">Volume</th>
+                        <th class="num">Traded value</th>
+                        <th>Index</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            <td class="col-company">{{ row.company_name }}</td>
+                            <td class="num">{{ row.symbol }}</td>
+                            <td class="num">{{ row.exchange or "-" }}</td>
+                            <td>{{ row.sector or "-" }}</td>
+                            <td class="col-industry">{{ row.industry or row.industry_group or "-" }}</td>
+                            <td class="num">{{ row.latest_date or "-" }}</td>
+                            <td class="num">{{ row.latest_price | inr }}</td>
+                            <td class="num {{ row.change_pct | tone }}">{{ row.change_pct | pct }}</td>
+                            <td class="num">{{ row.latest_volume | volume }}</td>
+                            <td class="num">{{ row.traded_value | inr }}</td>
+                            <td>{{ row.market_bucket or "-" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}

@@ -1,0 +1,55 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif runs %}
+<div class="table-scroll data-ops-table-scroll">
+    <table class="data-ops-table run-status-table compact-table">
+        <thead>
+            <tr>
+                <th>Start</th>
+                <th>End</th>
+                <th>Status</th>
+                <th>Provider</th>
+                <th>Selected</th>
+                <th>Synced</th>
+                <th>Skipped</th>
+                <th>Failed</th>
+                <th>Rows</th>
+                <th>Latest after</th>
+                <th>Provider latest</th>
+                <th>Duration</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for run in runs %}
+            <tr>
+                <td>{{ run.started_at | date_text }}</td>
+                <td>{{ run.finished_at | date_text }}</td>
+                <td>
+                    {% set badge_text = run.status %}
+                    {% set badge_tone = run.status_tone %}
+                    {% include "partials/status_badge.html" %}
+                </td>
+                <td>{{ run.provider }}</td>
+                <td>{{ run.symbols_selected }}</td>
+                <td>{{ run.symbols_synced }}</td>
+                <td>{{ run.symbols_skipped }}</td>
+                <td>{{ run.symbols_failed }}</td>
+                <td>{{ run.rows_saved }}</td>
+                <td>{{ run.latest_after | date_text }}</td>
+                <td>{{ run.provider_latest | date_text }}</td>
+                <td>{{ run.duration_label }}</td>
+                <td class="data-ops-message-cell">{{ run.error_message or "—" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="muted data-ops-note">Showing last {{ limit }} runs. Per-symbol before/after dates are not persisted on runs.</p>
+{% else %}
+    {% set empty_title = "No ingestion runs" %}
+    {% set empty_message = "Run a market sync from Sync Now to create ingestion history." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

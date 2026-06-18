@@ -1,0 +1,85 @@
+<div id="sequential-rankings-panel" class="section-stack">
+    {% if error_message %}
+        {% set banner_message = error_message %}
+        {% set banner_tone = "danger" %}
+        {% include "partials/info_banner.html" %}
+    {% endif %}
+    <div class="section-card compact-card">
+        <div class="section-heading compact">
+            <div>
+                <h3>Sequential Deep Learning Rankings</h3>
+                <p>Top buy and sell candidates are ranked across active stocks that have enough stored daily candles.</p>
+            </div>
+            {% set badge_text = (rankings.eligible_count or 0) ~ " eligible" %}
+            {% set badge_tone = "success" if rankings.eligible_count else "warning" %}
+            {% include "partials/status_badge.html" %}
+        </div>
+        <p class="muted">
+            Scanned {{ rankings.rows_scanned or 0 }} active stocks.
+            {% if rankings.as_of %}As of {{ rankings.as_of | date_text }}.{% endif %}
+        </p>
+    </div>
+    <div class="tab-row">
+        <button
+            class="tab-button {% if active_side == 'buy' %}is-active{% endif %}"
+            type="button"
+            hx-get="/web/partials/explore/sequential-rankings?side=buy"
+            hx-target="#sequential-rankings-panel"
+            hx-swap="outerHTML"
+            hx-indicator="#ranking-loader">
+            Top 15 buy candidates
+        </button>
+        <button
+            class="tab-button {% if active_side == 'sell' %}is-active{% endif %}"
+            type="button"
+            hx-get="/web/partials/explore/sequential-rankings?side=sell"
+            hx-target="#sequential-rankings-panel"
+            hx-swap="outerHTML"
+            hx-indicator="#ranking-loader">
+            Top 15 sell candidates
+        </button>
+        <span id="ranking-loader" class="loading-indicator inline">Loading rankings...</span>
+    </div>
+    <div class="financial-table-card">
+        {% if not rows %}
+            {% set empty_title = "No ranking rows" %}
+            {% set empty_message = "Ingest enough daily prices before ranking sequential candidates." %}
+            {% include "partials/empty_state.html" %}
+        {% else %}
+            <table class="financial-table ranking-table">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Rank Side</th>
+                        <th>Score</th>
+                        <th>Close</th>
+                        <th>Finding</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        {% set side = "SELL" if active_side == "sell" else "BUY" %}
+                        <tr>
+                            <td>
+                                <div class="company-cell">
+                                    <strong>{{ row.company_name or row.symbol }}</strong>
+                                    <span>{{ row.symbol }} &middot; {{ row.exchange }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="rank-badge {{ 'sell' if side == 'SELL' else 'buy' }}">{{ side }}</span>
+                                <small class="muted">Model: {{ row.action }} &middot; Conf {{ row.confidence_score | number }}</small>
+                            </td>
+                            <td class="{{ row.sequence_score | tone }}"><strong>{{ row.sequence_score | number(4) }}</strong></td>
+                            <td>{{ row.latest_close | inr }}</td>
+                            <td>
+                                {{ row.reason }}
+                                <small class="muted">As of {{ row.as_of_date | date_text }}</small>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,41 @@
+<header class="stock-detail-card stock-detail-header-card">
+    <div class="stock-detail-header">
+        <div class="stock-detail-title-block">
+            <h2>{{ detail.stock.company_name }}</h2>
+            <div class="stock-detail-meta-row">
+                <span class="stock-meta-chip stock-meta-chip--symbol">{{ detail.stock.symbol }}</span>
+                <span class="stock-meta-chip">{{ detail.stock.exchange }}</span>
+                {% if detail.stock.sector %}
+                    <span class="stock-meta-chip muted">{{ detail.stock.sector }}</span>
+                {% endif %}
+                {% if detail.stock.industry %}
+                    <span class="stock-meta-chip muted">{{ detail.stock.industry }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="stock-detail-price-block">
+            {% if detail.latest_close is not none %}
+                <div class="stock-detail-latest-price">{{ detail.latest_close | inr }}</div>
+                {% if detail.change_1d_pct is not none %}
+                    <div class="stock-detail-change {{ detail.change_1d_pct | tone }}">
+                        1D {{ detail.change_1d_pct | pct }}
+                    </div>
+                {% endif %}
+                {% if detail.to_date %}
+                    <small class="muted">As of {{ detail.to_date | date_text }}</small>
+                {% endif %}
+            {% else %}
+                <div class="stock-detail-latest-price muted">No price data</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="stock-detail-actions">
+        <a class="ghost-button" href="{{ detail.action_links.add_portfolio }}">+ Portfolio</a>
+        <a class="ghost-button" href="{{ detail.action_links.paper_trading }}">Paper Trade</a>
+        <a class="ghost-button" href="{{ detail.action_links.backtesting }}">Backtest</a>
+        <a class="ghost-button" href="{{ detail.action_links.strategy_lab }}">Strategy Lab</a>
+        {% if not detail.has_prices %}
+            <span class="stock-detail-no-price-note muted">No price history yet</span>
+        {% endif %}
+    </div>
+</header>

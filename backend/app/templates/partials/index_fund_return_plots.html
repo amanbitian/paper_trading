@@ -1,0 +1,81 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% endif %}
+
+<div
+    id="index-fund-plots-shell"
+    class="index-fund-plots-shell"
+    data-initial-selection='{{ selected_instruments | tojson }}'>
+    <section class="section-card index-fund-plots-picker-card">
+        <div class="section-heading compact">
+            <h3>Selected instruments</h3>
+            <div class="index-fund-plots-picker-actions">
+                <span id="index-fund-plots-count" class="muted index-fund-plots-count">0 selected</span>
+                <button type="button" class="ghost-button compact" id="index-fund-plots-clear" disabled>Clear all</button>
+            </div>
+        </div>
+        <p class="index-fund-note muted">Search and select one or more index or commodity instruments.</p>
+
+        <label class="field wide index-fund-plots-search-field">
+            <span class="muted">Search instruments</span>
+            <input
+                type="search"
+                id="index-fund-plots-search"
+                class="index-fund-plots-search-input"
+                placeholder="Search NIFTY 50, SENSEX, GOLD, CRUDE..."
+                autocomplete="off"
+                spellcheck="false">
+        </label>
+        <span id="index-fund-plots-search-loader" class="loading-indicator">Searching...</span>
+        <div id="index-fund-plots-search-results" class="index-fund-plots-search-results" aria-live="polite"></div>
+
+        <div id="index-fund-plots-chips" class="index-fund-plots-chips" aria-live="polite"></div>
+        <div id="index-fund-plots-hidden-inputs" hidden aria-hidden="true"></div>
+    </section>
+
+    <form id="index-fund-plots-form" class="index-fund-plots-options" autocomplete="off">
+        <div class="index-fund-filter-bar index-fund-plots-options-row">
+            <label class="field compact">
+                <span>Period</span>
+                <select name="period" id="index-fund-plots-period">
+                    <option value="1m" {% if filters.period == '1m' %}selected{% endif %}>1 month</option>
+                    <option value="3m" {% if filters.period == '3m' %}selected{% endif %}>3 months</option>
+                    <option value="6m" {% if filters.period == '6m' %}selected{% endif %}>6 months</option>
+                    <option value="1y" {% if filters.period == '1y' %}selected{% endif %}>1 year</option>
+                    <option value="3y" {% if filters.period == '3y' %}selected{% endif %}>3 years</option>
+                    <option value="5y" {% if filters.period == '5y' %}selected{% endif %}>5 years</option>
+                    <option value="10y" {% if filters.period == '10y' %}selected{% endif %}>10 years</option>
+                    <option value="15y" {% if filters.period == '15y' %}selected{% endif %}>15 years</option>
+                    <option value="20y" {% if filters.period == '20y' %}selected{% endif %}>20 years</option>
+                    <option value="max" {% if filters.period == 'max' %}selected{% endif %}>Max (all available data)</option>
+                </select>
+            </label>
+            <label class="field compact">
+                <span>Start date</span>
+                <input type="date" name="start_date" id="index-fund-plots-start" value="{{ filters.start_date }}">
+            </label>
+            <label class="field compact">
+                <span>End date</span>
+                <input type="date" name="end_date" id="index-fund-plots-end" value="{{ filters.end_date }}">
+            </label>
+            <label class="field compact toggle-field">
+                <span>Normalize to 100</span>
+                <input type="checkbox" name="normalize_indexed" value="true" id="index-fund-plots-normalize" {% if filters.normalize_indexed %}checked{% endif %}>
+            </label>
+            <label class="field compact toggle-field">
+                <span>Compare NIFTY 50</span>
+                <input type="checkbox" name="compare_nifty" value="true" id="index-fund-plots-compare-nifty" {% if filters.compare_nifty %}checked{% endif %}>
+            </label>
+            <button type="button" class="accent-button" id="index-fund-plots-generate">Generate return plot</button>
+        </div>
+    </form>
+
+    <section class="section-card index-fund-plots-results-card">
+        <span id="index-fund-plots-results-loader" class="loading-indicator">Generating charts...</span>
+        <div id="index-fund-plots-results" class="index-fund-plots-results">
+            {% include "partials/index_fund_return_plots_results.html" %}
+        </div>
+    </section>
+</div>

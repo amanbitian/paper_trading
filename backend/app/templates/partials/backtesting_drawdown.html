@@ -1,0 +1,10 @@
+{% if result.drawdown_plotly %}
+    <div class="chart-card backtest-chart">
+        <div id="backtest-drawdown-chart-{{ result.run_id }}" class="chart-plot"></div>
+        <div class="plotly-payload" data-plotly-json data-target="backtest-drawdown-chart-{{ result.run_id }}" hidden aria-hidden="true">{{ result.drawdown_plotly | tojson }}</div>
+    </div>
+{% else %}
+    {% set empty_title = "Drawdown unavailable" %}
+    {% set empty_message = "No drawdown series for this run." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

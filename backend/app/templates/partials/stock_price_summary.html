@@ -1,0 +1,39 @@
+<section class="stock-detail-card stock-price-summary-grid">
+    {% if detail.change_1d_pct is not none %}
+    <article class="metric-card">
+        <span class="metric-label">1D Return</span>
+        <strong class="metric-value {{ detail.change_1d_pct | tone }}">{{ detail.change_1d_pct | pct }}</strong>
+    </article>
+    {% endif %}
+    {% if detail.performance.change_1m_pct is not none %}
+    <article class="metric-card">
+        <span class="metric-label">1M Return</span>
+        <strong class="metric-value {{ detail.performance.change_1m_pct | tone }}">{{ detail.performance.change_1m_pct | pct }}</strong>
+    </article>
+    {% endif %}
+    {% if detail.performance.change_3m_pct is not none %}
+    <article class="metric-card">
+        <span class="metric-label">3M Return</span>
+        <strong class="metric-value {{ detail.performance.change_3m_pct | tone }}">{{ detail.performance.change_3m_pct | pct }}</strong>
+    </article>
+    {% endif %}
+    {% if detail.performance.change_6m_pct is not none %}
+    <article class="metric-card">
+        <span class="metric-label">6M Return</span>
+        <strong class="metric-value {{ detail.performance.change_6m_pct | tone }}">{{ detail.performance.change_6m_pct | pct }}</strong>
+    </article>
+    {% endif %}
+    {% if detail.performance.change_1y_pct is not none %}
+    <article class="metric-card">
+        <span class="metric-label">1Y Return</span>
+        <strong class="metric-value {{ detail.performance.change_1y_pct | tone }}">{{ detail.performance.change_1y_pct | pct }}</strong>
+    </article>
+    {% endif %}
+    {% if detail.latest_volume is not none %}
+    <article class="metric-card">
+        <span class="metric-label">Volume</span>
+        <strong class="metric-value">{{ detail.latest_volume | volume }}</strong>
+        <span class="metric-delta neutral">latest session</span>
+    </article>
+    {% endif %}
+</section>

@@ -1,0 +1,86 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: paper_trading_postgres
+    environment:
+      POSTGRES_DB: paper_trading
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d paper_trading"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: paper_trading_backend
+    environment:
+      APP_ENV: local
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@postgres:5432/paper_trading
+      JWT_SECRET_KEY: change_me_for_local_dev
+      JWT_ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 1440
+      AUTO_MIGRATE_ON_START: "false"
+      DEBUG_AUTH_BYPASS: "true"
+      DEBUG_AUTH_USER_EMAIL: debug@example.com
+      DEBUG_AUTH_USER_NAME: debug_user
+      DEBUG_AUTH_NAME: Debug User
+      YFINANCE_DEFAULT_PERIOD: 1y
+      YFINANCE_DEFAULT_INTERVAL: 1d
+      MARKET_MOVERS_MAX_ABS_DAILY_CHANGE_PCT: ${MARKET_MOVERS_MAX_ABS_DAILY_CHANGE_PCT:-50}
+      MARKET_MOVERS_MAX_CANDLE_GAP_DAYS: ${MARKET_MOVERS_MAX_CANDLE_GAP_DAYS:-7}
+      MARKET_MOVERS_REQUIRE_VOLUME: ${MARKET_MOVERS_REQUIRE_VOLUME:-true}
+      DELISTED_CONSTANT_FILE: /app/constant.txt
+      AI_FEATURES_ENABLED: "true"
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      OLLAMA_DEFAULT_MODEL: gemma3:12b
+      OLLAMA_FALLBACK_MODEL: mistral-nemo:12b
+      OLLAMA_TIMEOUT_SECONDS: "60"
+      OLLAMA_MAX_TOKENS: "1500"
+      LLM_CACHE_TTL_HOURS: "24"
+      MARKETAUX_API_TOKEN: ${MARKETAUX_API_TOKEN:-}
+      ALPHA_VANTAGE_API_KEY: ${ALPHA_VANTAGE_API_KEY:-}
+      NEWS_REQUEST_TIMEOUT_SECONDS: ${NEWS_REQUEST_TIMEOUT_SECONDS:-12}
+      NEWS_ON_DEMAND_LIMIT: ${NEWS_ON_DEMAND_LIMIT:-10}
+      NEWS_MARKETAUX_DAILY_LIMIT: ${NEWS_MARKETAUX_DAILY_LIMIT:-100}
+      NEWS_ALPHA_VANTAGE_DAILY_LIMIT: ${NEWS_ALPHA_VANTAGE_DAILY_LIMIT:-25}
+      LEGACY_STREAMLIT_URL: http://host.docker.internal:8501
+      ENABLE_LEGACY_START: "false"
+      LEGACY_COMPOSE_ROOT: /app
+      LEGACY_START_COMMAND: docker compose --profile legacy up -d streamlit
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./constant.txt:/app/constant.txt
+      - ./backend:/app/backend
+      - ./scripts:/app/scripts
+      - ./data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+  streamlit:
+    profiles:
+      - legacy
+    build:
+      context: ./frontend
+    container_name: paper_trading_streamlit
+    environment:
+      PAPER_TRADING_API_URL: http://backend:8000
+      PAPER_TRADING_DEBUG_AUTH_BYPASS: "true"
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    command: streamlit run streamlit_app.py --server.port=8501 --server.address=0.0.0.0
+
+volumes:
+  postgres_data:

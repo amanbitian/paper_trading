@@ -1,0 +1,10 @@
+{% if result.equity_plotly %}
+    <div class="chart-card backtest-chart">
+        <div id="backtest-equity-chart-{{ result.run_id }}" class="chart-plot"></div>
+        <div class="plotly-payload" data-plotly-json data-target="backtest-equity-chart-{{ result.run_id }}" hidden aria-hidden="true">{{ result.equity_plotly | tojson }}</div>
+    </div>
+{% else %}
+    {% set empty_title = "Equity curve unavailable" %}
+    {% set empty_message = "No equity curve data for this run." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

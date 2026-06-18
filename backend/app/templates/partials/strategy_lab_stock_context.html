@@ -1,0 +1,38 @@
+{% if not context %}
+    <div class="empty-state stock-context-empty">
+        <strong>No stock selected</strong>
+        <p>Search and select a stock to see latest price and portfolio exposure.</p>
+    </div>
+{% else %}
+    <article class="selected-stock-context-card">
+        <div class="stock-context-header">
+            <div>
+                <span class="stock-context-symbol">{{ context.symbol }}</span>
+                <h3>{{ context.company_name }}</h3>
+                <p class="stock-context-meta">{{ context.exchange }} · {{ context.yahoo_symbol }}</p>
+            </div>
+            {% if context.sector %}
+                {% set badge_text = context.sector %}
+                {% set badge_tone = "neutral" %}
+                {% include "partials/status_badge.html" %}
+            {% endif %}
+        </div>
+        <div class="stock-context-metrics">
+            <article class="metric-card compact-metric">
+                <span class="metric-label">Latest price</span>
+                <strong class="metric-value">
+                    {% if context.latest_price is not none %}{{ context.latest_price | inr }}{% else %}—{% endif %}
+                </strong>
+            </article>
+            <article class="metric-card compact-metric">
+                <span class="metric-label">Portfolio holding</span>
+                <strong class="metric-value">
+                    {% if context.has_holding %}{{ context.holding_qty | number(0) }} shares{% else %}None{% endif %}
+                </strong>
+            </article>
+        </div>
+        {% if context.industry %}
+            <p class="analytics-caption">{{ context.industry }}</p>
+        {% endif %}
+    </article>
+{% endif %}

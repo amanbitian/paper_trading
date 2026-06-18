@@ -1,0 +1,69 @@
+{% if error_message %}
+<div class="info-banner danger">
+    <span class="info-dot"></span>
+    <p>{{ error_message }}</p>
+</div>
+{% elif result %}
+<div class="info-banner {% if result.status == 'ok' %}success{% elif result.status == 'up_to_date' %}info{% else %}warning{% endif %}">
+    <span class="info-dot"></span>
+    <p>{{ result.message }}</p>
+</div>
+
+{% if bhav_refresh %}
+{# ── bhav_index membership refresh result ─────────────────────────────────── #}
+<div class="audit-summary-grid" style="margin-top:12px">
+    <div class="audit-metric-card">
+        <span class="metric-label">Bhav Index Stocks</span>
+        <span class="metric-value positive">{{ "{:,}".format(result.bhav_index_stocks) }}</span>
+        <span class="muted">out of {{ "{:,}".format(result.total_active) }} active</span>
+    </div>
+    <div class="audit-metric-card">
+        <span class="metric-label">Not Covered</span>
+        <span class="metric-value {% if result.not_covered > 0 %}negative{% endif %}">{{ "{:,}".format(result.not_covered) }}</span>
+        <span class="muted">no bhavcopy data</span>
+    </div>
+    <div class="audit-metric-card">
+        <span class="metric-label">Bhavcopy Pairs</span>
+        <span class="metric-value" style="font-size:clamp(13px,1.4vw,17px)">{{ "{:,}".format(result.bhavcopy_pairs_loaded) }}</span>
+        <span class="muted">unique (exchange, symbol)</span>
+    </div>
+    <div class="audit-metric-card">
+        <span class="metric-label">Time</span>
+        <span class="metric-value" style="font-size:clamp(13px,1.4vw,17px)">{{ result.elapsed_ms }}ms</span>
+        <span class="muted">Index load {{ result.load_ms }}ms</span>
+    </div>
+</div>
+{% else %}
+{# ── bhavcopy file sync result ─────────────────────────────────────────────── #}
+<div class="audit-summary-grid" style="margin-top:12px">
+    <div class="audit-metric-card">
+        <span class="metric-label">NSE Downloaded</span>
+        <span class="metric-value positive">{{ result.downloaded_nse }}</span>
+        <span class="muted">new files</span>
+    </div>
+    <div class="audit-metric-card">
+        <span class="metric-label">BSE Downloaded</span>
+        <span class="metric-value positive">{{ result.downloaded_bse }}</span>
+        <span class="muted">new files</span>
+    </div>
+    <div class="audit-metric-card">
+        <span class="metric-label">Skipped</span>
+        <span class="metric-value" style="font-size:clamp(13px,1.4vw,17px)">{{ result.skipped }}</span>
+        <span class="muted">already present</span>
+    </div>
+    <div class="audit-metric-card">
+        <span class="metric-label">Unavailable</span>
+        <span class="metric-value {% if result.failed > 0 %}neutral{% endif %}" style="font-size:clamp(13px,1.4vw,17px)">{{ result.failed }}</span>
+        <span class="muted">holidays / no data</span>
+    </div>
+</div>
+{% if last_date %}
+<p class="muted" style="font-size:12px;margin-top:8px">
+    Latest bhavcopy date on disk: <strong>{{ last_date }}</strong>
+    · Run <strong>Refresh Bhav Index</strong> to update explore page membership.
+</p>
+{% endif %}
+{% endif %}
+{% else %}
+<div class="empty-state"><p>No result returned.</p></div>
+{% endif %}

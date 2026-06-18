@@ -1,0 +1,103 @@
+{% if error_message %}
+    <div class="info-banner danger data-refresh-banner">
+        <span class="info-dot"></span>
+        <p>{{ error_message }}</p>
+    </div>
+{% elif payload %}
+    <div class="data-quality-result">
+        <div class="info-banner {{ tone or 'info' }} data-refresh-banner">
+            <span class="info-dot"></span>
+            <p>
+                Strategy explainers refreshed:
+                {{ payload.selected }} stocks selected,
+                {{ payload.refreshed }} strategy rows updated,
+                {{ payload.failed }} failed.
+            </p>
+        </div>
+
+        <div class="stats-card-grid data-strategy-explainer-stats">
+            <div class="stats-card">
+                <p class="stats-card__label">Total rows</p>
+                <p class="stats-card__value">{{ stats.total_rows }}</p>
+            </div>
+            <div class="stats-card">
+                <p class="stats-card__label">Stocks cached</p>
+                <p class="stats-card__value">{{ stats.stocks_cached }}</p>
+            </div>
+            <div class="stats-card">
+                <p class="stats-card__label">Stale rows</p>
+                <p class="stats-card__value">{{ stats.stale_rows }}</p>
+            </div>
+            <div class="stats-card">
+                <p class="stats-card__label">Batch</p>
+                <p class="stats-card__value">{{ exchange }} {{ offset }}-{{ offset + limit }}</p>
+            </div>
+        </div>
+
+        {% if stats.exchange_rows %}
+            <div class="data-ops-table-scroll">
+                <table class="data-ops-table">
+                    <thead>
+                        <tr>
+                            <th>Exchange</th>
+                            <th class="num">Rows</th>
+                            <th class="num">Stocks cached</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in stats.exchange_rows %}
+                        <tr>
+                            <td>{{ row.exchange }}</td>
+                            <td class="num">{{ row.rows }}</td>
+                            <td class="num">{{ row.stocks_cached }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        {% set failed_results = payload.results | selectattr("failed") | list %}
+        {% if failed_results %}
+            <div class="info-banner warning data-refresh-banner">
+                <span class="info-dot"></span>
+                <p>{{ failed_results | length }} stock(s) had at least one strategy failure.</p>
+            </div>
+            <div class="data-ops-table-scroll">
+                <table class="data-ops-table">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Issue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in failed_results[:20] %}
+                            {% for failure in row.failed %}
+                            <tr>
+                                <td>{{ row.symbol }}</td>
+                                <td class="data-ops-message-cell">{{ failure.strategy_type }}: {{ failure.error }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% elif stats %}
+    <div class="stats-card-grid data-strategy-explainer-stats">
+        <div class="stats-card">
+            <p class="stats-card__label">Total rows</p>
+            <p class="stats-card__value">{{ stats.total_rows }}</p>
+        </div>
+        <div class="stats-card">
+            <p class="stats-card__label">Stocks cached</p>
+            <p class="stats-card__value">{{ stats.stocks_cached }}</p>
+        </div>
+        <div class="stats-card">
+            <p class="stats-card__label">Stale rows</p>
+            <p class="stats-card__value">{{ stats.stale_rows }}</p>
+        </div>
+    </div>
+{% endif %}

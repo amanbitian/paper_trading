@@ -1,0 +1,72 @@
+{% set result = result or primary %}
+{% if not result %}
+    {% set empty_title = "No result" %}
+    {% set empty_message = "Run a backtest to see results." %}
+    {% include "partials/empty_state.html" %}
+{% else %}
+    <div class="backtest-results-panel" data-run-id="{{ result.run_id }}" data-result-scope="{{ result.run_id }}">
+        <div class="section-heading compact">
+            <h2>Results · {{ result.label }}</h2>
+            <p>Run #{{ result.run_id }} · {{ result.start_date }} → {{ result.end_date }}</p>
+        </div>
+
+        {% include "partials/backtesting_metric_cards.html" %}
+
+        <div class="backtest-result-tabs" role="tablist">
+            <button type="button" class="result-tab is-active" data-result-tab="overview">Overview</button>
+            <button type="button" class="result-tab" data-result-tab="equity">Equity Curve</button>
+            <button type="button" class="result-tab" data-result-tab="drawdown">Drawdown</button>
+            <button type="button" class="result-tab" data-result-tab="trades">Trades</button>
+            <button type="button" class="result-tab" data-result-tab="monthly">Monthly Returns</button>
+            <button type="button" class="result-tab" data-result-tab="assumptions">Assumptions</button>
+        </div>
+
+        <div class="result-tab-panels">
+            <div class="result-tab-panel is-active" data-panel="overview">
+                {% if curve_missing|default(false) %}
+                    {% set banner_message = "Metric summary loaded from database. Re-run backtest to refresh equity and drawdown charts." %}
+                    {% set banner_tone = "warning" %}
+                    {% include "partials/info_banner.html" %}
+                {% endif %}
+                {% if result.benchmark_warnings %}
+                    {% for warning in result.benchmark_warnings %}
+                        {% set banner_message = warning %}
+                        {% set banner_tone = "warning" %}
+                        {% include "partials/info_banner.html" %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="result-tab-panel" data-panel="equity">
+                {% include "partials/backtesting_equity_curve.html" %}
+            </div>
+
+            <div class="result-tab-panel" data-panel="drawdown">
+                {% include "partials/backtesting_drawdown.html" %}
+            </div>
+
+            <div class="result-tab-panel" data-panel="trades">
+                <div
+                    id="backtest-trades-panel-{{ result.run_id }}"
+                    class="lazy-partial-host"
+                    data-lazy-url="/web/partials/backtesting/trades/{{ result.run_id }}">
+                    <span class="loading-indicator">Open the Trades tab to load the trade log.</span>
+                </div>
+            </div>
+
+            <div class="result-tab-panel" data-panel="monthly">
+                {% include "partials/backtesting_monthly_returns.html" %}
+            </div>
+
+            <div class="result-tab-panel" data-panel="assumptions">
+                <div class="assumptions-card">
+                    <pre>{{ result.assumptions | tojson(indent=2) }}</pre>
+                    <p class="analytics-caption">
+                        Execution: {{ result.execution_mode }} · Intrabar: {{ result.intrabar_assumption }} ·
+                        Cost: {{ result.cost_model }} · Benchmark: {{ result.benchmark_code }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

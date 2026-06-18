@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="page-header">
+    <div>
+        <p class="eyebrow">Portfolio</p>
+        <h1>Add Portfolio</h1>
+        <p class="page-subtitle">{{ subtitle }}</p>
+    </div>
+</header>
+
+<section class="section-stack">
+    <div class="form-card section-card">
+        <div class="section-heading compact">
+            <div>
+                <h2>Create Portfolio</h2>
+                <p>Add a manual, paper, SIP, or algo portfolio.</p>
+            </div>
+        </div>
+        <div id="portfolio-create-result"></div>
+        <form
+            id="create-portfolio-form"
+            class="form-grid"
+            hx-post="/web/partials/portfolio/create"
+            hx-target="#portfolio-create-result"
+            hx-swap="innerHTML"
+            hx-indicator="#create-portfolio-loader">
+            <label class="field wide">
+                <span>Portfolio name</span>
+                <input name="portfolio_name" type="text" required minlength="2" placeholder="My manual portfolio">
+            </label>
+            <label class="field">
+                <span>Portfolio type</span>
+                <select name="portfolio_type">
+                    {% for ptype in portfolio_types %}
+                        <option value="{{ ptype }}">{{ ptype }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="field">
+                <span>Starting cash</span>
+                <input name="starting_value" type="number" min="0" step="1000" value="0">
+            </label>
+            <div class="form-actions">
+                <button class="accent-button" type="submit">Create Portfolio</button>
+                <span id="create-portfolio-loader" class="loading-indicator inline">Creating...</span>
+            </div>
+        </form>
+    </div>
+
+    <div class="form-card section-card add-holding-card">
+        <div class="section-heading compact">
+            <div>
+                <h2>Add Manual Holding</h2>
+                <p>Record a buy using stored instruments and your buy price.</p>
+            </div>
+        </div>
+
+        {% if prefill_warning %}
+            {% set banner_message = prefill_warning %}
+            {% set banner_tone = "warning" %}
+            {% include "partials/info_banner.html" %}
+        {% endif %}
+
+        {% if preselected_stock %}
+            {% set banner_message = "Adding selected stock: " ~ preselected_stock.company_name ~ ". Choose portfolio, quantity, and purchase details to record the holding." %}
+            {% set banner_tone = "info" %}
+            {% include "partials/info_banner.html" %}
+        {% endif %}
+
+        <div id="add-holding-result"></div>
+        <div class="stock-search-block">
+            <form id="holding-stock-search-form" class="search-grid" autocomplete="off">
+                <label class="field wide">
+                    <span>Search stock</span>
+                    <input
+                        id="holding-stock-search-input"
+                        name="query"
+                        type="search"
+                        placeholder="Search RELIANCE, TCS, HDFC Bank..."
+                        value="{{ preselected_stock.search_label if preselected_stock else '' }}"
+                        hx-get="/web/partials/stocks/search?selectable=true"
+                        hx-trigger="keyup changed delay:400ms"
+                        hx-target="#holding-stock-search-results"
+                        hx-swap="innerHTML"
+                        hx-include="#holding-stock-search-form"
+                        hx-indicator="#holding-stock-search-loader">
+                </label>
+                <label class="field">
+                    <span>Exchange</span>
+                    <select
+                        id="holding-stock-search-exchange"
+                        name="exchange"
+                        hx-get="/web/partials/stocks/search?selectable=true"
+                        hx-trigger="change"
+                        hx-target="#holding-stock-search-results"
+                        hx-swap="innerHTML"
+                        hx-include="#holding-stock-search-form"
+                        hx-indicator="#holding-stock-search-loader">
+                        <option value="" {% if not preselected_stock %}selected{% endif %}>All</option>
+                        <option value="NSE" {% if preselected_stock and preselected_stock.exchange == 'NSE' %}selected{% endif %}>NSE</option>
+                        <option value="BSE" {% if preselected_stock and preselected_stock.exchange == 'BSE' %}selected{% endif %}>BSE</option>
+                    </select>
+                </label>
+            </form>
+            <span id="holding-stock-search-loader" class="loading-indicator inline">Searching...</span>
+            <div id="holding-stock-search-results" class="search-results"></div>
+            {% set preselected = preselected_stock %}
+            {% include "partials/holding_selected_stock.html" %}
+        </div>
+        <form
+            id="add-holding-form"
+            class="form-grid"
+            hx-post="/web/partials/portfolio/add-holding"
+            hx-target="#add-holding-result"
+            hx-swap="innerHTML"
+            hx-indicator="#add-holding-loader">
+            <div class="form-grid two-col">
+                {% set field_name = "portfolio_id" %}
+                {% set selected_id = selected_portfolio_id %}
+                {% include "partials/portfolio_selector.html" %}
+            </div>
+            <input type="hidden" name="stock_id" id="holding-stock-id" value="{{ preselected_stock.stock_id if preselected_stock else '' }}">
+            <input type="hidden" name="symbol" id="holding-stock-symbol-hidden" value="{{ preselected_stock.symbol if preselected_stock else '' }}">
+            <input type="hidden" name="exchange" id="holding-stock-exchange-hidden" value="{{ preselected_stock.exchange if preselected_stock else '' }}">
+            <div class="form-grid four-col">
+                <label class="field">
+                    <span>Quantity</span>
+                    <input name="quantity" type="number" min="0.0001" step="1" value="1" data-estimate-field>
+                </label>
+                <label class="field">
+                    <span>Buy price</span>
+                    <input
+                        name="buy_price"
+                        id="holding-buy-price"
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        value="{{ default_buy_price }}"
+                        data-estimate-field>
+                </label>
+                <label class="field">
+                    <span>Purchase date</span>
+                    <input name="purchase_date" id="holding-purchase-date" type="date" value="{{ default_purchase_date }}">
+                </label>
+                <label class="field">
+                    <span>Charges</span>
+                    <input name="charges" type="number" min="0" step="0.01" value="0" data-estimate-field>
+                </label>
+            </div>
+            <label class="field wide">
+                <span>Notes</span>
+                <textarea name="notes" rows="2" placeholder="Optional notes"></textarea>
+            </label>
+            <div class="estimate-card" id="holding-estimate">Estimated amount: Rs 100.00</div>
+            <div class="form-actions">
+                <button class="accent-button" type="submit">Add Holding</button>
+                <span id="add-holding-loader" class="loading-indicator inline">Saving...</span>
+            </div>
+        </form>
+        {% if preselected_stock %}
+        <script type="application/json" id="holding-prefill-json">{{ preselected_stock | tojson }}</script>
+        {% endif %}
+    </div>
+
+    <div class="section-card">
+        <div class="section-heading compact">
+            <div>
+                <h2>Holdings</h2>
+                <p>Current holdings for the selected portfolio.</p>
+            </div>
+            <span id="holdings-loader" class="loading-indicator inline">Loading...</span>
+        </div>
+        <div
+            id="portfolio-holdings-wrap"
+            hx-get="/web/partials/portfolio/holdings?portfolio_id={{ selected_portfolio_id or '' }}"
+            hx-trigger="load, portfolio-created from:body, holding-added from:body, holdings-refresh from:body"
+            hx-target="#portfolio-holdings"
+            hx-swap="outerHTML"
+            hx-indicator="#holdings-loader">
+            {% include "partials/portfolio_holdings.html" %}
+        </div>
+    </div>
+
+    <div
+        id="portfolio-list-wrap"
+        hx-get="/web/partials/portfolio/list"
+        hx-trigger="load, portfolio-created from:body"
+        hx-swap="innerHTML"
+        class="section-card compact-card">
+    </div>
+</section>
+<script src="/static/js/trading.js" defer></script>
+{% endblock %}

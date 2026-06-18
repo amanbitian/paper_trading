@@ -1,0 +1,43 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif summary %}
+<div class="index-fund-summary-grid">
+    {% set label = "Total index instruments" %}
+    {% set value = summary.total_instruments | number(0) %}
+    {% set card_class = "index-fund-metric" %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "With prices" %}
+    {% set value = summary.with_prices | number(0) %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Without prices" %}
+    {% set value = summary.without_prices | number(0) %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Latest price date" %}
+    {% set value = summary.latest_price_date | date_text %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Categories" %}
+    {% set value = summary.categories_count | number(0) %}
+    {% include "partials/metric_card.html" %}
+
+    {% set label = "Last sync status" %}
+    {% set value = summary.last_sync_status or "—" %}
+    {% include "partials/metric_card.html" %}
+</div>
+{% if summary.sync_is_running %}
+    {% set banner_message = "Index fund sync is running. Summary and tables refresh when sync completes." %}
+    {% set banner_tone = "info" %}
+    {% include "partials/info_banner.html" %}
+{% elif summary.last_sync_message %}
+    <p class="index-fund-note muted">{{ summary.last_sync_message }}</p>
+{% endif %}
+{% else %}
+    {% set empty_title = "Summary unavailable" %}
+    {% set empty_message = "Could not load index fund summary metrics." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

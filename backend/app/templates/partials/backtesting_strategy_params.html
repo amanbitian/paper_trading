@@ -1,0 +1,61 @@
+{% if errors %}
+    {% include "partials/backtesting_validation_error.html" %}
+{% elif not parameters %}
+    {% set banner_message = "This strategy has no editable parameters beyond slippage and execution assumptions." %}
+    {% set banner_tone = "info" %}
+    {% include "partials/info_banner.html" %}
+{% else %}
+    {% if not advanced %}
+        {% set banner_message = "Using default strategy parameters. Enable advanced parameters to edit them." %}
+        {% set banner_tone = "info" %}
+        {% include "partials/info_banner.html" %}
+        <div class="strategy-default-json">
+            <pre>{{ parameters | tojson(indent=2) }}</pre>
+        </div>
+    {% else %}
+        <div class="strategy-param-grid">
+            {% for name, value in parameters.items() %}
+                {% set config = parameter_config.get(name, {}) %}
+                {% set label = config.label if config else name.replace('_', ' ').title() %}
+                <label class="field">
+                    <span>{{ label }}</span>
+                    {% if value is sameas true or value is sameas false %}
+                        <input
+                            type="checkbox"
+                            class="strategy-param-input"
+                            data-param-name="{{ name }}"
+                            data-param-kind="bool"
+                            {% if value %}checked{% endif %}>
+                    {% elif config.kind == 'int' %}
+                        <input
+                            type="number"
+                            class="strategy-param-input"
+                            data-param-name="{{ name }}"
+                            data-param-kind="int"
+                            min="{{ config.min if config else 0 }}"
+                            max="{{ config.max if config else 10000 }}"
+                            step="{{ config.step if config else 1 }}"
+                            value="{{ value }}">
+                    {% elif config.kind == 'float' %}
+                        <input
+                            type="number"
+                            class="strategy-param-input"
+                            data-param-name="{{ name }}"
+                            data-param-kind="float"
+                            min="{{ config.min if config else 0 }}"
+                            max="{{ config.max if config else 10000 }}"
+                            step="{{ config.step if config else 0.1 }}"
+                            value="{{ value }}">
+                    {% else %}
+                        <input
+                            type="text"
+                            class="strategy-param-input"
+                            data-param-name="{{ name }}"
+                            data-param-kind="text"
+                            value="{{ value }}">
+                    {% endif %}
+                </label>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endif %}

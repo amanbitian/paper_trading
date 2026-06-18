@@ -1,0 +1,35 @@
+{% if error %}
+    {% set banner_message = "Trend summary failed: " ~ error %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif not summary or not summary.has_items %}
+    {% set empty_title = "No trend data" %}
+    {% set empty_message = "Run daily price ingestion first, then reload this page." %}
+    {% include "partials/empty_state.html" %}
+{% else %}
+    <div class="summary-grid trends-summary-grid">
+        {% set card_class = "trends-metric" %}
+        {% set label = "Period" %}{% set value = summary.period_label %}{% set value_class = "" %}{% set delta = None %}{% include "partials/metric_card.html" %}
+        {% set label = "Lookback" %}{% set value = summary.lookback_days ~ " days" %}{% include "partials/metric_card.html" %}
+        {% set label = "Index" %}{% set value = summary.market_label %}{% include "partials/metric_card.html" %}
+        {% set label = "From date" %}{% set value = summary.baseline_date or "-" %}{% set value_class = "date-value" %}{% include "partials/metric_card.html" %}
+        {% set label = "To date" %}{% set value = summary.record_date or "-" %}{% set value_class = "date-value" %}{% include "partials/metric_card.html" %}
+        {% set label = "Rows" %}{% set value = summary.row_count | number(0) %}{% set value_class = "" %}{% include "partials/metric_card.html" %}
+        {% set label = "Median change" %}{% set value = summary.median_change | pct %}{% set tone = summary.median_change | tone %}{% set delta = None %}{% include "partials/metric_card.html" %}
+        {% if summary.average_change is not none %}
+            {% set label = "Average change" %}{% set value = summary.average_change | pct %}{% set tone = summary.average_change | tone %}{% include "partials/metric_card.html" %}
+        {% endif %}
+        {% if summary.best %}
+            {% set label = "Best performer" %}{% set value = summary.best.symbol %}{% set value_class = "performer-value" %}{% set delta = summary.best.change_pct | pct %}{% set tone = "positive" %}{% include "partials/metric_card.html" %}
+        {% endif %}
+        {% if summary.worst %}
+            {% set label = "Worst performer" %}{% set value = summary.worst.symbol %}{% set value_class = "performer-value" %}{% set delta = summary.worst.change_pct | pct %}{% set tone = "negative" %}{% include "partials/metric_card.html" %}
+        {% endif %}
+    </div>
+    {% if summary.universe_eligible_count %}
+        <p class="analytics-footnote">
+            Showing top {{ summary.row_count | number(0) }} of {{ summary.universe_eligible_count | number(0) }} eligible instruments
+            (cap {{ summary.limit_requested | number(0) }}). Basis: {{ summary.calculation_basis }}.
+        </p>
+    {% endif %}
+{% endif %}

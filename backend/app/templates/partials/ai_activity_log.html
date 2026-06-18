@@ -1,0 +1,37 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif rows %}
+<div class="ai-log-list">
+    {% for row in rows %}
+    <details class="ai-log-entry">
+        <summary>
+            {{ row.created_at | date_text }} — {{ row.action_type }} —
+            {% set badge_text = row.status %}
+            {% set badge_tone = "success" if row.status == 'ok' else ("warning" if row.status == 'cache_hit' else "danger") %}
+            {% include "partials/status_badge.html" %}
+            ({{ row.duration_ms | number(0) }} ms)
+        </summary>
+        <dl class="ai-log-dl">
+            <div><dt>Model</dt><dd>{{ row.model_name or "—" }}</dd></div>
+            <div><dt>Endpoint</dt><dd>{{ row.http_method }} {{ row.endpoint }}</dd></div>
+            <div><dt>Ollama</dt><dd>{{ "Connected" if row.ollama_connected else "No" }}</dd></div>
+            {% if row.error_message %}
+            <div><dt>Error</dt><dd>{{ row.error_message }}</dd></div>
+            {% endif %}
+        </dl>
+        {% if row.llm_prompt %}
+        <details><summary>LLM prompt</summary><pre class="ai-raw-pre">{{ row.llm_prompt }}</pre></details>
+        {% endif %}
+        {% if row.llm_response %}
+        <details><summary>LLM response</summary><pre class="ai-raw-pre">{{ row.llm_response }}</pre></details>
+        {% endif %}
+    </details>
+    {% endfor %}
+</div>
+{% else %}
+    {% set empty_title = "No AI actions logged" %}
+    {% set empty_message = "Run an analysis from another tab to populate the activity log." %}
+    {% include "partials/empty_state.html" %}
+{% endif %}

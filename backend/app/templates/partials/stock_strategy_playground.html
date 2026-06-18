@@ -1,0 +1,50 @@
+<section class="section-card stock-detail-card strategy-playground-card">
+    <div class="section-heading compact">
+        <h3>Strategy playground</h3>
+    </div>
+    {% if not detail.strategy_options %}
+        {% set banner_message = "Seed strategy templates to preview signals on this stock." %}
+        {% set banner_tone = "info" %}
+        {% include "partials/info_banner.html" %}
+    {% else %}
+        <form
+            id="explore-stock-strategy-form"
+            class="strategy-playground-form"
+            hx-post="/web/partials/explore/stock-strategy-preview"
+            hx-target="#explore-stock-strategy-result"
+            hx-swap="innerHTML"
+            hx-indicator="#explore-stock-strategy-loader">
+            <input type="hidden" name="stock_id" value="{{ detail.stock.id }}">
+
+            <div class="strategy-controls-grid">
+                <label class="field strategy-select-field">
+                    <span>Strategy</span>
+                    <select name="strategy_template_id" required>
+                        {% for option in detail.strategy_options %}
+                            <option value="{{ option.id }}">{{ option.label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <div class="strategy-preview-action">
+                    <button type="submit" class="accent-button">Preview strategy</button>
+                </div>
+            </div>
+
+            <p class="strategy-description muted">
+                Preview uses each template&apos;s default parameters. Enable advanced parameter editing in Strategy Lab.
+            </p>
+
+            <div class="strategy-advanced-row muted">
+                <span class="strategy-advanced-label">Advanced user</span>
+                <span class="strategy-advanced-status">Off · default parameters</span>
+            </div>
+        </form>
+
+        <span id="explore-stock-strategy-loader" class="loading-indicator">Previewing...</span>
+
+        <div id="explore-stock-strategy-result" class="strategy-preview-result-host">
+            {% set empty_message = "Choose a strategy and click Preview strategy." %}
+            {% include "partials/stock_strategy_preview_result.html" %}
+        </div>
+    {% endif %}
+</section>

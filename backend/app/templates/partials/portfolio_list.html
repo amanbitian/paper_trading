@@ -1,0 +1,16 @@
+<div id="portfolio-list" class="portfolio-list">
+    {% if not portfolios %}
+        {% set empty_title = "No portfolios yet" %}
+        {% set empty_message = "Create a portfolio to start tracking holdings." %}
+        {% include "partials/empty_state.html" %}
+    {% else %}
+        <ul class="portfolio-list-items">
+            {% for portfolio in portfolios %}
+                <li>
+                    <strong>{{ portfolio.portfolio_name }}</strong>
+                    <span class="muted">{{ portfolio.portfolio_type | upper }} · Cash {{ portfolio.cash_balance | inr }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

@@ -1,0 +1,46 @@
+{
+    // Python interpreter — points to the local venv used for linting/IntelliSense.
+    // The app itself runs inside Docker; this venv is only for IDE support.
+    "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/Scripts/python.exe",
+    // Fallback for Mac/Linux contributors:
+    // "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
+
+    // Tell Pylance/Pyright where the package root lives so imports resolve.
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/backend",
+        "${workspaceFolder}/backend/models"
+    ],
+    "python.analysis.typeCheckingMode": "basic",
+
+    // Load the backend .env for local script runs (not needed for Docker).
+    "python.envFile": "${workspaceFolder}/backend/.env",
+
+    // Formatting / linting
+    "editor.formatOnSave": true,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+    },
+
+    // Docker: default context for Compose commands
+    "docker.composeFile": "${workspaceFolder}/docker-compose.yml",
+
+    // File nesting for tidier explorer
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "docker-compose.yml": "docker-compose.*.yml",
+        "run.py": "run.bat, run.ps1",
+        "*.py": "${capture}.pyc"
+    },
+
+    // Exclude heavy dirs from search/watch
+    "files.watcherExclude": {
+        "**/backend/.venv/**": true,
+        "**/__pycache__/**": true,
+        "**/node_modules/**": true
+    },
+    "search.exclude": {
+        "**/backend/.venv": true,
+        "**/__pycache__": true
+    }
+}

@@ -1,0 +1,86 @@
+<section class="section-card stock-detail-card stock-findings-card">
+    <div class="section-heading compact">
+        <h3>Algorithm findings</h3>
+        <p class="muted">Signals from stored daily OHLCV where supported. Some algorithms need other data types.</p>
+    </div>
+    {% if not detail.findings %}
+        {% set empty_title = "No algorithm findings" %}
+        {% set empty_message = "Findings appear after enough stored price history is available for this stock." %}
+        {% include "partials/empty_state.html" %}
+    {% else %}
+        {% if detail.findings | length == 1 and detail.findings[0].category == "Data Quality" %}
+            {% set banner_message = detail.findings[0].reason %}
+            {% set banner_tone = "warning" %}
+            {% include "partials/info_banner.html" %}
+        {% endif %}
+        <div class="algo-findings-table-wrapper table-scroll">
+            <table class="algo-findings-table">
+                <thead>
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>Category</th>
+                        <th>Action</th>
+                        <th class="algo-confidence-col">Confidence</th>
+                        <th>Status</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in detail.findings %}
+                    <tr>
+                        <td class="algo-name-cell">
+                            <strong>{{ row.algorithm_name }}</strong>
+                        </td>
+                        <td class="algo-category-cell">{{ row.category or "—" }}</td>
+                        <td class="algo-action-cell">
+                            <span class="signal-badge signal-{{ row.action | lower }}">{{ row.action }}</span>
+                        </td>
+                        <td class="algo-confidence-col">
+                            {% if row.confidence_score is not none %}
+                            {% set pct = (row.confidence_score | float * 100) | round | int %}
+                            <div class="confidence-bar-wrap">
+                                <span>{{ row.confidence_score | float | round(2) }}</span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-bar-fill {% if row.confidence_score | float >= 0.65 %}is-high{% endif %}" style="width: {{ pct }}%"></div>
+                                </div>
+                            </div>
+                            {% else %}—{% endif %}
+                        </td>
+                        <td class="algo-status-cell">
+                            <code class="algo-status-code">{{ row.status }}</code>
+                        </td>
+                        <td class="algo-reason-cell reason-text">{{ row.reason }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="stock-findings-details">
+            <p class="muted stock-findings-details-label">Additional detail per algorithm</p>
+            {% for row in detail.findings %}
+            <details class="stock-finding-detail algo-detail">
+                <summary>{{ row.algorithm_name }} · {{ row.action }} · {{ row.confidence_score | float | round(2) if row.confidence_score is not none else "—" }}</summary>
+                <div class="stock-finding-detail-body">
+                    <p><strong>Category:</strong> {{ row.category or "—" }}</p>
+                    <p><strong>Status:</strong> <code class="algo-status-code">{{ row.status }}</code></p>
+                    <p class="reason-text"><strong>Data needed:</strong> {{ row.data_requirements }}</p>
+                    <p class="reason-text"><strong>Logic:</strong> {{ row.logic }}</p>
+                    <p class="reason-text"><strong>Finding:</strong> {{ row.reason }}</p>
+                    {% if row.indicators %}
+                        <pre class="params-code-block stock-finding-json">{{ row.indicators | tojson(indent=2) }}</pre>
+                    {% endif %}
+                    {% if row.chart_json_str %}
+                    <div class="finding-chart-host chart-plot" id="finding-chart-{{ loop.index }}"></div>
+                    <div class="plotly-payload" data-plotly-json data-target="finding-chart-{{ loop.index }}" hidden aria-hidden="true">{{ row.chart_json_str }}</div>
+                    {% elif row.has_chart %}
+                    <p class="muted">Chart data is unavailable for this algorithm.</p>
+                    {% else %}
+                    <p class="muted">No daily OHLCV chart for this algorithm (may require a different data type).</p>
+                    {% endif %}
+                </div>
+            </details>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>

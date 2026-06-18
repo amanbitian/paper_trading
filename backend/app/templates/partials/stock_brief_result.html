@@ -1,0 +1,44 @@
+<section class="stock-detail-card stock-brief-card" id="stock-brief-card">
+    <div class="stock-brief-header">
+        <div class="stock-brief-title">
+            <span class="stock-brief-icon">✦</span>
+            <h3>Stock Brief</h3>
+            <span class="stock-brief-subtitle muted">AI-generated analyst note</span>
+        </div>
+        {% if not brief.error %}
+        <button
+            class="ghost-button compact"
+            type="button"
+            hx-post="/web/partials/explore/stock-brief/{{ stock_id }}?force=true"
+            hx-target="#stock-brief-card"
+            hx-swap="outerHTML"
+            hx-indicator="#stock-brief-spinner">
+            Regenerate
+        </button>
+        <span id="stock-brief-spinner" class="loading-indicator">Generating…</span>
+        {% endif %}
+    </div>
+
+    {% if brief.error %}
+    <div class="stock-brief-error">
+        <p class="muted">{{ brief.error }}</p>
+        <p class="muted" style="margin-top:4px;font-size:12px;">Ollama starts automatically with <code>run.py</code> — check that <code>qwen3:14b</code> is pulled.</p>
+    </div>
+    {% else %}
+    <div class="stock-brief-body">
+        {% for para in brief.paragraphs %}
+        <p class="stock-brief-para">{{ para }}</p>
+        {% endfor %}
+    </div>
+    <div class="stock-brief-footer">
+        <span class="stock-brief-badge">{{ brief.model }}</span>
+        {% if brief.cached %}
+        <span class="stock-brief-badge stock-brief-badge--cached">Cached</span>
+        {% endif %}
+        {% if brief.generated_at %}
+        <span class="muted" style="font-size:11px;">Generated {{ brief.generated_at[:10] }}</span>
+        {% endif %}
+        <span class="stock-brief-disclaimer">Educational only · Not financial advice</span>
+    </div>
+    {% endif %}
+</section>

@@ -1,0 +1,66 @@
+<div
+    id="index-fund-sync-status"
+    class="sync-status-card index-fund-sync-card"
+    data-sync-running="{% if sync_status and sync_status.is_running %}true{% else %}false{% endif %}">
+    <div class="sync-copy">
+        <span class="muted">Index sync status</span>
+        <strong class="sync-state-label">
+            {% if sync_status and sync_status.is_running %}
+                Running
+            {% elif sync_status and sync_status.status %}
+                {{ sync_status.status }}
+            {% else %}
+                Idle
+            {% endif %}
+        </strong>
+        {% if sync_status and sync_status.started_at %}
+            <small>Started {{ sync_status.started_at | date_text }}</small>
+        {% endif %}
+        {% if sync_status and sync_status.finished_at and not sync_status.is_running %}
+            <small>Finished {{ sync_status.finished_at | date_text }}</small>
+        {% endif %}
+        {% if sync_status and (sync_status.rows_saved or sync_status.symbols_synced) %}
+            <small class="sync-run-detail">
+                {{ sync_status.rows_saved or 0 }} rows saved,
+                {{ sync_status.symbols_synced or 0 }} synced,
+                {{ sync_status.symbols_failed or 0 }} unchanged/failed
+            </small>
+        {% endif %}
+        {% if sync_message %}
+            <small class="sync-message sync-message-{{ sync_tone or 'info' }}">{{ sync_message }}</small>
+        {% elif sync_status and sync_status.message %}
+            <small class="sync-message sync-message-info">{{ sync_status.message }}</small>
+        {% endif %}
+    </div>
+    {% if sync_error %}
+        {% set banner_message = sync_error %}
+        {% set banner_tone = "danger" %}
+        <div class="sync-error-banner">{% include "partials/info_banner.html" %}</div>
+    {% endif %}
+    <div class="sync-actions index-fund-sync-actions">
+        <button
+            class="accent-button"
+            type="button"
+            id="index-fund-sync-button"
+            {% if sync_status and sync_status.is_running %}disabled{% endif %}
+            hx-post="/web/partials/index-fund/sync"
+            hx-target="#index-fund-sync-status"
+            hx-swap="outerHTML"
+            hx-indicator="#index-fund-sync-action-loader">
+            {% if sync_status and sync_status.is_running %}Syncing...{% else %}Sync Index Data{% endif %}
+        </button>
+        <button
+            class="ghost-button"
+            type="button"
+            hx-get="/web/partials/index-fund/sync-status"
+            hx-target="#index-fund-sync-status"
+            hx-swap="outerHTML"
+            hx-indicator="#index-fund-sync-action-loader">
+            Refresh Status
+        </button>
+        <span id="index-fund-sync-action-loader" class="loading-indicator inline">Working...</span>
+        {% if sync_status and sync_status.is_running %}
+            <small class="sync-poll-note muted">Status refreshes every 5s while sync runs (max {{ 25 }} instruments per run).</small>
+        {% endif %}
+    </div>
+</div>

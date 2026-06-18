@@ -1,0 +1,41 @@
+{% if error_message %}
+    {% set banner_message = error_message %}
+    {% set banner_tone = "danger" %}
+    {% include "partials/info_banner.html" %}
+{% elif status %}
+<div class="ai-model-status-row">
+    {% if not status.ai_features_enabled %}
+        {% set badge_text = "AI disabled" %}
+        {% set badge_tone = "warning" %}
+        {% include "partials/status_badge.html" %}
+        {% set banner_message = "AI features are disabled. Set AI_FEATURES_ENABLED=true in backend/.env and restart the API." %}
+        {% set banner_tone = "warning" %}
+        {% include "partials/info_banner.html" %}
+    {% elif status.available %}
+        {% set badge_text = "Model available" %}
+        {% set badge_tone = "success" %}
+        {% include "partials/status_badge.html" %}
+    {% else %}
+        {% set badge_text = "Unavailable" %}
+        {% set badge_tone = "danger" %}
+        {% include "partials/status_badge.html" %}
+        {% set banner_message = "AI model service is unavailable. Start the local model server (Ollama) or select another model." %}
+        {% set banner_tone = "danger" %}
+        {% include "partials/info_banner.html" %}
+    {% endif %}
+    <p class="ai-model-status-meta muted">
+        Ollama: {{ status.ollama_base_url or "—" }}
+        · Default: {{ status.default_model or "—" }}
+        {% if status.models %}
+            · {{ status.models | length }} model(s) listed
+        {% endif %}
+    </p>
+    {% if status.models %}
+    <datalist id="ai-model-options">
+        {% for m in status.models %}
+            <option value="{{ m }}"></option>
+        {% endfor %}
+    </datalist>
+    {% endif %}
+</div>
+{% endif %}

@@ -1,0 +1,14 @@
+<label class="field">
+    <span>Portfolio</span>
+    <select name="{{ field_name }}" id="{{ field_name }}" class="portfolio-select">
+        {% if not portfolios %}
+            <option value="">No portfolios yet</option>
+        {% else %}
+            {% for portfolio in portfolios %}
+                <option value="{{ portfolio.id }}" {% if selected_id == portfolio.id %}selected{% endif %}>
+                    {{ portfolio.portfolio_name }} ({{ portfolio.portfolio_type }})
+                </option>
+            {% endfor %}
+        {% endif %}
+    </select>
+</label>

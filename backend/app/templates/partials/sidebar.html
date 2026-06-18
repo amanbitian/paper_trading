@@ -1,0 +1,57 @@
+<aside class="sidebar" id="sidebar">
+    <div class="brand">
+        <div class="brand-mark">PT</div>
+        <div>
+            <strong>Paper Trading</strong>
+            <span>Local terminal</span>
+        </div>
+    </div>
+    <nav class="sidebar-nav" aria-label="Primary">
+        <a class="nav-link {% if active_page == 'explore' %}is-active{% endif %}" href="/web/explore">
+            <span>Explore</span>
+        </a>
+        <a class="nav-link {% if active_page == 'add_portfolio' %}is-active{% endif %}" href="/web/add-portfolio">
+            <span>Add Portfolio</span>
+        </a>
+        <a class="nav-link {% if active_page == 'paper_trading' %}is-active{% endif %}" href="/web/paper-trading">
+            <span>Paper Trading</span>
+        </a>
+        <a class="nav-link {% if active_page == 'strategy_lab' %}is-active{% endif %}" href="/web/strategy-lab">
+            <span>Strategy Lab</span>
+        </a>
+        <a class="nav-link {% if active_page == 'backtesting' %}is-active{% endif %}" href="/web/backtesting">
+            <span>Backtesting</span>
+        </a>
+        <a class="nav-link {% if active_page == 'data' %}is-active{% endif %}" href="/web/data">
+            <span>Data</span>
+        </a>
+        <a class="nav-link {% if active_page == 'index_fund' %}is-active{% endif %}" href="/web/index-fund">
+            <span>Index Fund</span>
+        </a>
+        <a class="nav-link {% if active_page == 'trends' %}is-active{% endif %}" href="/web/trends">
+            <span>Trends</span>
+        </a>
+        <a class="nav-link {% if active_page == 'risk' %}is-active{% endif %}" href="/web/risk">
+            <span>Risk</span>
+        </a>
+        <a class="nav-link {% if active_page == 'ai_think_tank' %}is-active{% endif %}" href="/web/ai-think-tank">
+            <span>AI Think Tank</span>
+        </a>
+    </nav>
+    <div class="sidebar-legacy">
+        <button
+            type="button"
+            id="legacy-mode-btn"
+            class="ghost-button legacy-mode-btn"
+            title="Starts the old Streamlit UI for debugging.">
+            Enable Legacy Mode
+        </button>
+        <p class="muted sidebar-legacy-caption">Starts the old Streamlit UI for debugging.</p>
+        <span id="legacy-mode-loader" class="loading-indicator">Starting legacy UI…</span>
+        <div id="legacy-mode-result" class="legacy-mode-result-host"></div>
+    </div>
+    <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <span>FastAPI web UI</span>
+    </div>
+</aside>

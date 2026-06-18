@@ -1,0 +1,9 @@
+<div class="table-card">
+    {% if table_title %}
+        <div class="table-card-header">
+            <h3>{{ table_title }}</h3>
+            {% if table_subtitle %}<p>{{ table_subtitle }}</p>{% endif %}
+        </div>
+    {% endif %}
+    {{ table_content | safe }}
+</div>
